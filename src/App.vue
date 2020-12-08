@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <com-Header></com-Header>
+    <!-- <com-Header></com-Header> -->
     <router-view></router-view>
   </div>
 </template>
@@ -18,6 +18,7 @@ export default {
 
 <style scoped lang="less">
 #app {
-  min-width: 1200px
+  min-width: 1200px;
+  height: 2000px;
 }
 </style>

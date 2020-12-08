@@ -6,3 +6,14 @@ a{
     background: transparent;
     text-decoration: none;
 }
+.finger{
+    cursor: pointer;
+    background-color: #539FFF;
+    color: #fff;
+}
+::-webkit-scrollbar {
+    display: none; 
+}
+.mt20{
+    margin-top: 20px;
+}
