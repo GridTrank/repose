@@ -2,7 +2,7 @@
   "name": "comic",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "lk543061231 <543061231@qq.com>",
+  "author": "、",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

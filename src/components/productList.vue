@@ -8,7 +8,7 @@
 export default {
     data(){
         return{
-            
+
         }
     }
 }
@@ -16,6 +16,6 @@ export default {
 
 <style scoped lang="less">
 .productList-wrap{
-
+    
 }
 </style>
