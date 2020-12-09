@@ -1,6 +1,7 @@
 <template>
   <div class="home-wrap">
-    <userInfo></userInfo>
+    <slide></slide>
+    <!-- <userInfo></userInfo>
     <recharge></recharge>
     <chapters></chapters>
     <productList></productList>
@@ -74,8 +75,8 @@
         <div class="con-pro">
             <productList :type="'typeTwo'"></productList>
         </div>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
 
     
 
@@ -91,6 +92,9 @@ import chapters from '@/components/chapters.vue'
 import productList from '@/components/productList.vue'
 import carousel from '@/components/carousel.vue'
 import tabs from '@/components/tabs.vue'
+import slide from '@/components/slide.vue'
+import {getIndex} from '@/utils/api.js'
+
 export default {
   components:{
     userInfo,
@@ -98,7 +102,14 @@ export default {
     chapters,
     productList,
     carousel,
-    tabs
+    tabs,
+    slide
+  },
+  created(){
+
+    // getIndex({}).then(res=>{
+    //   console.log(res)
+    // })
   }
 }
 </script>
@@ -107,7 +118,6 @@ export default {
 .home-wrap{
   width: 100%;
   height: auto;
-  display: none;
   .tabs{
     margin: auto;
     width: 95%;
