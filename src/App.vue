@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <!-- <com-Header></com-Header> -->
+  <div id="app" >
+    <com-Header></com-Header>
     <router-view></router-view>
   </div>
 </template>
@@ -12,6 +12,10 @@ export default {
   components:{
     comHeader,
     
+  },
+  data(){
+    return{
+    }
   }
 }
 </script>
@@ -19,6 +23,7 @@ export default {
 <style scoped lang="less">
 #app {
   min-width: 1200px;
-  height: 2000px;
+  // height: 2000px;
+  padding-bottom:50px;
 }
 </style>

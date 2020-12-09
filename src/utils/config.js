@@ -3,5 +3,6 @@ let config = {};
 if (process.env.NODE_ENV === 'production') {
     config.Domain =  'http://m.miniso.cn/openapi';
 } else {
-    config.Domain = 'http://api.wxo2020.xyz/backdata/webindex';
+    config.Domain = 'http://api.wxo2020.xyz';
 }
+export default config.Domain

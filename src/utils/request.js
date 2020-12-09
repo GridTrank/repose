@@ -2,7 +2,7 @@ import config from './config'
 import axios from 'axios'
 
 let baseURL = 'http://api.wxo2020.xyz';
-axios.defaults.timeout = 5000;
+// axios.defaults.timeout = 5000;
 
 const instance = axios.create({
    baseURL: '/api',  

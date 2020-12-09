@@ -1,11 +1,6 @@
 <template>
-  <div class="home-wrap">
-    <slide></slide>
-    <!-- <userInfo></userInfo>
-    <recharge></recharge>
-    <chapters></chapters>
-    <productList></productList>
-    <carousel></carousel>
+  <div class="home-wrap" v-loading="loading">
+    <slide :item="homeData.banners"></slide>
 
     <div class="tabs">
       <tabs></tabs>
@@ -20,7 +15,7 @@
         <div class="con-more">更多</div>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'"></productList>
+          <productList :type="'typeOne'" :item="homeData.newest"></productList>
       </div>
     </div>
 
@@ -34,7 +29,22 @@
         <div class="con-more">更多</div>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'"></productList>
+          <productList :type="'typeOne'" :item="homeData.hot_books"></productList>
+      </div>
+    </div>
+    <div class="container">
+      <div class="con-top">
+        <div class="con-l">
+          <img class="con-i" src="../assets/logo.png" alt="">
+          <p class="con-t">热门分类</p>
+          <div class="hot-c">
+            <span v-for="(e,el) in boks_tag" :key="el">{{e.tag_name}}</span>
+          </div>
+        </div>
+        <div class="con-more">更多</div>
+      </div>
+      <div class="con-pro">
+          <productList :type="'typeOne'" :item="boks"></productList>
       </div>
     </div>
 
@@ -44,72 +54,79 @@
         <div class="con-top">
           <div class="con-l">
             <img class="con-i" src="../assets/logo.png" alt="">
-            <p class="con-t">热门漫画</p>
+            <p class="con-t">新书版</p>
           </div>
           <div class="con-more">更多</div>
         </div>
         <div class="con-pro">
-            <productList :type="'typeTwo'"></productList>
+            <productList :type="'typeTwo'" :item="homeData.newbook"></productList>
         </div>
       </div>
       <div class="container rank">
         <div class="con-top">
           <div class="con-l">
             <img class="con-i" src="../assets/logo.png" alt="">
-            <p class="con-t">热门漫画</p>
+            <p class="con-t">点击版</p>
           </div>
           <div class="con-more">更多</div>
         </div>
         <div class="con-pro">
-            <productList :type="'typeTwo'"></productList>
+            <productList :type="'typeTwo'" :item="homeData.djbook"></productList>
         </div>
       </div>
       <div class="container rank">
         <div class="con-top">
           <div class="con-l">
             <img class="con-i" src="../assets/logo.png" alt="">
-            <p class="con-t">热门漫画</p>
+            <p class="con-t">推荐版</p>
           </div>
           <div class="con-more">更多</div>
         </div>
         <div class="con-pro">
-            <productList :type="'typeTwo'"></productList>
+            <productList :type="'typeTwo'" :item="homeData.tjbook"></productList>
         </div>
-      </div> -->
-    <!-- </div> -->
-
-    
-
-
+      </div>
+    </div>
   </div>
   
 </template>
 
 <script>
-import userInfo from '@/components/userInfo.vue'
-import recharge from '@/components/recharge.vue'
-import chapters from '@/components/chapters.vue'
+
 import productList from '@/components/productList.vue'
-import carousel from '@/components/carousel.vue'
 import tabs from '@/components/tabs.vue'
 import slide from '@/components/slide.vue'
 import {getIndex} from '@/utils/api.js'
-
+import configUrl from '@/utils/config.js'
 export default {
   components:{
-    userInfo,
-    recharge,
-    chapters,
+
     productList,
-    carousel,
     tabs,
     slide
   },
+  data(){
+    return{
+      homeData:{},
+      loading:true,
+      boks:[],
+      boks_tag:[]
+    }
+  },
   created(){
-
-    // getIndex({}).then(res=>{
-    //   console.log(res)
-    // })
+    getIndex({}).then(res=>{
+      if(res.status==200){
+        let book_tags=res.data.data.book_tags
+        this.boks_tag=book_tags.tags
+        for(let key in book_tags){
+          if(key!=='tags'){
+            this.boks.push(book_tags[key])
+          }
+        }
+        this.homeData=res.data.data
+      }
+      this.loading=false
+    })
   }
 }
 </script>
@@ -133,11 +150,14 @@ export default {
       padding: 0px  !important;
       margin: 0px  !important;
     }
+    .con-more{
+      // margin: 0 !important;
+    }
   }
   .container{
     padding: 10px;
     width: 1200px;
-    margin: 10px auto;
+    margin: 20px auto;
     .con-top{
       display: flex;
       justify-content: space-between;
@@ -149,6 +169,17 @@ export default {
           width:50px;
           height: 50px;
           margin-right: 20px;
+        }
+        .con-t{
+          font-size: 18px;
+        }
+        .hot-c{
+          margin-left: 30px;
+            span{
+              display: inline-block;
+              padding: 5px 20px;
+              font-size: 15px;
+            }
         }
       }
       .con-more{

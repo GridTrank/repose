@@ -1,33 +1,32 @@
 <template>
     <div class="productList-wrap">
         <div v-if="type=='typeOne'" class="p-lists">
-            <div class="type-one" v-for="(item,index) in data" :key="index">
+            <div class="type-one" v-for="(data,index) in item" :key="index">
                 <div class="imgBox">
-                    <img class="p-img" src="../assets/logo.png" >
+                    <img class="p-img" :src="imgurl+data.cover_url" >
                 </div>
-                <p class="p-status">已完结</p>
-                <p class="p-name">漫画名称</p>
-                <p class="p-class">
-                    <span >分类1</span>
-                    <span>分类2</span>
+                <p class="p-status">{{data.tags}}</p>
+                <p class="p-name oneHidden">{{data.book_name}}</p>
+                <p class="p-class" v-if="data.taglist && data.taglist.length>0">
+                    <span class="" v-for="(tag,i) in data.taglist" :key="i">{{tag}}</span>
                 </p>
+                <p class="p-class" v-else>{{data.tags}}</p>
             </div>
         </div>
 
         <div v-if="type=='typeTwo'" class="p-lists">
-            <div class="type-two" v-for="(item,index) in 4" :key="index">
+            <div class="type-two" v-for="(data,index) in item" :key="index">
                 <div class="imgBox">
-                    <img class="p-img" src="../assets/logo.png" >
-                    <p class="p-status">已完结</p>
+                    <img class="p-img" :src="imgurl+data.cover_url" >
+                    <p class="p-status">{{data.tags}}</p>
                 </div>
                 <div class="p-brief">
-                    <p class="p-name">漫画名称</p>
+                    <p class="p-name">{{data.book_name}}</p>
                     <p class="p-info twoHidden">漫画简介漫画简介漫画简介漫画简介漫画简介漫画简介漫画简介漫画简介漫画简介漫画简介漫画简介</p>
-                    <p class="p-class">
-                        <span>已更111</span>
-                        <span>分类2</span>
-                        <span>分类2</span>
+                    <p class="p-class" v-if="data.taglist && data.taglist.length>0">
+                        <span class="" v-for="(tag,i) in data.taglist" :key="i">{{tag}}</span>
                     </p>
+                    <p class="p-class" v-else>{{data.tags}}</p>
                 </div>
             </div>
         </div>
@@ -35,13 +34,16 @@
 </template>
 
 <script>
+import configUrl from '@/utils/config.js'
 export default {
     props:{
-        type:String
+        type:String,
+        item:Array
     },
     data(){
         return{
             data:12,
+            imgurl:configUrl
         }
     }
 }
@@ -52,15 +54,21 @@ export default {
     .p-lists{
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around;
+        // justify-content: space-around;
         .type-one{
             position: relative;
             margin-top:20px;
             cursor: pointer;
+            width: 184px;
+            margin-right: 15px;
+            &:nth-child(6){
+                margin-right: 0px;
+            }
             .imgBox{
                 width: 184px;
                 height: 244px;
-                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: hidden;
                 .p-img{
                     width: 100%;
                     height: 100%;
@@ -70,6 +78,17 @@ export default {
                 position: absolute;
                 top:0;
                 right: 0;
+            }
+            .p-name{
+                margin-top: 5px;
+                width: 100%;
+                color: #6F93BD;
+                font-size: 14px;
+                
+            }
+            .p-class{
+                color:#999;
+                font-size: 12px;
             }
             
         }
@@ -83,9 +102,10 @@ export default {
                 width: 100px;
                 height: 150px;
                 flex-shrink: 0;
-                border: 1px solid #ddd;
                 position: relative;
                 margin-right: 20px;
+                border-radius: 8px;
+                overflow: hidden;
                 .p-img{
                     width: 100%;
                     height: 100%;

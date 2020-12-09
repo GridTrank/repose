@@ -1,8 +1,8 @@
 <template>
     <div class="sildeBox">
         <swiper ref="mySwiper" :options="swiperOptions">
-            <swiper-slide v-for="(item,index) in list" :key="index" >
-                <img src="../assets/11.png" >
+            <swiper-slide v-for="(data,index) in item" :key="index" >
+                <img class="swiperImg" :src="imgUrl+data.pic_name" >
             </swiper-slide>
 			<div class="swiper-button-prev icon-image" slot="button-prev"></div>
     	    <div class="swiper-button-next icon-image" slot="button-next"></div>
@@ -14,10 +14,14 @@
 </template>
 
 <script>
+import configUrl from '@/utils/config.js'
 export default {
+    props:{
+        item:Array
+    },
     data(){
         return{
-            list:[1,1,1,1,1,1,1,1],
+            imgUrl:configUrl,
             swiperOptions: {
                 // autoplay:true,
                 // speed:2000,
@@ -48,7 +52,7 @@ export default {
 	    },
     },
     mounted() {
-		
+		console.log(configUrl)
 	},
     watch:{
 
@@ -73,6 +77,10 @@ export default {
             text-align: center;
         }
     } 
+    .swiperImg{
+        width: 100%;
+        height: 300px;
+    }
     
 }
 

@@ -17,6 +17,12 @@ a{
 .mt20{
     margin-top: 20px;
 }
+.oneHidden{
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .twoHidden{
     overflow: hidden;
     display: -webkit-box;
