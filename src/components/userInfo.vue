@@ -55,14 +55,11 @@ export default {
 
 <style scoped lang="less">
 .userinfo-wrap{
-    position: fixed;
     text-align: center;
     padding: 20px;
     background: rgba(1,1,1,.1);
     border: 1px solid #ddd;
-    top: 100px;
-    left: 10px;
-    width: 160px;
+    width:200px;
     .user-head{
         width: 120px;
         height: 120px;

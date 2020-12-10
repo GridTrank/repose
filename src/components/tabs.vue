@@ -1,19 +1,38 @@
 <template>
     <div class="tabs-wrap">
         <div class="tabs-lists">
-            <div class="tabs-item" v-for="(item,index) in 6" :key="index">
-                {{'分类标签'}}
+            <div class="tabs-item" :class="activeIndex==index?'select-tab':''" v-for="(data,index) in item" :key="index" @click="selectTag(data,index)">
+                {{data.label}}
             </div>
         </div>
-        <div class="tabs-more">
-            {{'全部分类'}}
+        <div class="tabs-more" v-if="showMore">
+            {{moreTitle}}
         </div>
     </div>
 </template>
 
 <script>
 export default {
-
+    props:{
+        item:Array,
+        showMore:Boolean,
+        moreTitle:String,
+        // activeIndex:{
+        //     type:Number,
+        //     default:0
+        // }
+    },
+    data(){
+        return{
+            activeIndex:0
+        }
+    },
+    methods:{
+        selectTag(data,index){
+            this.activeIndex=index
+            this.$emit("selectTag",data)
+        }
+    }
 }
 </script>
 
@@ -26,7 +45,10 @@ export default {
         display: flex;
         .tabs-item{
             cursor: pointer;
-            margin-right: 20px;
+            margin-right: 30px;
+        }
+        .select-tab{
+            color: #539FFF;
         }
         
     }

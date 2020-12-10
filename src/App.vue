@@ -1,7 +1,12 @@
 <template>
   <div id="app" >
-    <!-- <com-Header></com-Header> -->
-    <router-view></router-view>
+    <com-Header></com-Header>
+    <div class="container">
+      <keep-alive>
+          <router-view v-if="$route.meta.keepAlive" ></router-view>
+      </keep-alive>
+      <router-view v-if="!$route.meta.keepAlive" :key="$route.fullPath"></router-view>
+    </div>
   </div>
 </template>
 
@@ -25,5 +30,6 @@ export default {
   min-width: 1200px;
   // height: 2000px;
   padding-bottom:50px;
+
 }
 </style>

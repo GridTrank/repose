@@ -5,7 +5,7 @@
             <div class="nav-lists">
                 <div class="nav-item" href="#" target="_blank" v-for="(item,index) in navList" :key="index" @click="selectNav(index)">{{item.label}}</div>
             </div>
-            <div>
+            <div v-if="showSearch">
                 <el-input placeholder="搜索作品，作者名" style="width:300px" v-model="searchData">
                     <el-button slot="append" icon="el-icon-search" @click="search"> </el-button>
                 </el-input>
@@ -16,11 +16,11 @@
                     <img src="../assets/logo.png" >
                     <p>充值</p>
                 </router-link>
-                <router-link to="/Record?type='history'" class="nav-tab">
+                <router-link to="/Record?type=history" class="nav-tab">
                     <img src="../assets/logo.png" >
                     <p>历史</p>
                 </router-link>
-                <router-link to="/Record?type='collect'" class="nav-tab">
+                <router-link to="/Record?type=collect" class="nav-tab">
                     <img src="../assets/logo.png" >
                     <p>收藏</p>
                 </router-link>
@@ -46,11 +46,16 @@ export default {
                 {label:'排行榜',value:3,url:'/RankList'},
             ],
             showIndex:0,
+            showSearch:true
         }
     },
     watch:{
         '$route':function(to,from){
-
+            if(to.path=='/Search'){
+                this.showSearch=false
+            }else{
+                this.showSearch=true
+            }
         }
     },
     methods:{
@@ -60,6 +65,7 @@ export default {
             })
         },
         search(){
+            if(!this.searchData)return
             this.$router.push({
                 path:'/Search',
                 query:{

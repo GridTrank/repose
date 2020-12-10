@@ -1,16 +1,16 @@
 <template>
-  <div class="home-wrap" 
+  <div class="home-wrap " 
     v-loading.fullscreen.lock="loading"
      element-loading-text="加载中"
      element-loading-spinner="el-icon-loading"
      element-loading-background="rgba(0, 0, 0, 0.8)"
   >
-    <!-- <slide :item="homeData.banners"></slide>
+    <slide :item="homeData.banners"></slide>
     <div class="tabs">
       <tabs></tabs>
     </div>
    
-    <div class="container">
+    <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
           <img class="con-i" src="../assets/logo.png" alt="">
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="container">
+    <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
           <img class="con-i" src="../assets/logo.png" alt="">
@@ -35,7 +35,7 @@
           <productList :type="'typeOne'" :item="homeData.hot_books"></productList>
       </div>
     </div>
-    <div class="container">
+    <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
           <img class="con-i" src="../assets/logo.png" alt="">
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="rank-box">
+    <div class="rank-box bodyCon">
       <div class="container rank">
         <div class="con-top">
           <div class="con-l">
@@ -88,7 +88,7 @@
             <productList :type="'typeTwo'" :item="homeData.tjbook"></productList>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
   
 </template>
@@ -121,6 +121,7 @@ export default {
   methods:{
     getData(){
       getIndex({}).then(res=>{
+        this.loading=false
         if(res.status==200){
           let book_tags=res.data.data.book_tags
           this.boks_tag=book_tags.tags
@@ -149,7 +150,7 @@ export default {
   
   .rank-box{
     display: flex;
-    width: 1200px;
+    // width: 1200px;
     margin: auto;
     justify-content: space-between;
     .rank{
@@ -163,7 +164,7 @@ export default {
   }
   .container{
     padding: 10px;
-    width: 1200px;
+    // width: 1200px;
     margin: 20px auto;
     .con-top{
       display: flex;
@@ -190,7 +191,7 @@ export default {
         }
       }
       .con-more{
-        // margin-right: 50px;
+        margin-right: 22px;
       }
     }
   }

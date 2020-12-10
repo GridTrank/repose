@@ -11,6 +11,10 @@ a{
     background-color: #539FFF;
     color: #fff;
 }
+.bodyCon{
+    width: 1300px !important;
+    margin: auto;
+}
 ::-webkit-scrollbar {
     display: none; 
 }

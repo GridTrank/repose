@@ -22,7 +22,7 @@ const routes= [
     {
       path: '/Search',
       name: 'Search',
-      meta: { pageTitle: "搜索"},
+      meta: { pageTitle: "搜索",keepAlive: true},
       component: (resolve) => require(['@/views/Search.vue'], resolve)
     },
     {
