@@ -1,11 +1,15 @@
 <template>
-  <div class="home-wrap" v-loading="loading">
-    <slide :item="homeData.banners"></slide>
-
+  <div class="home-wrap" 
+    v-loading.fullscreen.lock="loading"
+     element-loading-text="加载中"
+     element-loading-spinner="el-icon-loading"
+     element-loading-background="rgba(0, 0, 0, 0.8)"
+  >
+    <!-- <slide :item="homeData.banners"></slide>
     <div class="tabs">
       <tabs></tabs>
     </div>
-    
+   
     <div class="container">
       <div class="con-top">
         <div class="con-l">
@@ -18,7 +22,6 @@
           <productList :type="'typeOne'" :item="homeData.newest"></productList>
       </div>
     </div>
-
 
     <div class="container">
       <div class="con-top">
@@ -47,7 +50,6 @@
           <productList :type="'typeOne'" :item="boks"></productList>
       </div>
     </div>
-
 
     <div class="rank-box">
       <div class="container rank">
@@ -86,7 +88,7 @@
             <productList :type="'typeTwo'" :item="homeData.tjbook"></productList>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
   
 </template>
@@ -114,19 +116,24 @@ export default {
     }
   },
   created(){
-    getIndex({}).then(res=>{
-      if(res.status==200){
-        let book_tags=res.data.data.book_tags
-        this.boks_tag=book_tags.tags
-        for(let key in book_tags){
-          if(key!=='tags'){
-            this.boks.push(book_tags[key])
+    this.getData()
+  },
+  methods:{
+    getData(){
+      getIndex({}).then(res=>{
+        if(res.status==200){
+          let book_tags=res.data.data.book_tags
+          this.boks_tag=book_tags.tags
+          for(let key in book_tags){
+            if(key!=='tags'){
+              this.boks.push(book_tags[key])
+            }
           }
+          this.homeData=res.data.data
         }
-        this.homeData=res.data.data
-      }
-      this.loading=false
-    })
+        this.loading=false
+      })
+    }
   }
 }
 </script>

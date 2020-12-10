@@ -1,35 +1,36 @@
 <template>
   <div class="header-wrap">
-      <div class="nav-wrap">
-          <img class="logo" src="../assets/logo.png" alt="">
-          <div class="nav-lists">
-            <div class="nav-item" href="#" target="_blank" v-for="(item,index) in navList" :key="index" @click="selectNav(index)">{{item.label}}</div>
-          </div>
-          <div >
-                <el-input placeholder="搜索作品，作者名" style="width:200px" v-model="searchData"></el-input>
-                <el-button type="primary" @click="search">搜索</el-button>
-          </div>
-          
-          <div class="nav-right">
-              <router-link to="/Recharge" class="nav-tab">
-                  <img src="../assets/logo.png" >
-                  <p>充值</p>
-              </router-link>
-              <router-link to="/Record?type='history'" class="nav-tab">
-                  <img src="../assets/logo.png" >
-                  <p>历史</p>
-              </router-link>
-              <router-link to="/Record?type='collect'" class="nav-tab">
-                  <img src="../assets/logo.png" >
-                  <p>收藏</p>
-              </router-link>
-
-          </div>
-          <div class="user-info">
-              <img class="user-img" src="../assets/logo.png" alt="">
-              <p class="user-name">游客123123131</p>
-          </div>
-      </div>
+        <div class="nav-wrap">
+            <img class="logo" src="../assets/logo.png" alt="">
+            <div class="nav-lists">
+                <div class="nav-item" href="#" target="_blank" v-for="(item,index) in navList" :key="index" @click="selectNav(index)">{{item.label}}</div>
+            </div>
+            <div>
+                <el-input placeholder="搜索作品，作者名" style="width:300px" v-model="searchData">
+                    <el-button slot="append" icon="el-icon-search" @click="search"> </el-button>
+                </el-input>
+            </div>
+            
+            <div class="nav-right">
+                <router-link to="/Recharge" class="nav-tab">
+                    <img src="../assets/logo.png" >
+                    <p>充值</p>
+                </router-link>
+                <router-link to="/Record?type='history'" class="nav-tab">
+                    <img src="../assets/logo.png" >
+                    <p>历史</p>
+                </router-link>
+                <router-link to="/Record?type='collect'" class="nav-tab">
+                    <img src="../assets/logo.png" >
+                    <p>收藏</p>
+                </router-link>
+            </div>
+            
+            <div class="user-info">
+                <img class="user-img" src="../assets/logo.png" alt="">
+                <p class="user-name">游客123123131</p>
+            </div>
+        </div>
   </div>
 </template>
 
@@ -89,12 +90,14 @@ export default {
             height: 40px
         }
         .nav-lists{
+            flex-shrink: 0;
             margin: 0 30px;
             .nav-item{
                 display: inline-block;
                 color: #fff;
+                width: 80px;
                 font-size: 14px;
-                padding: 2px 20px;
+                padding: 2px 0px;
                 text-align: center
             }
         }
@@ -104,6 +107,7 @@ export default {
             .nav-tab{
                 text-align: center;
                 padding: 0 20px;
+                width: 45px;
                 img{
                     width: 20px;
                     height: 20px;

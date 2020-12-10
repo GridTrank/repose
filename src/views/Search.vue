@@ -1,12 +1,14 @@
 <template>
-    <div class="search-wrap">
-        <!-- <div class="input">
-            <el-input placeholder="搜索作品、作者名" v-model="name"></el-input>
-            <el-button @click="getData">搜索</el-button>
-        </div> -->
-    </div>
-</template>
+    <div class="search-wrap" 
+     v-loading.fullscreen.lock="loading"
+     element-loading-text="加载中"
+     element-loading-spinner="el-icon-loading"
+     element-loading-background="rgba(0, 0, 0, 0.8)"
+    >
 
+    </div>
+     
+</template>
 <script>
 import configUrl from '@/utils/config.js'
 import {getSearchResult} from '@/utils/api.js'
@@ -15,11 +17,15 @@ export default {
         return{
             imgUrl:configUrl,
             name:this.$route.query.searchData || '',
+            loading:false
         }
     },
-    created(){
-        this.getData()
+    components:{
     },
+    created(){
+        // this.getData()
+    },
+
     watch:{
         '$route':function(to,from){
             if(to.query.searchData){
@@ -33,6 +39,7 @@ export default {
                 bookname:this.name
             }
             getSearchResult(data).then(res=>{
+                this.loading=false
                 // console.log(res)
             })
         },

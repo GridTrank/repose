@@ -21,9 +21,9 @@ Vue.prototype.$global=global
 
 Vue.config.productionTip = false
 router.beforeEach((to,from,next) => {
-  if(to.meta.pageTitle){
-    document.title = '油条漫画--'+ to.meta.pageTitle
-  }
+  // if(to.meta.pageTitle){
+  //   document.title = '油条漫画--'+ to.meta.pageTitle
+  // }
   next()
 });
 new Vue({
