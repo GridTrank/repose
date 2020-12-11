@@ -1,10 +1,5 @@
 <template>
-  <div class="home-wrap " 
-    v-loading.fullscreen.lock="loading"
-     element-loading-text="加载中"
-     element-loading-spinner="el-icon-loading"
-     element-loading-background="rgba(0, 0, 0, 0.8)"
-  >
+  <div class="home-wrap ">
     <slide :item="homeData.banners"></slide>
     <div class="tabs">
       <tabs></tabs>
@@ -102,7 +97,6 @@ import {getIndex} from '@/utils/api.js'
 import configUrl from '@/utils/config.js'
 export default {
   components:{
-
     productList,
     tabs,
     slide
@@ -110,7 +104,6 @@ export default {
   data(){
     return{
       homeData:{},
-      loading:true,
       boks:[],
       boks_tag:[]
     }
@@ -121,7 +114,6 @@ export default {
   methods:{
     getData(){
       getIndex({}).then(res=>{
-        this.loading=false
         if(res.status==200){
           let book_tags=res.data.data.book_tags
           this.boks_tag=book_tags.tags
@@ -132,7 +124,6 @@ export default {
           }
           this.homeData=res.data.data
         }
-        this.loading=false
       })
     }
   }

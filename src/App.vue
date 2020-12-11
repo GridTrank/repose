@@ -28,8 +28,6 @@ export default {
 <style scoped lang="less">
 #app {
   min-width: 1200px;
-  // height: 2000px;
   padding-bottom:50px;
-
 }
 </style>

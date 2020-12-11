@@ -27,6 +27,7 @@
             </div>
             
             <div class="user-info">
+                
                 <img class="user-img" src="../assets/logo.png" alt="">
                 <p class="user-name">游客123123131</p>
             </div>
