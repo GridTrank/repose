@@ -61,6 +61,7 @@ export default {
         padding: 50px;
     }
     .rank-list{
+        margin-top: 50px;
         display: flex;
         justify-content: space-between;
         .rank-con{

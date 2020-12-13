@@ -19,7 +19,10 @@ a{
     display: none; 
 }
 .mt20{
-    margin-top: 20px;
+    margin-top: 20px !important;
+}
+.mt40{
+    margin-top: 40px !important;
 }
 .oneHidden{
     overflow: hidden;
@@ -33,4 +36,11 @@ a{
     text-overflow: ellipsis;
     -webkit-line-clamp: 2;  /*要显示的行数*/
     -webkit-box-orient: vertical;
+}
+.logobg{
+    background: url(../assets/logo.689b3684.png)  no-repeat ;
+    background-size: 100% 100%;
+    width: 150px;
+    height: 50px;
+    background-position: center 0;
 }

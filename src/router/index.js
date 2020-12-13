@@ -14,6 +14,12 @@ const routes= [
       component: (resolve) => require(['@/views/Home.vue'], resolve)
     },
     {
+      path: '/Login',
+      name: 'Login',
+      meta: { pageTitle: "登录/注册", keepAlive: true},
+      component: (resolve) => require(['@/views/Login.vue'], resolve)
+    },
+    {
       path: '/Classify',
       name: 'Classify',
       meta: { pageTitle: "分类", keepAlive: true},
@@ -48,6 +54,12 @@ const routes= [
       name: 'Record',
       meta: { pageTitle: "历史"},
       component: (resolve) => require(['@/views/Record.vue'], resolve)
+    },
+    {
+      path: '/UserCenter',
+      name: 'UserCenter',
+      meta: { pageTitle: "用户中心"},
+      component: (resolve) => require(['@/views/UserCenter.vue'], resolve)
     },
     { // 匹配
       path: '*',

@@ -8,6 +8,8 @@ const instance = axios.create({
    baseURL: '/api',  
    headers: {'Content-Type': 'application/json'},
  });
+
+
  // loading框设置局部刷新，且所有请求完成后关闭loading框
 let loading;
 function startLoading() {

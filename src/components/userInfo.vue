@@ -6,7 +6,7 @@
       <div class="user-name mt20">
           <el-input style="width:100px" v-model="username" v-if="isEdit"></el-input>
           <p class="name" v-else>{{username}}</p>
-          <p class="edit" @click="isEdit=true">编辑</p>
+          <router-link to="/UserCenter?type=changeName" class="edit" @click="isEdit=true">编辑</router-link>
       </div>
       <div class="gold-vip mt20">
           <div class="gold">
@@ -31,13 +31,13 @@
           </div>
       </div>
       <div class="menus mt20">
-          <div class="menu-item">菜单1</div>
-          <div class="menu-item">菜单1</div>
-          <div class="menu-item">菜单1</div>
-          <div class="menu-item">菜单1</div>
-          <div class="menu-item">菜单1</div>
-          <div class="menu-item">菜单1</div>
-          <div class="menu-item">菜单1</div>
+          <router-link to="/Record?type=collect" class="menu-item">我的收藏</router-link>
+          <router-link to="/Record?type=history" class="menu-item">阅读记录</router-link>
+          <router-link to="/UserCenter?type=consumption" class="menu-item">消费记录</router-link>
+          <router-link to="/UserCenter?type=recharge" class="menu-item">充值记录</router-link>
+          <router-link to="/UserCenter?type=vip" class="menu-item">兑换VIP</router-link>
+          <router-link to="/UserCenter?type=password" class="menu-item">修改密码</router-link>
+          <div  class="menu-item" @click="loginOut">退出登录</div>
       </div>
   </div>
 </template>
@@ -49,6 +49,26 @@ export default {
             username:'1231321',
             isEdit:false
         }
+    },
+    methods:{
+        //登出
+        loginOut(){
+            this.$confirm('退出登录？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$message({
+                    type: 'success',
+                    message: '退出成功!'
+                });
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消'
+                });          
+            });
+        } 
     }
 }
 </script>
@@ -116,6 +136,7 @@ export default {
            border-right: 1px solid #ddd;
            padding:5px 5px;
            cursor: pointer;
+           display: block;
        }
        &:last-child{
            border-bottom: 1px solid #ddd;
