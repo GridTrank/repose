@@ -114,16 +114,16 @@ export default {
   methods:{
     getData(){
       getIndex({}).then(res=>{
-        if(res.status==200){
-          let book_tags=res.data.data.book_tags
-          this.boks_tag=book_tags.tags
-          for(let key in book_tags){
-            if(key!=='tags'){
-              this.boks.push(book_tags[key])
-            }
-          }
-          this.homeData=res.data.data
-        }
+        // if(res.status==200){
+        //   let book_tags=res.data.data.book_tags
+        //   this.boks_tag=book_tags.tags
+        //   for(let key in book_tags){
+        //     if(key!=='tags'){
+        //       this.boks.push(book_tags[key])
+        //     }
+        //   }
+        //   this.homeData=res.data.data
+        // }
       })
     }
   }

@@ -20,6 +20,18 @@ const routes= [
       component: (resolve) => require(['@/views/Login.vue'], resolve)
     },
     {
+      path: '/Detail',
+      name: 'Detail',
+      meta: { pageTitle: "漫画详情", keepAlive: true},
+      component: (resolve) => require(['@/views/Detail.vue'], resolve)
+    },
+    {
+      path: '/Catalog',
+      name: 'Catalog',
+      meta: { pageTitle: "章节目录", keepAlive: true},
+      component: (resolve) => require(['@/views/Catalog.vue'], resolve)
+    },
+    {
       path: '/Classify',
       name: 'Classify',
       meta: { pageTitle: "分类", keepAlive: true},

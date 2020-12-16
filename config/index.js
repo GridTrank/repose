@@ -11,11 +11,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api': {
-        target: 'http://api.wxo2020.xyz',  //目标接口域名
+      '/': {
+        target: 'http://app.xueningbai.cn',  //目标接口域名
         changeOrigin: true,  //是否跨域
         pathRewrite: {
-          '^/api': ''   //重写接口
+          '^/': ''   //重写接口
         }
       }
     },

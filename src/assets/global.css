@@ -37,6 +37,14 @@ a{
     -webkit-line-clamp: 2;  /*要显示的行数*/
     -webkit-box-orient: vertical;
 }
+.threeHiddens{
+    text-overflow: -o-ellipsis-lastline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
 .logobg{
     background: url(../assets/logo.689b3684.png)  no-repeat ;
     background-size: 100% 100%;

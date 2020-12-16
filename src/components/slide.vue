@@ -52,7 +52,7 @@ export default {
 	    },
     },
     mounted() {
-		console.log(configUrl)
+		// console.log(configUrl)
 	},
     watch:{
 
