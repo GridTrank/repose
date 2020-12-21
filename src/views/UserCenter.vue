@@ -123,7 +123,9 @@ export default {
         //兑换VIP
         exchangeVip(){},
         //修改密码
-        submit(){},
+        submit(){
+            
+        },
 
     }
 }

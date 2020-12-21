@@ -21,7 +21,15 @@ Vue.prototype.$global=global
 
 Vue.config.productionTip = false
 router.beforeEach((to,from,next) => {
-  // console.log(to)
+  if(to.meta.isToken && !localStorage.getItem("uToken")){
+    // ElementUI.Message.error('请先登录');
+    // setTimeout(()=>{
+    //   router.push({
+    //     path:"/Login"
+    //   })
+    // },1000)
+    // return
+  }
   next()
 });
 new Vue({

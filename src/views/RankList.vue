@@ -5,19 +5,19 @@
         <div class="rank-con">
             <div class="rank-head">新书总榜</div>
             <div class="item">
-                <productList :item="dataList" :type="'typeTwo'" :from="'ranklist'"></productList>
+                <productList :item="newBooks" :type="'typeTwo'" :from="'ranklist'"></productList>
             </div>
         </div>
         <div class="rank-con">
             <div class="rank-head">人气总榜</div>
             <div class="item">
-                <productList :item="dataList" :type="'typeTwo'" :from="'ranklist'"></productList>
+                <productList :item="hotBooks" :type="'typeTwo'" :from="'ranklist'"></productList>
             </div>
         </div>
         <div class="rank-con">
             <div class="rank-head">完结总榜</div>
             <div class="item">
-                <productList :item="dataList" :type="'typeTwo'" :from="'ranklist'"></productList>
+                <productList :item="endBooks" :type="'typeTwo'" :from="'ranklist'"></productList>
             </div>
         </div>
     </div>
@@ -27,14 +27,20 @@
 
 <script>
 import productList from '@/components/productList.vue'
-import {getIndex} from '@/utils/api.js'
+import {
+    getEnds,
+    getNewest,
+    getHot
+} from '@/utils/api.js'
 export default {
     components:{
         productList
     },
     data(){
         return{
-            dataList:[]
+            newBooks:[],
+            endBooks:[],
+            hotBooks:[]
         }
     },
     created(){
@@ -42,8 +48,16 @@ export default {
     },
     methods:{
         getData(){
-            getIndex({}).then(res=>{
-                this.dataList=res.data.data.hot_books
+            Promise.all([
+                getNewest({}),
+                getEnds({}),
+                getHot({}),
+            ])
+            .then(([newBooks,endBooks,hotBooks])=>{
+                this.newBooks=newBooks.data.newest
+                this.endBooks=endBooks.data.ends
+                this.hotBooks=hotBooks.data.hots
+
             })
         },
 

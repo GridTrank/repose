@@ -1,6 +1,8 @@
 *{
     margin: 0;
-    padding: 0
+    padding: 0;
+    color: #000;
+    font-family: PingFangSC-Regular, PingFang SC;
 }
 a{
     background: transparent;
@@ -12,7 +14,7 @@ a{
     color: #fff;
 }
 .bodyCon{
-    width: 1300px !important;
+    width: 1200px !important;
     margin: auto;
 }
 ::-webkit-scrollbar {
@@ -51,4 +53,7 @@ a{
     width: 150px;
     height: 50px;
     background-position: center 0;
+}
+.bfg{
+    background: #fff !important;
 }

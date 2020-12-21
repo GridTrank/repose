@@ -2,10 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 Vue.use(Router)
-const originalPush = Router.prototype.push
-Router.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
-}
+
 const routes= [
     {
       path: '/home',
@@ -58,13 +55,13 @@ const routes= [
     {
       path: '/Recharge',
       name: 'Recharge',
-      meta: { pageTitle: "充值"},
+      meta: { pageTitle: "充值",isToken:true},
       component: (resolve) => require(['@/views/Recharge.vue'], resolve)
     },
     {
       path: '/Record',
       name: 'Record',
-      meta: { pageTitle: "历史"},
+      meta: { pageTitle: "历史",isToken:true},
       component: (resolve) => require(['@/views/Record.vue'], resolve)
     },
     {

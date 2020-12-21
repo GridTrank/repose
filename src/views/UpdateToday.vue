@@ -11,7 +11,7 @@
 
 <script>
 import productList from '@/components/productList.vue'
-import {getIndex} from '@/utils/api.js'
+import {getHot} from '@/utils/api.js'
 export default {
   components:{
     productList
@@ -26,7 +26,7 @@ export default {
   },
   methods:{
     getData(){
-      getIndex({}).then(res=>{
+      getHot({}).then(res=>{
         this.dataList=res.data.data.hot_books
       })
     },

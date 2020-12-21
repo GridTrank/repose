@@ -11,10 +11,10 @@
           <img class="con-i" src="../assets/logo.png" alt="">
           <p class="con-t">上升最快</p>
         </div>
-        <div class="con-more">更多</div>
+        <div class="con-more">更多></div>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'" :item="homeData.newest"></productList>
+          <productList :type="'typeOne'" :item="newBooks"></productList>
       </div>
     </div>
 
@@ -24,10 +24,10 @@
           <img class="con-i" src="../assets/logo.png" alt="">
           <p class="con-t">热门漫画</p>
         </div>
-        <div class="con-more">更多</div>
+        <div class="con-more">更多></div>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'" :item="homeData.hot_books"></productList>
+          <productList :type="'typeOne'" :item="newBooks"></productList>
       </div>
     </div>
     <div class="container bodyCon">
@@ -39,51 +39,67 @@
             <span v-for="(e,el) in boks_tag" :key="el">{{e.tag_name}}</span>
           </div>
         </div>
-        <div class="con-more">更多</div>
+        <div class="con-more">更多></div>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'" :item="boks"></productList>
+          <productList :type="'typeOne'" :item="newBooks"></productList>
       </div>
     </div>
 
-    <div class="rank-box bodyCon">
-      <div class="container rank">
-        <div class="con-top">
-          <div class="con-l">
-            <img class="con-i" src="../assets/logo.png" alt="">
-            <p class="con-t">新书版</p>
+    <!-- 排行榜 -->
+    <div class="rank-box">
+      <div class="rank-wrap">
+        <div class="container rank">
+          <div class="con-top">
+            <div class="con-l">
+              <p class="con-t">新书版</p>
+            </div>
+            <div class="con-more">更多></div>
           </div>
-          <div class="con-more">更多</div>
-        </div>
-        <div class="con-pro">
-            <productList :type="'typeTwo'" :item="homeData.newbook"></productList>
-        </div>
-      </div>
-      <div class="container rank">
-        <div class="con-top">
-          <div class="con-l">
-            <img class="con-i" src="../assets/logo.png" alt="">
-            <p class="con-t">点击版</p>
+          <div class="con-pro">
+              <productList :type="'typeTwo'" :item="newBooks" :from="'ranklist'"></productList>
           </div>
-          <div class="con-more">更多</div>
         </div>
-        <div class="con-pro">
-            <productList :type="'typeTwo'" :item="homeData.djbook"></productList>
-        </div>
-      </div>
-      <div class="container rank">
-        <div class="con-top">
-          <div class="con-l">
-            <img class="con-i" src="../assets/logo.png" alt="">
-            <p class="con-t">推荐版</p>
+        <div class="container rank">
+          <div class="con-top">
+            <div class="con-l">
+              <p class="con-t">点击版</p>
+            </div>
+            <div class="con-more">更多></div>
           </div>
-          <div class="con-more">更多</div>
+          <div class="con-pro">
+              <productList :type="'typeTwo'" :item="newBooks"></productList>
+          </div>
         </div>
-        <div class="con-pro">
-            <productList :type="'typeTwo'" :item="homeData.tjbook"></productList>
+        <div class="container rank">
+          <div class="con-top">
+            <div class="con-l">
+              <p class="con-t">推荐版</p>
+            </div>
+            <div class="con-more">更多></div>
+          </div>
+          <div class="con-pro">
+              <productList :type="'typeTwo'" :item="newBooks"></productList>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- 完结 -->
+    <div class="container bodyCon">
+      <div class="con-top">
+        <div class="con-l">
+          <img class="con-i" src="../assets/logo.png" alt="">
+          <p class="con-t">完结优选</p>
+        </div>
+        <div class="con-more">更多></div>
+      </div>
+      <div class="con-pro">
+          <productList :type="'typeOne'" :item="newBooks"></productList>
+      </div>
+    </div>
+
+    
   </div>
   
 </template>
@@ -93,7 +109,13 @@
 import productList from '@/components/productList.vue'
 import tabs from '@/components/tabs.vue'
 import slide from '@/components/slide.vue'
-import {getIndex} from '@/utils/api.js'
+import {
+  getEnds,
+  getNewest,
+  getBanners,
+  getList,
+  getmostcharged
+} from '@/utils/api.js'
 import configUrl from '@/utils/config.js'
 export default {
   components:{
@@ -105,25 +127,29 @@ export default {
     return{
       homeData:{},
       boks:[],
-      boks_tag:[]
+      boks_tag:[],
+      newBooks:[],
+      endBooks:[],
+      banner:[]
     }
   },
   created(){
-    this.getData()
+    // this.getData()
   },
   methods:{
     getData(){
-      getIndex({}).then(res=>{
-        // if(res.status==200){
-        //   let book_tags=res.data.data.book_tags
-        //   this.boks_tag=book_tags.tags
-        //   for(let key in book_tags){
-        //     if(key!=='tags'){
-        //       this.boks.push(book_tags[key])
-        //     }
-        //   }
-        //   this.homeData=res.data.data
-        // }
+      Promise.all([
+        getNewest({}),
+        // getEnds({}),
+        // getBanners({num:3}),
+        // getList({}),
+        // getmostcharged({})
+      ])
+      .then(([newBooks])=>{
+        console.log(newBooks)
+        this.newBooks=newBooks.data.newest
+        // this.endBooks=endBooks.data.ends
+        // this.banner=banner.data.banners
       })
     }
   }
@@ -140,18 +166,31 @@ export default {
   }
   
   .rank-box{
-    display: flex;
-    // width: 1200px;
-    margin: auto;
-    justify-content: space-between;
-    .rank{
-      width: 350px !important;
-      padding: 0px  !important;
-      margin: 0px  !important;
+    background: linear-gradient(to top, #4B8C5C 0%, #75945E 100%) ;
+    height: 600px;
+    padding: 30px;
+    .rank-wrap{
+      width: 1200px;
+      display: flex;
+      margin: auto;
+      justify-content: space-between;
+      .rank{
+        width: 380px !important;
+        padding: 0px  !important;
+        margin: 0px  !important;
+        .con-t{
+          color: #fff !important;
+          font-size: 24px !important;
+        }
+      }
+      .con-more{
+        font-size: 14px;
+        color: #000;
+        cursor: pointer;
+        color: #fff !important;
+      }
     }
-    .con-more{
-      // margin: 0 !important;
-    }
+    
   }
   .container{
     padding: 10px;
@@ -170,7 +209,9 @@ export default {
           margin-right: 20px;
         }
         .con-t{
-          font-size: 18px;
+          font-size: 24px;
+          color: #000;
+          font-weight:500;
         }
         .hot-c{
           margin-left: 30px;
@@ -183,6 +224,9 @@ export default {
       }
       .con-more{
         margin-right: 22px;
+        font-size: 14px;
+        color: #000;
+        cursor: pointer;
       }
     }
   }

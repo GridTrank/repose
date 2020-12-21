@@ -13,17 +13,20 @@
     <div class="lists">
       <productList :item="dataList" :type="'typeOne'"></productList>
     </div>
+
+    
   </div>
 </template>
 
 <script>
 import tabs from '@/components/tabs.vue'
 import productList from '@/components/productList.vue'
-import {getIndex} from '@/utils/api.js'
+import {getList} from '@/utils/api.js'
 export default {
   components:{
     tabs,
-    productList
+    productList,
+    
   },
   data(){
     return{
@@ -48,8 +51,8 @@ export default {
   },
   methods:{
     getData(){
-      getIndex({}).then(res=>{
-        this.dataList=res.data.data.hot_books
+      getList({}).then(res=>{
+        console.log(res)
       })
     },
     selectTag(data){
@@ -66,6 +69,7 @@ export default {
 .classify-wrap{
   width: 100%;
   padding-top: 50px;
+  min-height: 800px;
   .tags{
     .tag-list{
       display: flex;

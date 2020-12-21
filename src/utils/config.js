@@ -1,8 +1,8 @@
 let config = {};
 /* 生产环境 */
 if (process.env.NODE_ENV === 'production') {
-    config.Domain =  'http://m.miniso.cn/openapi';
+    
 } else {
-    config.Domain = 'http://api.wxo2020.xyz';
+    config.Domain = 'http://www.jiepai110.net';
 }
 export default config.Domain

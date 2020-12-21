@@ -87,7 +87,7 @@ export default {
             })
         },
         search(){
-            if(!this.searchData)return
+            // if(!this.searchData)return
             this.$router.push({
                 path:'/Search',
                 query:{

@@ -1,16 +1,11 @@
 <template>
-    <div class="search-wrap bodyCon" 
-     v-loading.fullscreen.lock="loading"
-     element-loading-text="加载中"
-     element-loading-spinner="el-icon-loading"
-     element-loading-background="rgba(0, 0, 0, 0.8)"
-    >   
+    <div class="search-wrap bodyCon" >   
         <div class="search-btn">
             <el-input placeholder="搜索作品，作者名" style="width:400px;" v-model="name">
             </el-input>
             <el-button style="background:yello" slot="append" icon="el-icon-search" @click="getData">搜索</el-button>
         </div>
-        <div class="s-res">共找到6个相关内容</div>
+        <div class="s-res">共找到{{count}}个相关内容</div>
         <div class="res-list">
             <productList :type="'typeOne'" :item="data"></productList>
         </div>
@@ -27,7 +22,8 @@ export default {
             imgUrl:configUrl,
             name:this.$route.query.searchData || '',
             loading:true,
-            data:[]
+            data:[],
+            count:''
         }
     },
     components:{
@@ -43,13 +39,13 @@ export default {
     methods:{
         getData(){
             let data={
-                bookname:this.name
+                keyword:this.name
             }
-            if(!data.bookname)return
-            this.loading=true
+            // if(!data.keyword)return
             getSearchResult(data).then(res=>{
-                this.loading=false
-                this.data=res.data.data.searchbook.splice(0,10)
+                console.log(res)
+                    this.data=res.data.books
+                    this.count=res.data.count
             })
         },
         search(){

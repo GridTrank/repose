@@ -30,13 +30,13 @@
                     </div>
                 </div>
                 <div class="cata-list">
-                    <div class="cata-item" v-for="(item,index) in 8" :key="index">
+                    <router-link target="_blank"  :to="'/Detail?id='+item.id" class="cata-item" v-for="(item,index) in list" :key="index">
                         <img src="../assets/images/logo.png" alt="">
                         <div class="cata-info">
-                            <p>章节名称</p>
+                            <p>{{item.chapter_name}}</p>
                             <p>免费</p>
                         </div>
-                    </div>
+                    </router-link>
                 </div>
             </div>
         </div>
@@ -72,8 +72,36 @@
 </template>
 
 <script>
+import {getChapList,getBookDetail} from '@/utils/api.js'
 export default {
-
+    data(){
+        return{
+            list:[]
+        }
+    },
+    created(){
+        this.getList()
+        this.getDetail()
+    },
+    methods:{
+        getList(){
+            let data={
+                book_id:this.$route.query.id
+            }
+            getChapList(data).then(res=>{
+                this.list=res.data.chapters
+            })
+        },
+        getDetail(){
+            let data={
+                book_id:this.$route.query.id,
+                uid:localStorage.getItem("suid")
+            }
+            getBookDetail(data).then(res=>{
+                console.log(res)
+            })
+        }
+    }
 }
 </script>
 
@@ -88,6 +116,7 @@ export default {
         .info{
             display: flex;
             img{
+                flex-shrink: 0;
                 width: 230px;
                 height: 330px;
                 margin-right: 40px;
@@ -119,6 +148,7 @@ export default {
                 padding: 10px 20px;
                 background: #539FFF;
                 color: #fff;
+                cursor: pointer;
             }
         }
         .cata{
@@ -142,13 +172,20 @@ export default {
                     display: flex;
                     margin-top: 10px; 
                     margin-right: 70px; 
+                    color: #333;
+                    cursor: pointer;
                     &:nth-child(3n+3){
                         margin-right: 0;
-                    } 
+                    }
                     img{
                         width: 100px;
                         height: 70px;
-                    }
+                    } 
+                    .cata-info{
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-around;
+                    }                    
                 }
             }
         }

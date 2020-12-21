@@ -22,7 +22,7 @@
 <script>
 import userInfo from '@/components/userInfo.vue'
 import productList from '@/components/productList.vue'
-import {getIndex} from '@/utils/api.js'
+import {getHot} from '@/utils/api.js'
 export default {
     components:{
         userInfo,
@@ -47,7 +47,7 @@ export default {
             })
         },
         getData(){
-            getIndex({}).then(res=>{
+            getHot({}).then(res=>{
                 this.dataList=res.data.data.hot_books
             })
         },

@@ -36,7 +36,7 @@
                     </div>
                 </div>
 
-                <span class="ts">账户密码错误</span>
+                <!-- <span class="ts">账户密码错误</span> -->
                 <el-button v-if="loginResgister=='login'" style="width:300px;" class="mt20"  type="primary" @click="login">登录</el-button>
                 <el-button v-else style="width:300px;" class="mt20"  type="primary" @click="register">注册</el-button>
                 <div class="login-m mt20" v-if="loginResgister=='login'">
@@ -53,6 +53,10 @@
 </template>
 
 <script>
+import {
+    userRegister,
+    userLogin
+}from '@/utils/api.js'
 export default {
     data(){
         return{
@@ -91,11 +95,27 @@ export default {
             this.showInput='unserName'
         },
         //获取验证码
-        getCode(){},
+        getCode(){
+            
+        },
         //登录
         login(){},
         //注册
-        register(){}
+        register(){
+            let data={
+                username:this.regUserName,
+                password:this.regPassWorld
+            }
+            let nameRule= /^[a-zA-Z0-9_-]{6,20}$/
+            if(!nameRule.test(data.username)){
+                this.$message.error('请确认用户名是6-20位数字或字母组成')
+                return
+            }      
+            userRegister(data).then(res=>{
+                console.log(res)
+            })
+
+        }
 
     }
 }
