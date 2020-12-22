@@ -50,6 +50,10 @@ export const getChapDetail=(data)=>{
 export const getList=(data)=>{
     return  request('post','/tag/getList',data)
 }
+//漫画分类搜索
+export const getBookList=(data)=>{
+    return  request('post','/tag/getBookList',data)
+}
 //收藏
 export const getFavor=(data)=>{
     return  request('post','/users/isfavor',data)
@@ -64,11 +68,15 @@ export const userAutoReg=(data)=>{
 }
 //自动注册
 export const userAutoLogin=(data)=>{
-    return  request('post','/account/login',data)
+    return  request('post','/account/autologin',data)
 }
 //登录
 export const userLogin=(data)=>{
     return  request('post','/account/login',data)
+}
+//登出
+export const userLogout=(data)=>{
+    return  request('post','/account/logout',data)
 }
 //发送短信
 export const sendcms=(data)=>{

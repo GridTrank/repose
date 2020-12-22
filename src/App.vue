@@ -15,6 +15,7 @@
 import comHeader from '@/components/comHeader.vue'
 import comFoot from '@/components/comFoot.vue'
 import {userAutoReg,userAutoLogin} from '@/utils/api.js'
+import {mapActions,mapGetters,mapMutations} from 'vuex'
 import md5 from 'js-md5';
 export default {
   name: 'App',
@@ -34,14 +35,21 @@ export default {
     if(!localStorage.getItem("suid")){
       localStorage.setItem("suid",this.suid)
     }
-    this.autoRegister()
+    if(!localStorage.getItem("utoken")){
+      this.autoRegister()
+    }
   },
   methods:{
+      ...mapActions(["upDataUserInfo"]),
       autoRegister(){
         userAutoReg({suid:localStorage.getItem("suid")}).then(res=>{
           if(res.data.success==1){
             userAutoLogin({suid:localStorage.getItem("suid")}).then(res=>{
-              console.log(res.data)
+              if(res.data.userInfo){
+                localStorage.setItem("userInfo",JSON.stringify(res.data.userInfo))
+                localStorage.setItem("utoken",res.data.userInfo.utoken)
+                this.upDataUserInfo(Object.assign({},this.getUserInfo,res.data.userInfo))
+              }
             })
           }
         })

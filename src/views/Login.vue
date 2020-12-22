@@ -4,7 +4,7 @@
             {{loginResgister=='login'?'用户登录':'用户注册'}}
         </h2>
         <div class="login-reg">
-            <img src="../assets/logo.png" alt="" srcset="">
+            <img src="../assets/images/reg.png" alt="" srcset="">
             <div class="input">
                 <div class="login-m">
                     <p class="l-t" @click="loginMethod('unserName')" :style="showInput=='unserName'?'color:red':''">
@@ -53,9 +53,11 @@
 </template>
 
 <script>
+import {mapActions,mapGetters,mapMutations} from 'vuex'
 import {
     userRegister,
-    userLogin
+    userLogin,
+    sendcms
 }from '@/utils/api.js'
 export default {
     data(){
@@ -84,6 +86,7 @@ export default {
         }
     },
     methods:{
+        ...mapActions(["upDataUserInfo"]),
         //切换登录方式
         loginMethod(type){
             this.showInput=type
@@ -96,10 +99,31 @@ export default {
         },
         //获取验证码
         getCode(){
-            
+          sendcms({phone:this.phone}).then(res=>{
+              console.log(res)
+          })  
         },
         //登录
-        login(){},
+        login(){
+            let data={
+                username:this.loginUserName,
+                password:this.loginPassWorld
+            }
+            userLogin(data).then(res=>{
+                if(res.data.success==1){
+                    localStorage.setItem("userInfo",JSON.stringify(res.data.userInfo))
+                    localStorage.setItem("utoken",res.data.userInfo.utoken)
+                    this.upDataUserInfo(Object.assign({},this.getUserInfo,res.data.userInfo))
+                    this.$message({
+                        message:'登录成功',
+                        type:'success'
+                    })
+                    this.$router.push({
+                        path:"/Home"
+                    })
+                }
+            })
+        },
         //注册
         register(){
             let data={
@@ -130,9 +154,10 @@ export default {
     .login-reg{
         width: 100%;
         display: flex;
+        justify-content: center;
         img{
-            width: 50%;
-            height: 100%;
+            width: 425px;
+            height: 483px;
         }
         .input{
             margin-left: 100px;

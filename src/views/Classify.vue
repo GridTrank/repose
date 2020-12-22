@@ -21,7 +21,7 @@
 <script>
 import tabs from '@/components/tabs.vue'
 import productList from '@/components/productList.vue'
-import {getList} from '@/utils/api.js'
+import {getList,getBookList} from '@/utils/api.js'
 export default {
   components:{
     tabs,
@@ -51,8 +51,11 @@ export default {
   },
   methods:{
     getData(){
-      getList({}).then(res=>{
-        console.log(res)
+      getBookList({}).then(res=>{
+        console.log(res.data.tags)
+        if(res.data.success==1){
+          this.dataList=res.data.tags
+        }
       })
     },
     selectTag(data){

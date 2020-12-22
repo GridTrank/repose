@@ -3,16 +3,19 @@
         <div class="swiper-container">
             <div class="swiper-wrapper">
                 
-                <div class="swiper-slide"><a href="#"><img src="../assets/top_hero_cs_2017.jpg" ></a></div>
-                <div class="swiper-slide"><a href="#"><img src="../assets/top_hero_cw_im17.jpg" ></a></div>
-                <div class="swiper-slide"><a href="#"><img src="../assets/top_hero_hakko.jpg" ></a></div>
-                <div class="swiper-slide"><a href="#"><img src="../assets/top_hero_karadacalpis_im02.jpg" ></a></div>
+                <div class="swiper-slide"><a href="#"><img src="../assets/images/banner1.png" ></a></div>
+                <div class="swiper-slide"><a href="#"><img src="../assets/images/banner2.png" ></a></div>
+                <div class="swiper-slide"><a href="#"><img src="../assets/images/banner3.png" ></a></div>
             </div>
         </div>
         <!-- <div class="swiper-pagination"></div> -->
         <div class="button">
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev">
+                <img src="../assets/images/left1.png" alt="" srcset="">
+            </div>
+            <div class="swiper-button-next">
+                <img src="../assets/images/right1.png" alt="" srcset="">
+            </div>
         </div>
     </div>
 </template>
@@ -144,40 +147,27 @@ export default {
 }
 .swiper-button-prev {
     border-radius: 50%;
-    background:none;
+    background: none;
     background-color: #333236;
     width: 66px;
     height: 66px;
     opacity: .4;
-    &:after{
-        content: "";
-        display: block;
-        position: absolute;
-        top: 50%;
-        right: 1px;
-        width: 66px;
-        height: 66px;
-        margin-top: -10px;
+    img{
+        width: 100%;
+        height: 100%;
     }
 }
 .swiper-button-next {
     border-radius: 50%;
-    background:none;
+    background: none;
     background-color: #333236;
     width: 66px;
     height: 66px;
     opacity: .4;
-    &:after{
-        content: "";
-        display: block;
-        position: absolute;
-        top: 50%;
-        right: 1px;
-        width: 66px;
-        height: 66px;
-        margin-top: -10px;
+    img{
+        width: 100%;
+        height: 100%;
     }
-    
 }
 
 </style>

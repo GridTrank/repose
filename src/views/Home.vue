@@ -8,7 +8,7 @@
     <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
-          <img class="con-i" src="../assets/logo.png" alt="">
+          <img class="con-i" src="../assets/images/sszk.png" alt="">
           <p class="con-t">上升最快</p>
         </div>
         <div class="con-more">更多></div>
@@ -21,7 +21,7 @@
     <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
-          <img class="con-i" src="../assets/logo.png" alt="">
+          <img class="con-i" src="../assets/images/rmmh.png" alt="">
           <p class="con-t">热门漫画</p>
         </div>
         <div class="con-more">更多></div>
@@ -33,7 +33,7 @@
     <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
-          <img class="con-i" src="../assets/logo.png" alt="">
+          <img class="con-i" src="../assets/images/rmmh.png" alt="">
           <p class="con-t">热门分类</p>
           <div class="hot-c">
             <span v-for="(e,el) in boks_tag" :key="el">{{e.tag_name}}</span>
@@ -57,7 +57,7 @@
             <div class="con-more">更多></div>
           </div>
           <div class="con-pro">
-              <productList :type="'typeTwo'" :item="newBooks" :from="'ranklist'"></productList>
+              <productList :type="'typeTwo'" :item="newBooks" :from="'rankHome'"></productList>
           </div>
         </div>
         <div class="container rank">
@@ -89,7 +89,7 @@
     <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
-          <img class="con-i" src="../assets/logo.png" alt="">
+          <img class="con-i" src="../assets/images/wjyx.png" alt="">
           <p class="con-t">完结优选</p>
         </div>
         <div class="con-more">更多></div>
@@ -146,7 +146,6 @@ export default {
         // getmostcharged({})
       ])
       .then(([newBooks])=>{
-        console.log(newBooks)
         this.newBooks=newBooks.data.newest
         // this.endBooks=endBooks.data.ends
         // this.banner=banner.data.banners
@@ -204,8 +203,8 @@ export default {
         display: flex;
         align-items: center;
         .con-i{
-          width:50px;
-          height: 50px;
+          width:30px;
+          height: 30px;
           margin-right: 20px;
         }
         .con-t{

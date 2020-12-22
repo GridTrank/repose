@@ -1,23 +1,22 @@
 <template>
 <div class="rank-wrap bodyCon">
-    <div class="rank-tit">排行榜</div>
     <div class="rank-list">
         <div class="rank-con">
             <div class="rank-head">新书总榜</div>
             <div class="item">
-                <productList :item="newBooks" :type="'typeTwo'" :from="'ranklist'"></productList>
+                <productList :item="newBooks" :type="'rank'" ></productList>
             </div>
         </div>
         <div class="rank-con">
             <div class="rank-head">人气总榜</div>
             <div class="item">
-                <productList :item="hotBooks" :type="'typeTwo'" :from="'ranklist'"></productList>
+                <productList :item="hotBooks" :type="'rank'" ></productList>
             </div>
         </div>
         <div class="rank-con">
             <div class="rank-head">完结总榜</div>
             <div class="item">
-                <productList :item="endBooks" :type="'typeTwo'" :from="'ranklist'"></productList>
+                <productList :item="endBooks" :type="'rank'" ></productList>
             </div>
         </div>
     </div>
