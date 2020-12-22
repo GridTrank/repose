@@ -4,12 +4,12 @@ import {Message, Loading} from 'element-ui';
 import router from '../router'
 import md5 from 'js-md5';
 
-// let baseURL = 'http://app.xueningbai.cn';
-let baseURL = 'http://app.jiepai110.net';
+let baseURL = 'http://app.xueningbai.cn';
+// let baseURL = 'http://app.jiepai110.net';
 
 const instance = axios.create({
-   baseURL: '',  
-   // baseURL: baseURL,  
+   // baseURL: '',  
+   baseURL: baseURL,  
    headers: {'Content-Type': 'application/json'},
    timeout: 30000 
  });
@@ -32,7 +32,8 @@ function endLoading() {
 }
 
 
-let appkey='hahmh';
+let appkey='clwlxw';
+// let appkey='hahmh';
 let times=(new Date().getTime()/1000).toFixed(0);
 let token=md5(appkey+times)
 

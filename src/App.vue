@@ -1,14 +1,13 @@
 <template>
   <div id="app" >
-    <!-- <com-Header></com-Header>
+     <com-Header></com-Header>
     <div class="container">
       <keep-alive>
           <router-view v-if="$route.meta.keepAlive" ></router-view>
       </keep-alive>
       <router-view v-if="!$route.meta.keepAlive" :key="$route.fullPath"></router-view>
     </div>
-    <comFoot class="foot"></comFoot> -->
-    <div></div>
+    <comFoot class="foot"></comFoot> 
   </div>
 </template>
 
@@ -35,7 +34,7 @@ export default {
     if(!localStorage.getItem("suid")){
       localStorage.setItem("suid",this.suid)
     }
-    // this.autoRegister()
+    this.autoRegister()
   },
   methods:{
       autoRegister(){
@@ -57,6 +56,8 @@ export default {
   background: #F9F9F9;
   min-height: 800px;
   position: relative;
-  padding-bottom: 300px;
+  .container{
+    min-height: 500px
+  }
 }
 </style>
