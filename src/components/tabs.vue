@@ -2,7 +2,7 @@
     <div class="tabs-wrap">
         <div class="tabs-lists">
             <div class="tabs-item" :class="activeIndex==index?'select-tab':''" v-for="(data,index) in item" :key="index" @click="selectTag(data,index)">
-                {{data.label}}
+                {{data.tag_name}}
             </div>
         </div>
         <div class="tabs-more" v-if="showMore">
@@ -45,10 +45,15 @@ export default {
         display: flex;
         .tabs-item{
             cursor: pointer;
-            margin-right: 30px;
+            height: 26px;
+            text-align: center;
+            padding: 0 12px;
+            line-height: 26px;
         }
         .select-tab{
-            color: #539FFF;
+            color: #000;
+            background: #FCE13D;
+            border-radius: 4px;
         }
         
     }

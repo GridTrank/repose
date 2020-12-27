@@ -26,8 +26,8 @@
                 </router-link>
             </div>
             <div class="no-login" v-if="!getUserInfo">
-                <div class="login-btn">登录</div>
-                <div class="reg-btn">注册</div>
+                <router-link to="/Login?type=login" class="l-btn" >登录</router-link>
+                <router-link to="/Login?type=register" class="l-btn">注册</router-link>
             </div>
             <div v-else class="user-info" 
             :class="showdown?'btr':''"
@@ -35,12 +35,12 @@
              @mouseleave="mouseLeave"
              >
                 <img class="user-img" src="../assets/images/tx.png" alt="">
-                <p class="user-name" v-if="!getUserInfo.mobile">{{'游客'+getUserInfo.username}}</p>
+                <p class="user-name">{{getUserInfo.level==1?'游客':''}}{{getUserInfo.username}}</p>
                 <div class="user-down" v-if="showdown">
                     <div class="item">
-                        <p v-if="!getUserInfo.mobile">当前用户为游客登录，建议尽快注册正式账号</p>
+                        <p v-if="getUserInfo.level==1">当前用户为游客登录，建议尽快注册正式账号</p>
                     </div>
-                    <div class="btns mt20" >
+                    <div class="btns mt20" v-if="getUserInfo.level==1">
                         <router-link class="btn" to="/Login?type=register">注册</router-link>
                         <router-link class="btn" to="/Login?type=login">登录</router-link>
                     </div>
@@ -137,7 +137,20 @@ export default {
             })
         },
         logout(){
-            localStorage.clear()
+            this.$confirm('确认是否退出登录?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '已退出登录!'
+                    });
+                    localStorage.clear()
+                    this.upDataUserInfo('')
+                }).catch((err)=>{
+                    console.log(err)
+                })                 
         },
         mouseEnter(){
             this.showdown=true
@@ -195,7 +208,7 @@ export default {
         }
         .no-login{
             display: flex;
-            div{
+            .l-btn{
                 padding: 6px 13px;
                 border:1px solid #FCE13D;
                 border-radius: 16px;
@@ -206,7 +219,7 @@ export default {
             }
         }
         .user-info{
-            width: 148px;
+            width: 175px;
             display: flex;
             align-items: center;
             padding: 5px 10px;
@@ -232,10 +245,11 @@ export default {
                 overflow: hidden; 
                 width: 100%;
                 left: 0;
-                padding-top: 20px;
+                padding-top: 30px;
+                padding-bottom: 30px;
                 border-top:none;
                 .item{
-                    padding:10px;
+                    padding:10px 30px;
                     font-size: 12px;
                     p{
                         color: #999;

@@ -4,16 +4,15 @@
         <img class="head-img" src="../assets/logo.png" >
       </div>
       <div class="user-name mt20">
-          <el-input style="width:100px" v-model="username" v-if="isEdit"></el-input>
-          <p class="name" v-else>{{username}}</p>
+          <p class="name" >{{getUserInfo.username}}</p>
           <router-link to="/UserCenter?type=changeName" class="edit" @click="isEdit=true">编辑昵称</router-link>
       </div>
       <div class="gold-num mt20">
           <div class="g-n">
-              <img class="g-n-i" src="../assets/logo.png" alt="">
+              <img class="g-n-i" src="../assets/images/tyx.png" alt="">
               <div class="g-n-d">
                   <p>金币</p>
-                  <p class="g-n-dd">1200</p>
+                  <p class="g-n-dd">{{getUserInfo.balance}}</p>
               </div>
           </div>
           <div class="g-b">
@@ -22,37 +21,59 @@
       </div> 
       <div class="gold-get mt20">
             <div class="gold-btn ">
-                <img class="gbi" src="../assets/logo.png" alt="">
+                <img class="gbi" src="../assets/images/lq.png" alt="">
                 <p class="gbt">登录领金币</p>
                 <p class="gbb">今日已领取50金币</p>
             </div>
             <div class="gold-btn ">
-                <img class="gbi" src="../assets/logo.png" alt="">
+                <img class="gbi" src="../assets/images/fx.png" alt="">
                 <p class="gbt">分享赚金币</p>
                 <p class="gbb">今日已获得50金币</p>
             </div>  
       </div>
       <div class="vip-buy mt20">
-          <img class="v-i" src="../assets/logo.png" alt="">
+          <img class="v-i" src="../assets/images/sxvip.png" alt="">
           <div class="v-t">
-              <p>vip</p>
-              <p class="v-st">剩余10天</p>
+              <p>VIP</p>
+              <p class="v-st">剩余{{getUserInfo.vip_expire_time}}天</p>
           </div>
           <div class="v-b">购买</div>
       </div>
       <div class="menus mt20">
-          <router-link to="/Record?type=collect" class="menu-item">我的收藏</router-link>
-          <router-link to="/Record?type=history" class="menu-item">阅读记录</router-link>
-          <router-link to="/UserCenter?type=consumption" class="menu-item">消费记录</router-link>
-          <router-link to="/UserCenter?type=recharge" class="menu-item">充值记录</router-link>
-          <router-link to="/UserCenter?type=vip" class="menu-item">兑换VIP</router-link>
-          <router-link to="/UserCenter?type=password" class="menu-item">修改密码</router-link>
-          <div  class="menu-item" @click="loginOut">退出登录</div>
+            <router-link to="/Record?type=collect" class="menu-item">
+                <img src="../assets/images/wdsch.png" alt="">
+                <span>我的收藏</span>
+            </router-link>
+            <router-link to="/Record?type=history" class="menu-item">
+                <img src="../assets/images/ydjlh.png" alt="">
+                <span>阅读记录</span>
+            </router-link>
+            <router-link to="/UserCenter?type=consumption" class="menu-item">
+                <img src="../assets/images/xfjlh.png" alt="">
+                <span>消费记录</span>
+            </router-link>
+            <router-link to="/UserCenter?type=recharge" class="menu-item">
+                <img src="../assets/images/czjlh.png" alt="">
+                <span>充值记录</span>
+            </router-link>
+            <router-link to="/UserCenter?type=vip" class="menu-item">
+                <img src="../assets/images/dhviph.png" alt="">
+                <span>兑换vip</span>
+            </router-link>
+            <router-link to="/UserCenter?type=password" class="menu-item">
+                <img src="../assets/images/xgmmh.png" alt="">
+                <span>修改密码</span>
+            </router-link>
+            <div  class="menu-item" @click="logout">
+                <img src="../assets/images/tcdlh.png" alt="">
+                <span>退出登录</span>
+            </div>
       </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
     data(){
         return{
@@ -60,25 +81,28 @@ export default {
             isEdit:false
         }
     },
+    computed: {
+        ...mapGetters(["getUserInfo"])
+    },
     methods:{
-        //登出
-        loginOut(){
-            this.$confirm('退出登录？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '退出成功!'
-                });
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消'
-                });          
-            });
-        } 
+        ...mapActions(['upDataUserInfo']),
+
+        logout(){
+            this.$confirm('确认是否退出登录?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '已退出登录!'
+                    });
+                    localStorage.clear()
+                    this.upDataUserInfo('')
+                }).catch((err)=>{
+                    console.log(err)
+                })              
+        },
     }
 }
 </script>
@@ -143,6 +167,7 @@ export default {
             border-radius: 13px;
             color: #FFFFFF;
             font-size: 12px;
+            cursor: pointer;
         }
     }
     .gold-get{
@@ -204,6 +229,7 @@ export default {
             line-height: 26px;
             color: #000;
             font-size: 12px;
+            cursor: pointer;
         }
     }
     .gold-vip{
@@ -246,18 +272,32 @@ export default {
     }
    
     .menus{
-       .menu-item{
-           text-align: left;
-           border-top: 1px solid #ddd;
-           border-left: 1px solid #ddd;
-           border-right: 1px solid #ddd;
-           padding:5px 5px;
-           cursor: pointer;
-           display: block;
-       }
-       &:last-child{
-           border-bottom: 1px solid #ddd;
-       }
+        .menu-item{
+            display: flex;
+            margin-left: 20px;
+            padding: 10px;
+            cursor: pointer;
+            img{
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+            span{
+                font-size: 14px;
+                border-bottom: 1px solid #ddd;
+                display: inline-block;
+                width: 100%;
+                text-align: left;
+                height: 30px;
+                
+            }
+            &:last-child{
+                span{
+                    border:none;
+                }
+            }
+        }
+        
     }
 }
 

@@ -6,6 +6,11 @@
                 <div class="swiper-slide"><a href="#"><img src="../assets/images/banner1.png" ></a></div>
                 <div class="swiper-slide"><a href="#"><img src="../assets/images/banner2.png" ></a></div>
                 <div class="swiper-slide"><a href="#"><img src="../assets/images/banner3.png" ></a></div>
+                <!-- <div v-for="(data,index) in item" :key="index" class="swiper-slide">
+                    <a href="#">
+                        <img class="img" :src="data.book.cover_url" >
+                    </a>
+                </div> -->
             </div>
         </div>
         <!-- <div class="swiper-pagination"></div> -->
@@ -25,6 +30,9 @@ import Swiper from "swiper";
 import configUrl from '@/utils/config.js'
 
 export default {
+    props:{
+        item:Array
+    },
     data(){
         return{
             imgUrl:configUrl,
@@ -48,8 +56,8 @@ export default {
             prevButton:'.swiper-button-prev',
             nextButton:'.swiper-button-next',
             onInit:function(swiper){
-                swiper.slides[2].className="swiper-slide swiper-slide-active";//第一次打开不要动画
-                },
+                // swiper.slides[2].className="swiper-slide swiper-slide-active";//第一次打开不要动画
+            },
             breakpoints: { 
                 668: {
                     slidesPerView: 1,
@@ -70,7 +78,9 @@ export default {
 .pc-banner {
 	background: #33323E;
 	width: 100%;
-	float: left;
+    float: left;
+    // height: 374px !important;
+    overflow: hidden;
 }
 .swiper-container {
 	width: 100%;
@@ -82,7 +92,8 @@ export default {
 	-ms-transition: transform 1.0s;
 	-o-transition: transform 1.0s;
 	-webkit-transform: scale(0.7);
-	transform: scale(0.9);
+    transform: scale(0.9);
+   
 }
 
 .swiper-slide-active,.swiper-slide-duplicate-active {
@@ -108,7 +119,8 @@ export default {
 .swiper-slide img {
 	width: 100%;
 	border-radius: 14px;
-	display: block;
+    display: block;
+    height: 375px;
 }
 .swiper-pagination {
 	position: relative;

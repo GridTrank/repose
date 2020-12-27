@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/': {
-        target: 'http://app.jiepai110.net',  //目标接口域名
+        target: 'http://app.xueningbai.cn',  //目标接口域名
         changeOrigin: true,  //是否跨域
         pathRewrite: {
           '^/': ''   //重写接口

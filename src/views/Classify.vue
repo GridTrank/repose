@@ -31,38 +31,53 @@ export default {
   data(){
     return{
       tagList:[
-        {label:'全部',value:'0'},
-        {label:'分类1',value:'1'},
-        {label:'分类2',value:'2'},
-        {label:'分类3',value:'3'},
-        {label:'分类4',value:'4'},
+        {tag_name:'全部',id:'0'},
       ],
       statusList:[
-        {label:'全部',value:'0'},
-        {label:'连载中',value:'1'},
-        {label:'完结',value:'2'},
+        {tag_name:'全部',value:''},
+        {tag_name:'连载中',value:0},
+        {tag_name:'已完结',value:1},
 
       ],
-      dataList:[]
+      dataList:[],
+      tag:'',
+      end:'',
+      pager:{
+        startItem:1,
+        pageSize:20,
+      }
     }
   },
   created(){
     this.getData()
+    this.getBooks()
   },
   methods:{
     getData(){
-      getBookList({}).then(res=>{
-        console.log(res.data.tags)
+      getList({}).then(res=>{
         if(res.data.success==1){
-          this.dataList=res.data.tags
+          this.tagList=res.data.tags
         }
       })
     },
+    getBooks(){
+      let data={
+        tag:this.tag,
+        end:this.end,
+        area:'',
+        ...this.pager
+      }
+      getBookList(data).then(res=>{
+        console.log(res)
+      })
+    },
     selectTag(data){
-      console.log(data)
+      this.tag=data.id
+      this.getBooks()
     },
     selectStatus(data){
-      console.log(data)
+      this.end=data.value
+      this.getBooks()
     }
   }
 }
@@ -73,6 +88,7 @@ export default {
   width: 100%;
   padding-top: 50px;
   min-height: 800px;
+  padding-bottom: 50px;
   .tags{
     .tag-list{
       display: flex;

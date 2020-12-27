@@ -19,9 +19,8 @@ export default {
 
 <style scoped lang="less">
 .foot{
-    margin-top: 50px;
     width: 100%;
-    height: 270px;
+    height: 200px;
     background: #333;
     display: flex;
     justify-content: space-around;

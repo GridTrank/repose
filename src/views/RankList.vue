@@ -67,6 +67,7 @@ export default {
 <style scoped lang="less">
 .rank-wrap{
     margin-top: 20px;
+    padding-bottom: 50px;
     .rank-tit{
         width: 100%;
         border:1px solid #ddd;
@@ -79,6 +80,10 @@ export default {
         justify-content: space-between;
         .rank-con{
             width: 350px;
+            .rank-head{
+                font-size: 24px;
+                font-weight: 400;
+            }
         }
     }
 }

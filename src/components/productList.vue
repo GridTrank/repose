@@ -25,7 +25,7 @@
                         <p class="p-name ">{{data.book_name}}</p>
                         <p class="p-info twoHidden mt20">{{data.summary}}</p>
                         <div class="p-tags"  >
-                            <p >已更 <span class="p-u">{{data.last_chapter_id}}</span></p>
+                            <p >已更 <span class="p-u">{{data.last_chapter}}</span></p>
                             <div class="p-count" >
                                 <div class="p-p">
                                     <img src="../assets/images/hr.png" >
@@ -44,7 +44,7 @@
                         <span class="p-num" :class="index<3 && 'fcolor'">{{index+1}}</span> 
                         {{data.book_name}}
                     </p>
-                    <p class="p-u">更新至 <span class="p-u-c">{{data.last_chapter_id}}</span> </p>
+                    <p class="p-u">更新至 <span class="p-u-c">{{data.last_chapter}}</span> </p>
                 </div>
             </router-link >
         </div>
@@ -85,17 +85,14 @@
         </div>
 
         <div v-if="type=='typeThere'" class="p-lists">
-            <div class="type-there" v-for="(data,index) in item" :key="index">
+            <router-link target="_blank" :to="'/Catalog?id='+ data.id || data.book.id" class="type-there" v-for="(data,index) in item" :key="index">
                 <div class="imgBox">
-                    <img class="p-img" :src="imgurl+data.cover_url" >
+                    <img class="p-img" :src="data.cover_url || data.book.cover_url" >
                 </div>
-                <p class="p-status">{{data.tags}}</p>
-                <p class="p-name oneHidden">{{data.book_name}}</p>
-                <p class="p-class" v-if="data.taglist && data.taglist.length>0">
-                    <span class="" v-for="(tag,i) in data.taglist" :key="i">{{tag}}</span>
-                </p>
-                <p class="p-class" v-else>{{data.tags}}</p>
-            </div>
+                <p class="p-status">{{(data.end|| data.book.end) ?'已完结':'连载'}}</p>
+                <p class="p-name oneHidden">{{data.book_name || data.book.book_name}}</p>
+                <p class="p-class" >{{data.tags || data.book.tags || data.book.tag_name}}</p>
+            </router-link>
         </div>
     </div>
 </template>
@@ -356,9 +353,9 @@ export default {
             position: relative;
             margin-top:20px;
             cursor: pointer;
-            width: 185px;
+            width: 180px;
             margin-right: 15px;
-            &:nth-child(5){
+            &:nth-child(4){
                 margin-right: 0px;
             }
             .imgBox{
@@ -373,22 +370,25 @@ export default {
             }
             .p-status{
                 position: absolute;
-                top:0;
-                right: 0;
-                background: rgba(1, 1, 1, .3);
-                padding:2px 5px;
-                border-radius: 8px;
+                top:8px;
+                right: 8px;
+                background: #FCE13D;
+                padding:5px 10px;
+                border-radius: 2px;
+                font-size: 12px;
             }
             .p-name{
-                margin-top: 5px;
+                margin-top: 16px;
+                margin-bottom: 10px;
                 width: 100%;
-                color: #6F93BD;
-                font-size: 14px;
-                
+                font-size: 16px;        
             }
             .p-class{
                 color:#999;
-                font-size: 12px;
+                span{
+                    color:#999;
+                }
+                font-size: 14px;
             }
         }
         

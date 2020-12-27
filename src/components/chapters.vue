@@ -1,13 +1,12 @@
 <template>
   <div class="chapters-wrap">
-      <div class="chap-tit">
-          <p>章节</p>
-          <p>1111</p>
-      </div>
-      <div class="chap-list">
-          <p class="chap-item" v-for="(item,index) in dataList" :key="index">{{'菜单'}}</p>
-      </div>
-      <div class="close" @click="show=false">收起</div>
+        <div class="chap-list">
+            <p class="chap-item" v-for="(item,index) in dataList" :key="index">{{'菜单'}}</p>
+        </div>
+        <div class="close" @click="closeChap">
+            <img src="../assets/images/show-close.png" alt="">
+            <span>章节</span>
+        </div>
   </div>
 </template>
 
@@ -18,6 +17,11 @@ export default {
             show:true,
             dataList:15
         }
+    },
+    methods:{
+        closeChap(){
+
+        }
     }
 }
 </script>
@@ -27,9 +31,6 @@ export default {
     width: 200px;
     height: 450px;
     background: rgba(1, 1, 1, .2);
-    position: fixed;
-    top: 200px;
-    left: 10px;
     padding: 10px;
     // overflow: hidden;
     .chap-tit{
@@ -54,14 +55,15 @@ export default {
     }
     .close{
         cursor: pointer;
-        width: 50px;
+        width: 40px;
         height: 100px;
         position: absolute;
-        left: 220px;
-        top:185px;
-        text-align: center;
-        line-height: 100px;
-        background: rgba(1, 1, 1, .2);
+        left: -42px;
+        top:0;
+        border-top-left-radius: 14px;
+        border-bottom-left-radius: 14px;
+        border:1px solid #E2E2E2;
+        background: #fff;
     }
 }
 </style>

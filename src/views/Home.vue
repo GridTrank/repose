@@ -1,6 +1,6 @@
 <template>
   <div class="home-wrap ">
-    <slide :item="homeData.banners"></slide>
+    <slide :item="banner"></slide>
     <div class="tabs">
       <tabs></tabs>
     </div>
@@ -11,10 +11,10 @@
           <img class="con-i" src="../assets/images/sszk.png" alt="">
           <p class="con-t">上升最快</p>
         </div>
-        <div class="con-more">更多></div>
+        <router-link to="/RankList" class="con-more">更多></router-link>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'" :item="newBooks"></productList>
+          <productList :type="'typeOne'" :item="tops"></productList>
       </div>
     </div>
 
@@ -24,22 +24,23 @@
           <img class="con-i" src="../assets/images/rmmh.png" alt="">
           <p class="con-t">热门漫画</p>
         </div>
-        <div class="con-more">更多></div>
+        <router-link to="/RankList" class="con-more">更多></router-link>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'" :item="newBooks"></productList>
+          <productList :type="'typeOne'" :item="hots"></productList>
       </div>
     </div>
+    <!-- 热门分类 -->
     <div class="container bodyCon">
       <div class="con-top">
         <div class="con-l">
           <img class="con-i" src="../assets/images/rmmh.png" alt="">
           <p class="con-t">热门分类</p>
           <div class="hot-c">
-            <span v-for="(e,el) in boks_tag" :key="el">{{e.tag_name}}</span>
+            <span class="tag" :class="selectTag==el?'select-tag':''" @click="toClass(e,el)" v-for="(e,el) in boks_tag.slice(0,4)" :key="el">{{e.tag_name}}</span>
           </div>
         </div>
-        <div class="con-more">更多></div>
+        <router-link to="/Classify" class="con-more">更多></router-link>
       </div>
       <div class="con-pro">
           <productList :type="'typeOne'" :item="newBooks"></productList>
@@ -54,7 +55,7 @@
             <div class="con-l">
               <p class="con-t">新书版</p>
             </div>
-            <div class="con-more">更多></div>
+            <router-link to="/RankList" class="con-more">更多></router-link>
           </div>
           <div class="con-pro">
               <productList :type="'typeTwo'" :item="newBooks" :from="'rankHome'"></productList>
@@ -65,10 +66,10 @@
             <div class="con-l">
               <p class="con-t">点击版</p>
             </div>
-            <div class="con-more">更多></div>
+            <router-link to="/RankList" class="con-more">更多></router-link>
           </div>
           <div class="con-pro">
-              <productList :type="'typeTwo'" :item="newBooks"></productList>
+              <productList :type="'typeTwo'" :item="hots"></productList>
           </div>
         </div>
         <div class="container rank">
@@ -76,10 +77,10 @@
             <div class="con-l">
               <p class="con-t">推荐版</p>
             </div>
-            <div class="con-more">更多></div>
+            <router-link to="/RankList" class="con-more">更多></router-link>
           </div>
           <div class="con-pro">
-              <productList :type="'typeTwo'" :item="newBooks"></productList>
+              <productList :type="'typeTwo'" :item="endBooks"></productList>
           </div>
         </div>
       </div>
@@ -92,10 +93,10 @@
           <img class="con-i" src="../assets/images/wjyx.png" alt="">
           <p class="con-t">完结优选</p>
         </div>
-        <div class="con-more">更多></div>
+        <router-link to="/RankList" class="con-more">更多></router-link>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'" :item="newBooks"></productList>
+          <productList :type="'typeOne'" :item="endBooks"></productList>
       </div>
     </div>
 
@@ -114,7 +115,10 @@ import {
   getNewest,
   getBanners,
   getList,
-  getmostcharged
+  getmostcharged,
+  getHot,
+  getTops,
+  getBookList
 } from '@/utils/api.js'
 import configUrl from '@/utils/config.js'
 export default {
@@ -125,12 +129,17 @@ export default {
   },
   data(){
     return{
+      selectTag:0,
       homeData:{},
       boks:[],
       boks_tag:[],
       newBooks:[],
       endBooks:[],
-      banner:[]
+      banner:[],
+      hots:[],
+      tops:[],
+      recharges:[],
+      list:[]
     }
   },
   created(){
@@ -138,18 +147,31 @@ export default {
   },
   methods:{
     getData(){
-      Promise.all([
-        getNewest({}),
-        // getEnds({}),
-        // getBanners({num:3}),
-        // getList({}),
-        // getmostcharged({})
-      ])
-      .then(([newBooks])=>{
-        this.newBooks=newBooks.data.newest
-        // this.endBooks=endBooks.data.ends
-        // this.banner=banner.data.banners
+      getNewest({}).then((res)=>{
+        this.newBooks=res.data.newest
       })
+      getBanners({}).then(res=>{
+        this.banner=res.data.banners
+      })
+      getHot({}).then(res=>{
+        this.hots=res.data.hots
+      })
+      getEnds({}).then(res=>{
+        this.endBooks=res.data.ends
+      })
+      getTops({}).then(res=>{
+        this.tops=res.data.tops
+      })
+      
+      getList({}).then(res=>{
+        this.boks_tag=res.data.tags
+      })
+      getmostcharged({}).then(res=>{
+        this.recharges=''
+      })
+    },
+    toClass(data,index){
+      this.selectTag=index
     }
   }
 }
@@ -165,7 +187,7 @@ export default {
   }
   
   .rank-box{
-    background: linear-gradient(to top, #4B8C5C 0%, #75945E 100%) ;
+    background: linear-gradient(to top, #791512  0%, #341C1A  100%) ;
     height: 600px;
     padding: 30px;
     .rank-wrap{
@@ -217,7 +239,12 @@ export default {
             span{
               display: inline-block;
               padding: 5px 20px;
-              font-size: 15px;
+              font-size: 16px;
+              cursor: pointer;
+              color: #1A1A1A;
+            }
+            .select-tag{
+              color: #F5A623;
             }
         }
       }

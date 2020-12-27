@@ -62,6 +62,7 @@ export default {
 <style scoped lang="less">
 .search-wrap{
     margin-top: 50px;
+    padding-bottom: 50px;
     .search-btn{
         text-align: center
     }

@@ -6,7 +6,7 @@
                 <p class="cont-t">修改昵称</p>
                 <div class="change-name">
                     <el-input placeholder="请输入昵称（2-8个字符）" style="width:300px;" v-model="name"></el-input>
-                    <el-button type="primary"  style="width:300px" @click="saveName">保存</el-button>
+                    <div class="commonbtn changebtn" type="primary"  style="width:300px" @click="saveName">保存</div>
                 </div>
             </div>
             <div class="con" v-else-if="type=='recharge'">
@@ -43,7 +43,7 @@
                 <p class="cont-t">兑换vip</p>
                 <div class="exchange-vip">
                     <el-input placeholder="输入兑换码" style="width:300px;" v-model="vipCode"></el-input>
-                    <el-button type="primary"  style="width:300px" @click="exchangeVip">立即兑换</el-button>
+                    <div class="commonbtn" type="primary"  style="width:300px" @click="exchangeVip">立即兑换</div>
                     <div class="explain">
                         <p>兑换说明</p>
                         <p>1、请在有效期内输入兑换码兑换VIP会员</p>
@@ -55,9 +55,9 @@
             <div class="con" v-else-if="type=='password'">
                 <p class="cont-t">修改密码</p>
                 <div class="change-password">
-                    <el-input placeholder="请输入新密码（6-20位数字、字符和字母组成）" style="width:350px;" v-model="passWord"></el-input>
-                    <el-input placeholder="请确认新密码）" style="width:350px;" v-model="passWord"></el-input>
-                    <el-button type="primary"  style="width:350px" @click="submit">确认修改</el-button>
+                    <el-input placeholder="请输入新密码（6-20位数字、字符和字母组成）" style="width:350px;" v-model.number="passWord" type="password"></el-input>
+                    <el-input placeholder="请确认新密码）" style="width:350px;" v-model.number="newpassWord" type="password"></el-input>
+                    <div class="commonbtn" type="primary"  style="width:350px" @click="submit">确认修改</div>
                 </div>
             </div>
             
@@ -66,6 +66,13 @@
 </template>
 
 <script>
+import{
+    getSpendings,
+    getCharges,
+    changeName,
+    changePwd
+}from '@/utils/api.js'
+import { mapActions, mapGetters } from "vuex";
 import userInfo from '@/components/userInfo.vue'
 export default {
     data(){
@@ -74,6 +81,7 @@ export default {
             name:'',
             vipCode:'',
             passWord:'',
+            newpassWord:'',
             czData:[
                 {
                     danhao:123,
@@ -111,10 +119,61 @@ export default {
     components:{
         userInfo,
     },
+    created(){
+        if(this.type=='consumption'){
+            this.getConsumption()
+        }else if(this.type=='recharge'){
+            this.getRechart()
+        }
+    },
     methods:{
+        ...mapActions(['upDataUserInfo']),
         //修改昵称
         saveName(){
-            console.log(this.$children)
+            changeName({
+                nickname:this.name,
+                utoken:localStorage.getItem("utoken")
+            }).then(res=>{
+                console.log(res)
+                if(res.data.success==1){
+                    this.$message({
+                        type:'success',
+                        message:'昵称修改成功'
+                    })
+                }
+            })
+
+        },
+        //修改密码
+        submit(){
+            if(this.passWord!=this.newpassWord){
+                this.$message.error('两次密码输入不一致')
+                return
+            }
+            changePwd({
+                passWord: this.passWord,
+                utoken:localStorage.getItem("utoken")
+            }).then(res=>{
+               if(res.data.success==1){
+                    this.$message({
+                        type:'success',
+                        message:'密码修改成功'
+                    })
+                }else{
+                    this.$message.error(res.data.msg)
+                }
+           }) 
+        },
+        //消费记录
+        getConsumption(){
+            getSpendings({utoken:localStorage.getItem("utoken")}).then(res=>{
+                this.xfData=res.data.spendings
+            })
+        },
+        getRechart(){
+            getCharges({utoken:localStorage.getItem("utoken")}).then(res=>{
+                this.czData=res.data.charges
+            })
         },
         //去支付
         toPay(){
@@ -122,10 +181,7 @@ export default {
         },
         //兑换VIP
         exchangeVip(){},
-        //修改密码
-        submit(){
-            
-        },
+        
 
     }
 }
@@ -150,9 +206,22 @@ export default {
                 align-items: center;
                 height: 120px;
                 justify-content: space-between;
+                .changebtn{
+                    background: #FCE13D;
+                    color: #57390F;
+                    border:none;
+                }
             }
             .exchange-vip{
                 height: 260px;
+                .explain{
+                    color: #666;
+                    font-size: 12px;
+                    height: 102px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
             }
             .change-password{
                 height: 200px;
@@ -160,5 +229,16 @@ export default {
             
         }
     }
+}
+.commonbtn{
+    width: 344px;
+    height: 40px;
+    background: #FCE13D;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 40px;
+    color: #57390F;
+    font-size: 14px;
+    cursor: pointer;
 }
 </style>

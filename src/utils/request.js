@@ -8,8 +8,8 @@ let baseURL = 'http://app.xueningbai.cn';
 // let baseURL = 'http://app.jiepai110.net';
 
 const instance = axios.create({
-   // baseURL: '',  
-   baseURL: baseURL,  
+   baseURL: '',  
+   // baseURL: baseURL,  
    headers: {'Content-Type': 'application/json'},
    timeout: 30000 
  });
@@ -34,12 +34,13 @@ function endLoading() {
 
 let appkey='clwlxw';
 // let appkey='hahmh';
-let times=(new Date().getTime()/1000).toFixed(0);
-let token=md5(appkey+times)
+
 
  // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
-   // startLoading()
+   startLoading()
+   let times=(new Date().getTime()/1000).toFixed(0);
+   let token=md5(appkey+times)
    config.data.token=token
    config.data.time=times
    
@@ -54,7 +55,7 @@ instance.interceptors.response.use(function (response) {
    //       path:'/Login'
    //    })
    // },1000)
-   // endLoading()
+   endLoading()
    return response;
  }, function (error) {
    return Promise.reject(error);

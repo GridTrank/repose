@@ -11,14 +11,19 @@
 
 <script>
 import productList from '@/components/productList.vue'
-import {getHot} from '@/utils/api.js'
+import {getUpdate} from '@/utils/api.js'
+import {getFormat} from '@/utils/index.js'
 export default {
   components:{
     productList
   },
   data(){
     return{
-      dataList:[]
+      dataList:[],
+      pager:{
+        startItem:1,
+        pageSize:20,
+      }
     }
   },
   created(){
@@ -26,8 +31,12 @@ export default {
   },
   methods:{
     getData(){
-      getHot({}).then(res=>{
-        this.dataList=res.data.data.hot_books
+      let data={
+        date:getFormat(new Date().getTime()),
+        ...this.pager
+      }
+      getUpdate(data).then(res=>{
+        this.dataList=res.data.books
       })
     },
   }
@@ -35,6 +44,7 @@ export default {
 </script>
 <style scoped lang="less"> 
 .update-wrap{
+  padding-bottom: 50px;
     .update-btn{
         margin-top: 50px;
         p{

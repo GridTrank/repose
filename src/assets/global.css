@@ -18,7 +18,7 @@ a{
     margin: auto;
 }
 ::-webkit-scrollbar {
-    display: none; 
+    /* display: none;  */
 }
 .mt20{
     margin-top: 20px !important;
@@ -56,4 +56,15 @@ a{
 }
 .bfg{
     background: #fff !important;
+}
+.fwsix{
+    font-weight: 600 !important;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label{
+    color: #666 !important;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner{
+    background: #FCE13D !important;
+    color: #57390F !important;
+    border-color:#FCE13D !important;
 }

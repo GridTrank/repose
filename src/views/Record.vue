@@ -1,19 +1,22 @@
 <template>
     <div class="record-wrap bodyCon">
-        <userInfo></userInfo>
-        <div class="mybook">
-            <div class="top">
+        <div class="top">
                 <div class="btn">我的书架</div>
                 <span :class="queryType=='history'?'show-query':''" @click="switchRecord('history')">阅读记录</span>
                 <span :class="queryType=='collect'?'show-query':''" @click="switchRecord('collect')">我的收藏</span>
 
                 <div class="clear" @click="cleaInfo">
-                    <img src="../assets/logo.png" alt="" srcset="">
                     清空记录
                 </div>
             </div>
+        <div class="mybook">
+            <userInfo></userInfo>
             <div class="lists">
-                <productList :item="dataList" :type="'typeThere'"></productList>
+                <productList v-if="dataList && dataList.length>0" :item="dataList" :type="'typeThere'"></productList>
+                <div v-else class="nodata">
+                    <img src="../assets/images/zw.png" >
+                    <p>暂无数据</p>
+                </div>
             </div>
         </div>
     </div>
@@ -22,7 +25,7 @@
 <script>
 import userInfo from '@/components/userInfo.vue'
 import productList from '@/components/productList.vue'
-import {getHot} from '@/utils/api.js'
+import {getHot,getHistory,bookShelf,delFavors} from '@/utils/api.js'
 export default {
     components:{
         userInfo,
@@ -35,8 +38,10 @@ export default {
         }
     },
     created(){
-        this.getData()
+        let type=this.$route.query.type
+        this.getData(type)
     },
+    
     methods:{
         switchRecord(type){
             this.$router.push({
@@ -45,22 +50,51 @@ export default {
                     type:type
                 }
             })
+            this.getData()
         },
         getData(){
-            getHot({}).then(res=>{
-                this.dataList=res.data.data.hot_books
-            })
+            if(this.queryType=='collect'){
+                bookShelf({utoken:localStorage.getItem("utoken")}).then(res=>{
+                    this.dataList=res.data.favors
+                })
+            }else{
+                this.dataList=JSON.parse(localStorage.getItem("allBrowse"))
+            }
+            
         },
         cleaInfo(){
+            if(this.dataList==null || this.dataList.length<=0){
+                return
+            }
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                });
+                let ids=[]
+                this.dataList.forEach(item=>{
+                    ids.push(item.book_id)
+                })
+                if(this.queryType=='collect'){
+                    delFavors({
+                        ids:ids.join(','),
+                        utoken:localStorage.getItem('utoken')
+                    }).then(res=>{
+                        if(res.data.success==1){
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData()
+                        }else{
+                            this.$message.error(res.data.msg)
+                        }
+                    })
+                }else{
+                    localStorage.removeItem("allBrowse")
+                    this.getData()
+                }
+                
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -75,37 +109,69 @@ export default {
 
 <style scoped lang="less">
 .record-wrap{
-    margin-top: 50px;
-    display: flex;
-    .mybook{
-        margin-left: 20px;
-        width: 1000px;
-        .top{
+    margin-top: 40px;
+    position: relative;
+    .top{
+        width: 802px;
+        position: relative;
+        margin-left: 378px;
+        .btn{
+            display: inline-block;
+            padding:10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        span{
+            margin-left: 30px;
+            cursor: pointer;
+            color: #666666;
+            font-size: 14px;
+        }
+        .show-query{
+            color: #000;
             position: relative;
-            .btn{
-                display: inline-block;
-                padding:10px 40px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                cursor: pointer;
-            }
-            .show-query{
-                color: red;
-            }
-            span{
-                margin-left: 30px;
-                cursor: pointer;
-            }
-            .clear{
-                display: flex;
-                align-items: center;
+            &::after{
+                content: "";
+                display: block;
                 position: absolute;
-                top:0;
-                right: 0;
-                cursor: pointer;
-                img{
-                    width: 40px;
-                    height: 40px;
+                width: 19px;
+                height: 2px;
+                background: #FCE13D;
+                left: 40%;
+                bottom: -30%;
+            }
+        }
+        .clear{
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top:13px;
+            right: 0;
+            cursor: pointer;
+            img{
+                width: 40px;
+                height: 40px;
+            }
+        }
+    }
+    .mybook{
+        display: flex;
+        justify-content: space-between;
+        
+        .lists{
+            width: 850px;
+            padding: 20px;
+            background: #fff;
+            margin-left: 42px;
+            .nodata{
+                width: 100%;
+                text-align: center;
+                padding-top: 100px;
+                p{
+                    color: #999;
+                    font-size: 14px;
                 }
             }
         }

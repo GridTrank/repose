@@ -70,6 +70,12 @@ const routes= [
       meta: { pageTitle: "用户中心"},
       component: (resolve) => require(['@/views/UserCenter.vue'], resolve)
     },
+    {
+      path: '/Upload',
+      name: 'Upload',
+      meta: { pageTitle: "下载"},
+      component: (resolve) => require(['@/views/Upload.vue'], resolve)
+    },
     { // 匹配
       path: '*',
       name: 'Home',
