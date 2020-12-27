@@ -28,6 +28,7 @@
       </div>
       <div class="con-pro">
           <productList :type="'typeOne'" :item="hots"></productList>
+          
       </div>
     </div>
     <!-- 热门分类 -->
