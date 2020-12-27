@@ -70,6 +70,10 @@ export const getBanners=(data)=>{
     return  request('post','/tag/getBanners',data)
 }
 
+//购买章节
+export const buyChapter=(data)=>{
+    return  request('post','/finance/buychapter',data)
+}
 //是否收藏
 export const getFavor=(data)=>{
     return  request('post','/users/isfavor',data)
@@ -106,10 +110,7 @@ export const sendcms=(data)=>{
 export const bookShelf=(data)=>{
     return  request('post','/users/bookshelf',data)
 }
-//购买章节
-export const buyChapter=(data)=>{
-    return  request('post','/users/buychapter',data)
-}
+
 //修改昵称
 export const changeName=(data)=>{
     return  request('post','/users/getVipExpireTime',data)

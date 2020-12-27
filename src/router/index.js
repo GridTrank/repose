@@ -55,13 +55,13 @@ const routes= [
     {
       path: '/Recharge',
       name: 'Recharge',
-      meta: { pageTitle: "充值",isToken:true},
+      meta: { pageTitle: "充值"},
       component: (resolve) => require(['@/views/Recharge.vue'], resolve)
     },
     {
       path: '/Record',
       name: 'Record',
-      meta: { pageTitle: "历史",isToken:true},
+      meta: { pageTitle: "阅读记录",isToken:true},
       component: (resolve) => require(['@/views/Record.vue'], resolve)
     },
     {
@@ -75,6 +75,12 @@ const routes= [
       name: 'Upload',
       meta: { pageTitle: "下载"},
       component: (resolve) => require(['@/views/Upload.vue'], resolve)
+    },
+    {
+      path: '/PayResult',
+      name: 'PayResult',
+      meta: { pageTitle: "支付结果"},
+      component: (resolve) => require(['@/views/PayResult.vue'], resolve)
     },
     { // 匹配
       path: '*',
@@ -97,4 +103,5 @@ const router = new Router({
   mode: 'hash',
   routes
 });
+
 export default router;

@@ -28,7 +28,7 @@
       </div>
       <div class="con-pro">
           <productList :type="'typeOne'" :item="hots"></productList>
-          
+
       </div>
     </div>
     <!-- 热门分类 -->
@@ -44,7 +44,7 @@
         <router-link to="/Classify" class="con-more">更多></router-link>
       </div>
       <div class="con-pro">
-          <productList :type="'typeOne'" :item="newBooks"></productList>
+          <productList :type="'typeOne'" :item="hotClass"></productList>
       </div>
     </div>
 
@@ -140,7 +140,9 @@ export default {
       hots:[],
       tops:[],
       recharges:[],
-      list:[]
+      list:[],
+      tag_name:'',
+      hotClass:[]
     }
   },
   created(){
@@ -166,13 +168,30 @@ export default {
       
       getList({}).then(res=>{
         this.boks_tag=res.data.tags
+        this.tag_name=res.data.tags[0].tag_name
+        this.getClass()
       })
       getmostcharged({}).then(res=>{
         this.recharges=''
       })
+      
+    },
+    getClass(){
+      let data={
+        tag:this.tag_name,
+        end:'-1',
+        area_id:'-1',
+        startItem:0,
+        pageSize:12
+      }
+      getBookList(data).then(res=>{
+        this.hotClass=res.data.books
+      })
     },
     toClass(data,index){
       this.selectTag=index
+      this.tag_name=data.tag_name
+      this.getClass()
     }
   }
 }

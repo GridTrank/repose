@@ -2,10 +2,8 @@
   <div id="app" >
      <com-Header></com-Header>
     <div class="container">
-      <keep-alive>
-          <router-view v-if="$route.meta.keepAlive" ></router-view>
-      </keep-alive>
-      <router-view v-if="!$route.meta.keepAlive" :key="$route.fullPath"></router-view>
+      <router-view  :key="$route.fullPath"></router-view>
+      <!-- <router-view v-if="!$route.meta.keepAlive" :key="$route.fullPath"></router-view> -->
     </div>
     <comFoot class="foot"></comFoot> 
   </div>

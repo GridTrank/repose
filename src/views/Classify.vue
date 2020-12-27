@@ -11,7 +11,21 @@
         </div>
     </div>
     <div class="lists">
-      <productList :item="dataList" :type="'typeOne'"></productList>
+      <productList v-if="dataList.length>0" :item="dataList" :type="'typeOne'"></productList>
+      <div v-else class="nodata">
+          <img src="../assets/images/zw.png" >
+          <p>暂无数据</p>
+      </div>
+      <div class="page">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :page-sizes="[12, 30, 60, 120]"
+          :page-size="12"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+        </el-pagination>
+      </div>
     </div>
 
     
@@ -34,28 +48,32 @@ export default {
         {tag_name:'全部',id:'0'},
       ],
       statusList:[
-        {tag_name:'全部',value:''},
+        {tag_name:'全部',value:-1},
         {tag_name:'连载中',value:0},
         {tag_name:'已完结',value:1},
-
       ],
       dataList:[],
-      tag:'',
-      end:'',
+      tag:'全部',
+      end:-1,
       pager:{
-        startItem:1,
-        pageSize:20,
-      }
+        startItem:0,
+        pageSize:12,
+      },
+      total:0,
     }
   },
   created(){
-    this.getData()
+    this.tag=this.$route.query.tag
+
+    this.getTags()
     this.getBooks()
   },
   methods:{
-    getData(){
+    getTags(){
       getList({}).then(res=>{
         if(res.data.success==1){
+          let tt={tag_name:'全部',id:'0'}
+          res.data.tags.unshift(tt)
           this.tagList=res.data.tags
         }
       })
@@ -64,19 +82,28 @@ export default {
       let data={
         tag:this.tag,
         end:this.end,
-        area:'',
+        area_id:'-1',
         ...this.pager
       }
       getBookList(data).then(res=>{
-        console.log(res)
+        this.dataList=res.data.books
+        this.total=res.data.count
       })
     },
     selectTag(data){
-      this.tag=data.id
+      this.tag=data.tag_name
       this.getBooks()
     },
     selectStatus(data){
       this.end=data.value
+      this.getBooks()
+    },
+    handleSizeChange(val){
+      this.pager.pageSize=val
+      this.getBooks()
+    },
+    handleCurrentChange(val){
+      this.pager.startItem=val-1
       this.getBooks()
     }
   }
@@ -101,6 +128,19 @@ export default {
   }
   .lists{
     margin-top: 50px;
+    .nodata{
+        width: 100%;
+        text-align: center;
+        padding-top: 100px;
+        p{
+            color: #999;
+            font-size: 14px;
+        }
+    }
+    .page{
+      margin-top: 50px ;
+      text-align: center;
+    }
   }
 }
 

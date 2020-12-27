@@ -17,7 +17,7 @@
                     <img src="../assets/images/czjb.png">
                     <div class="gb-num">
                         <p class="num1">金币</p>
-                        <p class="num2">1200</p>
+                        <p class="num2">{{balance}}</p>
                     </div>
                     <p class="czbtn">充值</p>
                 </div>
@@ -25,7 +25,7 @@
                     <img class="vip" src="../assets/images/sxvip.png">
                     <div class="gb-num">
                         <p class="num1">VIP</p>
-                        <p class="num2">剩余10天</p>
+                        <p class="num2">{{getUserInfo.vip_expire_time}}</p>
                     </div>
                     <p class="czbtn">购买</p>
                 </div>
@@ -77,7 +77,8 @@ export default {
                 {goldNum:'VIP季卡',price:'188',average:'2.1'},
                 {goldNum:'VIP年卡',price:'365',average:'1'},
             ],
-            slectIndex:0
+            slectIndex:0,
+            balance:localStorage.getItem("balance")
         }
     },
     computed: {

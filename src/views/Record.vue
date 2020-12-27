@@ -91,6 +91,10 @@ export default {
                         }
                     })
                 }else{
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
                     localStorage.removeItem("allBrowse")
                     this.getData()
                 }
@@ -115,6 +119,7 @@ export default {
         width: 802px;
         position: relative;
         margin-left: 378px;
+        margin-bottom: 20px;
         .btn{
             display: inline-block;
             padding:10px 40px;

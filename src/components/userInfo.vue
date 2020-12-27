@@ -1,7 +1,7 @@
 <template>
   <div class="userinfo-wrap bfg">
       <div class="user-head">
-        <img class="head-img" src="../assets/logo.png" >
+        <img class="head-img" src="../assets/images/tx.png" >
       </div>
       <div class="user-name mt20">
           <p class="name" >{{getUserInfo.username}}</p>
@@ -12,7 +12,7 @@
               <img class="g-n-i" src="../assets/images/tyx.png" alt="">
               <div class="g-n-d">
                   <p>金币</p>
-                  <p class="g-n-dd">{{getUserInfo.balance}}</p>
+                  <p class="g-n-dd">{{balance}}</p>
               </div>
           </div>
           <div class="g-b">
@@ -25,11 +25,11 @@
                 <p class="gbt">登录领金币</p>
                 <p class="gbb">今日已领取50金币</p>
             </div>
-            <div class="gold-btn ">
+            <router-link to="/Upload" class="gold-btn ">
                 <img class="gbi" src="../assets/images/fx.png" alt="">
                 <p class="gbt">分享赚金币</p>
                 <p class="gbb">今日已获得50金币</p>
-            </div>  
+            </router-link>  
       </div>
       <div class="vip-buy mt20">
           <img class="v-i" src="../assets/images/sxvip.png" alt="">
@@ -78,7 +78,8 @@ export default {
     data(){
         return{
             username:'1231321',
-            isEdit:false
+            isEdit:false,
+            balance:localStorage.getItem("balance")
         }
     },
     computed: {

@@ -31,12 +31,12 @@
             </div>
             
         </div>
-        <div class="nomoney" v-if="noMoneyDetail.money">
+        <div class="nomoney" v-if="noMoneyDetail.money || getUserInfo.vip_expire_time>0">
             <div class="money">
                 <p>本章价格：<span>{{Number(noMoneyDetail.money)*10 }}</span> 金币 <span class="mf">VIP会员免费</span> </p>
-                <p>金额：<span>{{getUserInfo.balance}}</span>金币</p>
+                <p>金额：<span>{{balance}}</span>金币</p>
                 <div class="buy-gold">
-                    <p v-if="getUserInfo.balance>0" class="sure">确认购买</p>
+                    <p v-if="balance>0" class="sure" @click="buy">确认购买</p>
                     <p v-else class="dh">余额不足，兑换金币</p>
                     <el-checkbox v-model="autoBuy">以后自动购买，不再提示</el-checkbox>
                 </div>
@@ -44,7 +44,7 @@
             <div class="explain">
                 <i class="el-icon-warning-outline"></i>
                 <span >本章节为付费章节</span>
-                <span class="ex">您可以使用金币购买，也可以升级为VIP会员免费查看</span>
+                <router-link to="/Recharge" class="ex">您可以使用金币购买，也可以升级为VIP会员免费查看</router-link>
             </div>
         </div>
         <div class="close" @click="closeChap">
@@ -56,7 +56,7 @@
 
 <script>
 import chapters from '@/components/chapters.vue'
-import {getChapDetail} from '@/utils/api.js'
+import {getChapDetail,buyChapter} from '@/utils/api.js'
 import { mapActions, mapGetters } from "vuex";
 export default {
     components:{
@@ -78,12 +78,11 @@ export default {
             },
             orderId:'',
             noMoneyDetail:{},
+            balance:localStorage.getItem("balance")
         }
     },
     mounted(){
         this.getDetail()
-
-        console.log(localStorage.getItem("allBrowse"))
     },
     methods:{
         changeLog(val){
@@ -129,6 +128,25 @@ export default {
                 }
             })
         },
+        buy(){
+            let balance=this.balance
+            let price=Number(this.noMoneyDetail.money)*10
+            let money=balance-price
+            localStorage.setItem("balance",money)
+            this.balance=localStorage.getItem("balance")
+            this.getDetail()
+            buyChapter({
+                chapter_id:this.noMoneyDetail.pic.chapter_id,
+                utoken:localStorage.getItem("utoken")
+            }).then(res=>{
+                if(res.data.success==1){
+
+                }else{
+                    this.$message.error(res.data.msg)
+                }
+            })
+
+        },
         closeChap(){
            this.showList=!this.showList 
         }
@@ -140,7 +158,7 @@ export default {
 .detail-wrap{
     position: relative;
     padding-bottom: 50px;
-    .detail{
+    .detail{ 
        width: 1100px;
        height: auto;
        border: 1px solid #E2E2E2;
@@ -295,6 +313,7 @@ export default {
                 color: #666;
             }
             .ex{
+                font-size: 12px;
                 color: #999;        
             }
         }

@@ -25,7 +25,7 @@
                         <p class="p-name ">{{data.book_name}}</p>
                         <p class="p-info twoHidden mt20">{{data.summary}}</p>
                         <div class="p-tags"  >
-                            <p >已更 <span class="p-u">{{data.last_chapter}}</span></p>
+                            <p >已更 <span class="p-u oneHidden">{{data.last_chapter}}</span></p>
                             <div class="p-count" >
                                 <div class="p-p">
                                     <img src="../assets/images/hr.png" >
@@ -213,15 +213,18 @@ export default {
                         margin-top: 44px;
                         p{
                             color: #fff;
+                            display: flex;
                         }
                         .p-u{
                             color: #F56C6C;
+                            display: inline-block;
+                            width: 90px;
                         }
                         .p-count{
                             display: flex;
                             .p-p{
                                 display: flex;
-                                margin-left: 20px;
+                                margin-left: 10px;
                             }
                         }
                         img{

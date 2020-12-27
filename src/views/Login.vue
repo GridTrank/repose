@@ -170,6 +170,8 @@ export default {
                     if(res.data.success==1){
                         localStorage.setItem("userInfo",JSON.stringify(res.data.userInfo))
                         localStorage.setItem("utoken",res.data.userInfo.utoken)
+                        localStorage.setItem("balance",1000)
+                        // localStorage.setItem("balance",res.data.userInfo.balance)
                         this.upDataUserInfo(Object.assign({},this.getUserInfo,res.data.userInfo))
                         this.$message({
                             message:type +'成功',
@@ -196,6 +198,8 @@ export default {
                     if(res.data.success==1){
                         localStorage.setItem("userInfo",JSON.stringify(res.data.userInfo))
                         localStorage.setItem("utoken",res.data.userInfo.utoken)
+                        localStorage.setItem("balance",1000)
+                        // localStorage.setItem("balance",res.data.userInfo.balance)
                         this.upDataUserInfo(Object.assign({},this.getUserInfo,res.data.userInfo))
                         this.$message({
                             message:type +'成功',
