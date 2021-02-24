@@ -47,13 +47,7 @@ a{
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
-.logobg{
-    background: url(../assets/images/logo.png)  no-repeat ;
-    background-size: 100% 100%;
-    width: 150px;
-    height: 50px;
-    background-position: center 0;
-}
+
 .bfg{
     background: #fff !important;
 }

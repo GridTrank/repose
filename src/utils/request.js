@@ -1,15 +1,12 @@
-import config from './config'
 import axios from 'axios'
 import {Message, Loading} from 'element-ui';
-import router from '../router'
 import md5 from 'js-md5';
 
-let baseURL = 'http://app.xueningbai.cn';
-// let baseURL = 'http://app.jiepai110.net';
+let baseURL = 'http://127.0.0.1:3000';
 
 const instance = axios.create({
-   baseURL: '',  
-   // baseURL: baseURL,  
+   // baseURL: '',  
+   baseURL: baseURL,  
    headers: {'Content-Type': 'application/json'},
    timeout: 30000 
  });
@@ -41,8 +38,6 @@ instance.interceptors.request.use(function (config) {
    startLoading()
    let times=(new Date().getTime()/1000).toFixed(0);
    let token=md5(appkey+times)
-   config.data.token=token
-   config.data.time=times
    
    return config;
  }, function (error) {

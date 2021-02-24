@@ -3,7 +3,10 @@ import request from './request.js'
 
 // 热门漫画
 export const getHot=(data)=>{
-    return  request('post','/books/getHot',data)
+    return  request('get','/menu/getMenu',data)
+}
+export const test=(data)=>{
+    return  request('get','/login',data)
 }
 //最新漫画
 export const getNewest=(data)=>{

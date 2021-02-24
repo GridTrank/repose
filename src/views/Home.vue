@@ -1,148 +1,41 @@
 <template>
-  <div class="home-wrap ">
-    <slide :item="banner"></slide>
-    <div class="tabs">
-      <tabs></tabs>
-    </div>
-   
-    <div class="container bodyCon">
-      <div class="con-top">
-        <div class="con-l">
-          <img class="con-i" src="../assets/images/sszk.png" alt="">
-          <p class="con-t">上升最快</p>
-        </div>
-        <router-link to="/RankList" class="con-more">更多></router-link>
-      </div>
-      <div class="con-pro">
-          <productList :type="'typeOne'" :item="tops"></productList>
-      </div>
-    </div>
+  <div class="nav">
+    <el-menu 
+    background-color="#545c64"
+    text-color="#fff"
+    active-text-color="#ffd04b"
+    :router="false">
+      <el-submenu 
+      v-for="(item,index) in navList" :key="index" 
+      :index="item.menu_path">
+          <div slot="title">
+              <span style="color:#fff">{{item.menu_name}}</span>
+          </div>
 
-    <div class="container bodyCon">
-      <div class="con-top">
-        <div class="con-l">
-          <img class="con-i" src="../assets/images/rmmh.png" alt="">
-          <p class="con-t">热门漫画</p>
-        </div>
-        <router-link to="/RankList" class="con-more">更多></router-link>
-      </div>
-      <div class="con-pro">
-          <productList :type="'typeOne'" :item="hots"></productList>
+          <el-menu-item v-for="(v,i) in item.children" :key="i" 
+          :index="v.menu_path">
+              <span style="color:#fff">{{v.menu_name}}</span>
+          </el-menu-item>
 
-      </div>
-    </div>
-    <!-- 热门分类 -->
-    <div class="container bodyCon">
-      <div class="con-top">
-        <div class="con-l">
-          <img class="con-i" src="../assets/images/rmmh.png" alt="">
-          <p class="con-t">热门分类</p>
-          <div class="hot-c">
-            <span class="tag" :class="selectTag==el?'select-tag':''" @click="toClass(e,el)" v-for="(e,el) in boks_tag.slice(0,4)" :key="el">{{e.tag_name}}</span>
-          </div>
-        </div>
-        <router-link to="/Classify" class="con-more">更多></router-link>
-      </div>
-      <div class="con-pro">
-          <productList :type="'typeOne'" :item="hotClass"></productList>
-      </div>
-    </div>
-
-    <!-- 排行榜 -->
-    <div class="rank-box">
-      <div class="rank-wrap">
-        <div class="container rank">
-          <div class="con-top">
-            <div class="con-l">
-              <p class="con-t">新书版</p>
-            </div>
-            <router-link to="/RankList" class="con-more">更多></router-link>
-          </div>
-          <div class="con-pro">
-              <productList :type="'typeTwo'" :item="newBooks" :from="'rankHome'"></productList>
-          </div>
-        </div>
-        <div class="container rank">
-          <div class="con-top">
-            <div class="con-l">
-              <p class="con-t">点击版</p>
-            </div>
-            <router-link to="/RankList" class="con-more">更多></router-link>
-          </div>
-          <div class="con-pro">
-              <productList :type="'typeTwo'" :item="hots"></productList>
-          </div>
-        </div>
-        <div class="container rank">
-          <div class="con-top">
-            <div class="con-l">
-              <p class="con-t">推荐版</p>
-            </div>
-            <router-link to="/RankList" class="con-more">更多></router-link>
-          </div>
-          <div class="con-pro">
-              <productList :type="'typeTwo'" :item="endBooks"></productList>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 完结 -->
-    <div class="container bodyCon">
-      <div class="con-top">
-        <div class="con-l">
-          <img class="con-i" src="../assets/images/wjyx.png" alt="">
-          <p class="con-t">完结优选</p>
-        </div>
-        <router-link to="/RankList" class="con-more">更多></router-link>
-      </div>
-      <div class="con-pro">
-          <productList :type="'typeOne'" :item="endBooks"></productList>
-      </div>
-    </div>
-
-    
+      </el-submenu>
+    </el-menu>
   </div>
   
 </template>
 
 <script>
-
-import productList from '@/components/productList.vue'
-import tabs from '@/components/tabs.vue'
-import slide from '@/components/slide.vue'
 import {
-  getEnds,
-  getNewest,
-  getBanners,
-  getList,
-  getmostcharged,
   getHot,
-  getTops,
-  getBookList
+  test
 } from '@/utils/api.js'
 import configUrl from '@/utils/config.js'
 export default {
   components:{
-    productList,
-    tabs,
-    slide
+
   },
   data(){
     return{
-      selectTag:0,
-      homeData:{},
-      boks:[],
-      boks_tag:[],
-      newBooks:[],
-      endBooks:[],
-      banner:[],
-      hots:[],
-      tops:[],
-      recharges:[],
-      list:[],
-      tag_name:'',
-      hotClass:[]
+      navList:[]
     }
   },
   created(){
@@ -150,49 +43,32 @@ export default {
   },
   methods:{
     getData(){
-      getNewest({}).then((res)=>{
-        this.newBooks=res.data.newest
-      })
-      getBanners({}).then(res=>{
-        this.banner=res.data.banners
-      })
-      getHot({}).then(res=>{
-        this.hots=res.data.hots
-      })
-      getEnds({}).then(res=>{
-        this.endBooks=res.data.ends
-      })
-      getTops({}).then(res=>{
-        this.tops=res.data.tops
-      })
-      
-      getList({}).then(res=>{
-        this.boks_tag=res.data.tags
-        this.tag_name=res.data.tags[0].tag_name
-        this.getClass()
-      })
-      getmostcharged({}).then(res=>{
-        this.recharges=''
-      })
-      
-    },
-    getClass(){
-      let data={
-        tag:this.tag_name,
-        end:'-1',
-        area_id:'-1',
-        startItem:0,
-        pageSize:12
-      }
-      getBookList(data).then(res=>{
-        this.hotClass=res.data.books
+      getHot().then(res=>{
+        let data=res.data.menuList
+        this.getParent(data)
       })
     },
-    toClass(data,index){
-      this.selectTag=index
-      this.tag_name=data.tag_name
-      this.getClass()
+    getParent(data){
+      let arr=[]
+      data.forEach(ele => {
+          if(ele.parent_id && ele.child_id!=0){
+            ele.children=[]
+            arr.push(ele)
+          }
+      });
+      this.getChild(data,arr)
+    },
+    getChild(data,arr){
+      arr.forEach(ele=>{
+        data.forEach(el=>{
+          if(ele.child_id==el.parent_id){
+            ele.children.push(el)
+          }
+        })
+      })
+      this.navList=arr
     }
+
   }
 }
 </script>

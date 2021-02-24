@@ -10,78 +10,7 @@ const routes= [
       meta: { pageTitle: "首页", keepAlive: true},
       component: (resolve) => require(['@/views/Home.vue'], resolve)
     },
-    {
-      path: '/Login',
-      name: 'Login',
-      meta: { pageTitle: "登录/注册", keepAlive: true},
-      component: (resolve) => require(['@/views/Login.vue'], resolve)
-    },
-    {
-      path: '/Detail',
-      name: 'Detail',
-      meta: { pageTitle: "漫画详情", keepAlive: true},
-      component: (resolve) => require(['@/views/Detail.vue'], resolve)
-    },
-    {
-      path: '/Catalog',
-      name: 'Catalog',
-      meta: { pageTitle: "章节目录", keepAlive: true},
-      component: (resolve) => require(['@/views/Catalog.vue'], resolve)
-    },
-    {
-      path: '/Classify',
-      name: 'Classify',
-      meta: { pageTitle: "分类", keepAlive: true},
-      component: (resolve) => require(['@/views/Classify.vue'], resolve)
-    },
-    {
-      path: '/Search',
-      name: 'Search',
-      meta: { pageTitle: "搜索",keepAlive: true},
-      component: (resolve) => require(['@/views/Search.vue'], resolve)
-    },
-    {
-      path: '/UpdateToday',
-      name: 'UpdateToday',
-      meta: { pageTitle: "今日更新"},
-      component: (resolve) => require(['@/views/UpdateToday.vue'], resolve)
-    },
-    {
-      path: '/RankList',
-      name: 'RankList',
-      meta: { pageTitle: "排行榜"},
-      component: (resolve) => require(['@/views/RankList.vue'], resolve)
-    },
-    {
-      path: '/Recharge',
-      name: 'Recharge',
-      meta: { pageTitle: "充值"},
-      component: (resolve) => require(['@/views/Recharge.vue'], resolve)
-    },
-    {
-      path: '/Record',
-      name: 'Record',
-      meta: { pageTitle: "阅读记录",isToken:true},
-      component: (resolve) => require(['@/views/Record.vue'], resolve)
-    },
-    {
-      path: '/UserCenter',
-      name: 'UserCenter',
-      meta: { pageTitle: "用户中心"},
-      component: (resolve) => require(['@/views/UserCenter.vue'], resolve)
-    },
-    {
-      path: '/Upload',
-      name: 'Upload',
-      meta: { pageTitle: "下载"},
-      component: (resolve) => require(['@/views/Upload.vue'], resolve)
-    },
-    {
-      path: '/PayResult',
-      name: 'PayResult',
-      meta: { pageTitle: "支付结果"},
-      component: (resolve) => require(['@/views/PayResult.vue'], resolve)
-    },
+  
     { // 匹配
       path: '*',
       name: 'Home',
