@@ -1,6 +1,24 @@
 <template>
   <div class="nav">
-    
+    <el-menu 
+    background-color="#545c64"
+    text-color="#fff"
+    active-text-color="#ffd04b"
+    :router="false">
+      <el-submenu 
+      v-for="(item,index) in navList" :key="index" 
+      :index="item.menu_path">
+          <div slot="title">
+              <span style="color:#fff">{{item.menu_name}}</span>
+          </div>
+
+          <el-menu-item v-for="(v,i) in item.children" :key="i" 
+          :index="v.menu_path">
+              <span style="color:#fff">{{v.menu_name}}</span>
+          </el-menu-item>
+
+      </el-submenu>
+    </el-menu>
   </div>
   
 </template>

@@ -1,21 +1,29 @@
 <template>
   <div id="app" >
-    <div class="container">
-      <router-view  :key="$route.fullPath"></router-view>
-      <!-- <router-view v-if="!$route.meta.keepAlive" :key="$route.fullPath"></router-view> -->
-      </div>
+      <el-container>
+        <el-header>
+            <comHeader></comHeader>
+        </el-header>
+        <el-container>
+          <el-aside>
+              <comNav></comNav>
+          </el-aside>
+          <el-main>
+              <router-view  :key="$route.fullPath"></router-view>
+          </el-main>
+        </el-container>
+      </el-container>
   </div>
 </template>
 
 <script>
-
-import {userAutoReg,userAutoLogin} from '@/utils/api.js'
-import {mapActions,mapGetters,mapMutations} from 'vuex'
-import md5 from 'js-md5';
+import comHeader from '@/components/comHeader.vue'
+import comNav from '@/components/comNav.vue'
 export default {
   name: 'App',
   components:{
-
+    comHeader,
+    comNav
   },
   data(){
     return{
