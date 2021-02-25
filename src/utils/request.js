@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {Message, Loading} from 'element-ui';
 import md5 from 'js-md5';
+import qs from 'qs';
 
 let baseURL = 'http://127.0.0.1:3000';
 
@@ -10,7 +11,6 @@ const instance = axios.create({
    headers: {'Content-Type': 'application/json'},
    timeout: 30000 
  });
-
 
  // loading框设置局部刷新，且所有请求完成后关闭loading框
 let loading;
@@ -29,16 +29,14 @@ function endLoading() {
 }
 
 
-let appkey='clwlxw';
-// let appkey='hahmh';
-
-
  // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
    startLoading()
-   let times=(new Date().getTime()/1000).toFixed(0);
-   let token=md5(appkey+times)
-   
+   config.method === 'post'
+        ? config.data = qs.stringify({...config.data})
+        : config.params = {...config.params};
+   config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
    return config;
  }, function (error) {
    return Promise.reject(error);
@@ -56,21 +54,23 @@ instance.interceptors.response.use(function (response) {
    return Promise.reject(error);
  });
 
- export default function request(methods, url, params) {
-    switch (methods) {
-       case 'get':
-          return get(url, params);  
-       case 'post':
-          return post(url, params)
-    }
- }
+//  export default function request(methods, url, params) {
+//     switch (methods) {
+//        case 'get':
+//           return get(url, params);  
+//        case 'post':
+//           return post(url, params)
+//     }
+//  }
+
+export default instance
 
 //get请求
 function get(url, params) {
-    return instance.get(url, params)
- }
+   return instance.get(url, params)
+}
  
- //post请求
- function post(url, params) {
-    return instance.post(url, params)
- }
+//post请求
+function post(url, params) {
+   return instance.post(url, params)
+}

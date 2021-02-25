@@ -6,7 +6,7 @@
               <div class="left">
                   <router-link class="left-txt" :to="'/Home'">
                     <div class="logo">
-                        <img src="../assets/images/logo.png" alt="" srcset="">
+                        <!-- <img src="../assets/images/logo.png" alt="" srcset=""> -->
                     </div>
 
                     <div class="text">

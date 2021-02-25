@@ -21,3 +21,25 @@ export const validateTel = function (tel){
     myreg = new RegExp(myreg);
     return myreg.test(tel);
   }
+  
+export const getDate=function(_,type,value){
+    var date=''
+    if(value){
+        if(type=='day'){
+            var d1=new Date(value[0])
+            var d2=new Date(value[1])
+            value[0]=d1.getFullYear() + '-' + (d1.getMonth() + 1) + '-' + d1.getDate();
+            value[1]=d2.getFullYear() + '-' + (d2.getMonth() + 1) + '-' + d2.getDate();
+            return value
+        }else if(type=='week'){
+            var newDate = new Date(value);
+            date= newDate.getFullYear() + '-' + (newDate.getMonth()+1) + '-' + newDate.getDate();
+            return date
+        }else if(type == 'month'){
+            return value
+        }
+    }else{
+        return ''
+    }
+    
+}

@@ -5,7 +5,7 @@ import router from './router'
 import Vuex from 'vuex'
 import store from './store'
 
-import './assets/global.css'
+import './assets/global.less'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)

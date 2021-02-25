@@ -1,5 +1,5 @@
 <template>
-  <div class="nav">
+  <div class="home-wrap">
     
   </div>
   
@@ -17,39 +17,12 @@ export default {
   },
   data(){
     return{
-      navList:[]
     }
   },
   created(){
-    this.getData()
   },
   methods:{
-    getData(){
-      getHot().then(res=>{
-        let data=res.data.menuList
-        this.getParent(data)
-      })
-    },
-    getParent(data){
-      let arr=[]
-      data.forEach(ele => {
-          if(ele.parent_id && ele.child_id!=0){
-            ele.children=[]
-            arr.push(ele)
-          }
-      });
-      this.getChild(data,arr)
-    },
-    getChild(data,arr){
-      arr.forEach(ele=>{
-        data.forEach(el=>{
-          if(ele.child_id==el.parent_id){
-            ele.children.push(el)
-          }
-        })
-      })
-      this.navList=arr
-    }
+ 
 
   }
 }
@@ -58,7 +31,6 @@ export default {
 <style scoped lang="less">
 .home-wrap{
   width: 100%;
-  height: auto;
   .tabs{
     margin: auto;
     width: 95%;
