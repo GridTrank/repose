@@ -1,5 +1,4 @@
 import commonInput from '@/components/commonInput.vue'
-import exportDialog from '@/components/exportDialog.vue'
 import commonTable from '@/components/commonTable.vue'
 import { mapActions, mapGetters } from 'vuex'
 import {
@@ -27,17 +26,7 @@ export default{
                     {required: true, message: '请输入修改值', trigger: 'blur'}
                 ]
             },
-            //商品成本
-            goodCost:[
-                {label:'不更改',value:0},
-                {label:'固定值=',value:1},
-                {label:'商品原价+',value:2},
-                {label:'商品原价*',value:3},
-                {label:'商品成本+',value:4},
-                {label:'商品成本*',value:5},
-            ],
-            //商品类型
-            goodType:[],
+
             queryData:{},
             pager:{
                 page:1,
@@ -46,46 +35,50 @@ export default{
             searchFrom:[
                 {
                     label:'商品编码:',
-                    type:'textarea',
-                    search:'in',
-                    split:/[\n\r]/,
-                    value:'goodsBn',
+                    type:'text',
+                    value:'product_code',
                     clear:true,
-                    placeholder:'请输入商品编码，多个编码换行',
+                    search:'like',
+                    placeholder:'请输入商品编码',
                     style:'width:250px'
                 },
                 {
-                    label:'商品规格编码:',
-                    type:'textarea',
-                    search:'in',
-                    split:/[\n\r]/,
-                    value:'productBn',
-                    clear:true,
-                    placeholder:'请输入商品规格编码，多个编码换行',
-                    style:'width:250px'
-                },
-                {
-                    type:'textarea',
-                    search:'in',
-                    split:/[\n\r]/,
-                    value:'productName',
+                    type:'text',
+                    value:'product_name',
                     label:'商品名称:',
+                    search:'like',
                     clear:true,
-                    placeholder:'请输入商品名称，多个名称换行',
+                    placeholder:'请输入商品名称',
                     style:'width:250px'
                 },
 
                 {
                     type:'select',
-                    value:'productType',
+                    value:'store_name',
+                    label:'所属店铺',
                     search:'eq',
+                    placeholder:'请选择',
+                    selectFrom:[]
+                },
+                {
+                    type:'select',
+                    value:'product_type',
                     label:'商品类型',
+                    search:'eq',
+                    placeholder:'请选择',
+                    selectFrom:[]
+                },
+                {
+                    type:'select',
+                    value:'is_sale',
+                    label:'是否上架',
+                    search:'eq',
                     placeholder:'请选择',
                     selectFrom:[]
                 },
                 {
                     type:'date',
-                    name:'createTime',
+                    name:'create_time',
                     search:'between',
                     label:'创建时间',
                 },
@@ -113,52 +106,47 @@ export default{
             tableData:[],
             columnData:[
                 {
-                    prop:'goodsBn',
+                    prop:'product_code',
                     label:'商品编码',
                 },
                 {
-                    prop:'productBn',
-                    label:'商品规格编码',
-                },
-                {
-                    prop:'productName',
+                    prop:'product_name',
                     label:'商品名称',
                 },
                 {
-                    prop:'originalPrice',
-                    label:'商品原价',
+                    prop:'product_describe',
+                    label:'商品描述',
                 },
                 {
-                    prop:'costPrice',
-                    label:'商品成本',
+                    prop:'product_price',
+                    label:'商品价格',
                 },
                 {
-                    prop:'priceRadio',
-                    label:'成本/原价',
-                },
-                {
-                    prop:'productType',
+                    prop:'product_type',
                     label:'商品类型',
                 },
                 {
-                    prop:'createTime',
+                    prop:'stock',
+                    label:'库存',
+                },
+                {
+                    prop:'create_time',
                     label:'创建时间',
                 },
                 {
-                    prop:'updateTime',
-                    label:'更新时间',
+                    prop:'store_name',
+                    label:'所属店铺',
                 },
                 {
-                    prop:'lastUserLogin',
-                    label:'最后操作人员',
+                    prop:'is_sale',
+                    label:'是否上架',
                 },
             ],
             count:0,
             options:{
-                selection:true,
-                width:300,
+                selection:true,  //是否开启多选
+                width:200,    //操作栏长度
                 operation:[
-                    {type:'primary',name:'变更日志',value:'redirect'},
                     {type:'primary',name:'编辑',value:'edit'},
                     {type:'danger',name:'删除',value:'del'}
                 ]
@@ -173,7 +161,6 @@ export default{
     },
     components:{
         commonInput,
-        exportDialog,
         commonTable
     },
     computed: {
@@ -182,93 +169,24 @@ export default{
         ])
       },
     created(){
-        // this.getData({})
-        getProductList().then(res=>{
-            console.log(res)
-        })
-    },
-    watch:{
-        "dialogTableVisible":function(val){
-            if(!val){
-                this.editData={
-                    condition:1,
-                    costPrice:1,
-                    productType:'',
-                    costNum:'',
-                }
-            }
-        },
-        "editData.costPrice":function(val){
-            if(val===0){
-                this.ruleForm.costNum[0].required=false
-            }
-        }
+        this.getData({})
     },
     methods:{
         //搜索
         search(data){
-            let query=data
+            console.log(data)
             this.queryData= data 
             this.pager.page=1
             this.pager.rows=20
-            this.getData(query)
+            this.getData(data)
         },
         getData(data){
-            const loading = this.$loading({
-				lock: true,
-				text: 'Loading',
-				spinner: 'el-icon-loading',
-				background: 'rgba(0, 0, 0, 0.7)'
-            });
-            data.page=this.pager.page
-            data.rows=this.pager.rows
-            http.post('/warn_product/index',data,(res)=>{
-                loading.close();
-                this.count=res.count
-                this.tableData=res.items
-            }) 
-        },
-        //获取操作人员
-        getUser(){
-            const loading = this.$loading({
-				lock: true,
-				text: 'Loading',
-				spinner: 'el-icon-loading',
-				background: 'rgba(0, 0, 0, 0.7)'
-			});
-            var option = {
-                page:1,
-                rows:999
-            }
-            http.post('/User/index',option, (result) => {
-                loading.close();
-                result.items.forEach(item=>{
-                    item.label=item.userName
-                    item.value=item.userId
-                })
-                this.searchFrom.forEach(item=>{
-                    if(item.value=='userId'){
-                        item.selectFrom = result.items;  
-                    } 
-                }) 
+           getProductList(data).then(res=>{
+                this.tableData=res.data.result.productList
+                this.count=res.data.result.count
             })
         },
-        getProductType(){
-            http.post("/warn_product/productTypeOption",{},(res)=>{
-                res.forEach(item=>{
-                    item.label=item.optionValue
-                    item.value=item.optionLabel
-                })
-                let result=JSON.parse(JSON.stringify(res))
-                this.searchFrom.forEach(item=>{
-                    if(item.value=='productType'){
-                        item.selectFrom=result
-                    }
-                })
-                res.unshift({optionValue:'不更改',optionLabel:''})
-                this.goodType=res
-            })
-        },
+     
         //单个修改
         edit(data){
             this.isBatch=false

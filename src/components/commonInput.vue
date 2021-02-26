@@ -105,7 +105,6 @@ export default {
                 this.searchData[name].opt[0]= this.searchData[name].opt[0] +' 00:00:00'
                 this.searchData[name].opt[1]= this.searchData[name].opt[1] +' 23:59:59'
             }
-            console.log(this.searchData)
         },
         //导入成功
         FileSuccess(res){
@@ -165,7 +164,7 @@ export default {
                                             searchData[name]=['eq',that.searchData[name] ]
                                             break;
                                         case 'like':
-                                            searchData[name] = ['like',`%${that.searchData[name]}%`];
+                                            searchData[name] = ['like',` "%${that.searchData[name]}%" `];
                                         break;
                                         default: searchData[name] = that.searchData[name]
                                     }

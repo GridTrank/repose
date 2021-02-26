@@ -27,7 +27,7 @@
                               <img src="../assets/images/icon_default.png" alt="" srcset="">
                           </div>
                           <div class="name">
-                              用户
+                              {{getUserInfo.userInfo.nick_name}}
                           </div>
                       </div>
                       <el-dropdown-menu slot="dropdown">
@@ -35,8 +35,8 @@
                           <el-dropdown-item>个人信息</el-dropdown-item>
                         </router-link>
 
-                        <div >
-                          <el-dropdown-item>退出系统</el-dropdown-item>
+                        <div @click="loginOut">
+                          <el-dropdown-item >退出系统</el-dropdown-item>
                         </div>
                       </el-dropdown-menu>
 
@@ -131,7 +131,7 @@
 </style>
 
 <script>
-
+import { mapActions,mapGetters } from 'vuex'
 export default {
   	name: "mnsHeader",
 	data() {
@@ -141,17 +141,26 @@ export default {
 	},
 
 	computed: {
-
+    ...mapGetters(['getUserInfo'])
 	},
 	created() {
-		this.getData();
 	},
 
 	methods: {
-		getData() {	
-    },
-
-
+    ...mapActions([
+      'upDataUserInfo'
+    ]),
+		loginOut(){
+      sessionStorage.clear()
+      this.$message({
+        message:'已退出系统',
+        type:'success'
+      })
+      this.upDataUserInfo('')
+      this.$router.push({
+          path:'/login'
+      })
+    }
 	}
 };
 </script>

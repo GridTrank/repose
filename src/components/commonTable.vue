@@ -1,7 +1,6 @@
 <template>
     <div class="table-wrap">
         <el-table 
-        height="100%"
         size="small"
         :data="tableData" 
          @selection-change="handleSelectionChange"
@@ -31,8 +30,8 @@
                             <span>{{ss.optionLabel}}: {{ss.optionValue}}</span>
                         </p>
                     </span>
-                    <!-- 日报警 || 异常报警-->
-                    <span v-else-if="item.prop=='isDayAlarm' || item.prop=='isErrAlarm' ">
+                    <!-- 是否商家 -->
+                    <span v-else-if="item.prop=='isSale' || item.prop=='isErrAlarm' ">
                        {{scope.row[item.prop] == 0 ? '否':'是'}}
                     </span>
                     <!-- 接收状态 -->
@@ -62,22 +61,7 @@
                         </span>
                         <span v-else>{{scope.row[item.prop]}}</span>
                     </span>
-                    <!-- 备注信息  -->
-                    <div class="remark" v-else-if="item.prop=='loggerRemark'">
-                      <div :class="['info',{'all':more == scope.row.loggerId}]">
-                        <span v-for="(ss,si) in scope.row[item.prop]" :key="si">{{ss.loggerRemark}}</span>
-                      </div>
-                      <p :class="['blue', {'none':more == scope.row.loggerId}] " @click="moreRemark(scope.row.loggerId)" v-if="(scope.row[item.prop].length && (scope.row[item.prop].length > 2 || scope.row[item.prop][0].loggerRemark.length > 20))">更多</p>
-                    </div>
-                    <span v-else-if="item.prop=='productList'">
-                       <p v-for="(ss,si) in scope.row[item.prop]" :key="si">
-                            <span>{{ss.product_name}} x {{ss.buy_quantity}}</span>
-                        </p>
-                    </span>
-                    <!-- 报警通知方式-->
-                    <span v-else-if="item.prop=='alarmType'">
-                        <span v-for="(ss,si) in scope.row[item.prop]" :key="si">{{ss}}<span v-if="si < scope.row[item.prop].length - 1">/</span></span>
-                    </span>
+               
                     <span v-else>{{scope.row[item.prop]}}</span>
                 </template>
 
@@ -95,7 +79,7 @@
             </el-table-column>
         </el-table>
         <!-- 分页 开始 -->
-        <div class="page" v-if="count > pager.rows">
+        <div class="page" >
             <el-pagination
                 @current-change="handleCurrentChange"
                 @size-change="handleSizeChange"

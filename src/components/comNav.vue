@@ -35,6 +35,7 @@ import {
   addRole
 } from '@/utils/api.js'
 import configUrl from '@/utils/config.js'
+import { mapActions,mapGetters } from 'vuex'
 export default {
   components:{
 
@@ -45,17 +46,13 @@ export default {
       isCollapse:false
     }
   },
+  computed:{
+      ...mapGetters(['getUserInfo'])
+  },
   created(){
-    this.getData()
-  
+    this.getParent(this.getUserInfo.menuList)
   },
   methods:{
-    getData(){
-      getMenu({role:1}).then(res=>{
-        let data=res.data.menuList
-        this.getParent(data)
-      })
-    },
     getParent(data){
       let arr=[]
       data.forEach(ele => {
@@ -83,7 +80,6 @@ export default {
         // } 
         this.isCollapse = !this.isCollapse;
         this.$emit('showMenu',!this.isCollapse)
-
     }
 
   }

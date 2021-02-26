@@ -11,6 +11,12 @@ const routes= [
       component: (resolve) => require(['@/views/Home.vue'], resolve)
     },
     {
+      path: '/login',
+      name: 'Login',
+      meta: { pageTitle: "登录", keepAlive: true},
+      component: (resolve) => require(['@/views/Login/index.vue'], resolve)
+    },
+    {
       path: '/Product/List',
       name: 'ProductList',
       meta: { pageTitle: "商品列表", keepAlive: true},
@@ -68,5 +74,9 @@ const router = new Router({
   mode: 'hash',
   routes
 });
+const VueRouterPush = Router.prototype.push
+Router.prototype.push = function push (to) {
+  return VueRouterPush.call(this, to).catch(err => err)
+}
 
 export default router;

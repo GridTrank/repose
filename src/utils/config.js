@@ -3,6 +3,6 @@ let config = {};
 if (process.env.NODE_ENV === 'production') {
     
 } else {
-    config.Domain = 'http://www.jiepai110.net';
+    config.Domain = 'http://127.0.0.1:3000';
 }
 export default config.Domain

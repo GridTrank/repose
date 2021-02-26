@@ -1,6 +1,6 @@
 <template>
   <div class="home-wrap">
-    
+      你好
   </div>
   
 </template>
@@ -8,9 +8,7 @@
 <script>
 import {
   getHot,
-  test
 } from '@/utils/api.js'
-import configUrl from '@/utils/config.js'
 export default {
   components:{
 

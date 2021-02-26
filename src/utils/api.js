@@ -34,4 +34,12 @@ export const getOrdertList=(data)=>{
         data:data
     })
 }
+//登录
+export const login=(data)=>{
+    return  instance({
+        method:'post',
+        url:'/user/login',
+        data:data
+    })
+}
 
