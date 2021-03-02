@@ -49,28 +49,12 @@ instance.interceptors.response.use(function (response) {
    //    })
    // },1000)
    endLoading()
-   return response;
+   return response.data;
  }, function (error) {
    return Promise.reject(error);
  });
 
-//  export default function request(methods, url, params) {
-//     switch (methods) {
-//        case 'get':
-//           return get(url, params);  
-//        case 'post':
-//           return post(url, params)
-//     }
-//  }
+
 
 export default instance
 
-//get请求
-function get(url, params) {
-   return instance.get(url, params)
-}
- 
-//post请求
-function post(url, params) {
-   return instance.post(url, params)
-}

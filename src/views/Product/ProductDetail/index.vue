@@ -1,68 +1,72 @@
 <template>
   <div class="warnlist-wrap main-warp">
-        <commonInput 
-        :searchFrom="searchFrom" 
-        @batchModify="batchModify"
-        @exportReport="exportReport"
-        @search="search"
-        @del="del"
-        :from="'warnList'"
-        ></commonInput>
-        <!-- 表格 -->
+        <el-form :model="formData"  label-width="100px">
+          <el-form-item label="商品名称" >
+            <el-input style="width:300px" v-model="formData.product_name" placeholder="请输入商品名称"></el-input>
+          </el-form-item>
+          <el-form-item label="商品描述" >
+            <el-input type="textarea" style="width:300px" v-model="formData.product_describe" placeholder="请输入商品描述"></el-input>
+          </el-form-item>
+          <el-form-item label="商品价格" >
+            <el-input style="width:300px" v-model="formData.product_price" placeholder="请输入商品价格"></el-input>
+          </el-form-item>
+          <el-form-item label="商品库存" >
+            <el-input style="width:300px" v-model="formData.stock" placeholder="请输入商品库存"></el-input>
+          </el-form-item>
+          <el-form-item label="是否上架" >
+            <el-select v-model="formData.is_sale">
+              <el-option label="是" :value="1"></el-option>
+              <el-option label="否" :value="2"></el-option>
+            </el-select>
+          </el-form-item>
 
-        <commonTable 
-        :tableData="tableData" 
-        :count="count" 
-        :columnData="columnData"
-        :options="options"
-        @edit="edit"
-        @currentChange="currentChange"
-        @sizeChange="sizeChange"
-        @redirect="redirect"
-        @select="select"
-        @del="del"
-        ></commonTable>
+          <el-form-item label="主图">
+            <el-upload
+              action="http://127.0.0.1:3000/product/productBanner"
+              :file-list="fileList"
+              ref="upload"
+              list-type="picture-card"
+              :on-preview="handleBannerPreview"
+              :multiple='true'
+              :on-success="fileSuccess"
+              :on-remove="fileRemove"
+              :before-upload="beforeUpload"
+              name="imgSrc"
+              :data="fileData"
+              :limit="5"
+            >
+               <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisibleBanner">
+              <img width="100%" :src="dialogImageUrlBanner" alt="">
+            </el-dialog>
+          </el-form-item>
 
-        <!-- 修改弹窗 -->
-        <el-dialog :title="diaTitle" :visible.sync="dialogTableVisible" width="40%">
-            <el-form :model="editData" :rules="ruleForm" ref="ruleForm">
-              <el-form-item label="修改条件" v-if="isBatch" label-width="200px">
-                  <el-radio-group v-model="editData.condition" @change="changeCondition">
-                    <el-radio v-for="(ra,ri) in conditions" :key="ri" :label="ra.value">{{ra.name}}</el-radio>
-                  </el-radio-group>
-              </el-form-item>
-              <el-form-item label="商品条码" v-if="!isBatch" label-width="200px">
-                <span>{{changeEditData[0].productBn}}</span>
-              </el-form-item>
-              <el-form-item label="商品名称" v-if="!isBatch" label-width="200px">
-                <span>{{changeEditData[0].productName}}</span>
-              </el-form-item>
-              <el-form-item label="商品成本" prop="costNum" label-width="200px">
-                  <el-select v-model="editData.costPrice" >
-                    <el-option v-for="(gd,gi) in goodCost" :key="gi" :label="gd.label" :value="gd.value"></el-option>
-                  </el-select>
-                  <el-input :disabled="editData.costPrice===0" v-model="editData.costNum" style="width:150px;"></el-input>
-              </el-form-item>
-              <el-form-item label="商品类型" prop="productType"  label-width="200px">
-                  <el-select v-model="editData.productType" >
-                    <el-option v-for="(gd,gi) in goodType" :key="gi" :label="gd.optionValue" :value="gd.optionLabel"></el-option>
-                  </el-select>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="closeDia('ruleForm')">取 消</el-button>
-              <el-button type="primary" @click="change('ruleForm')">确 定</el-button>
-            </div>
-        </el-dialog>
-        
-        <!-- 导出 -->
-        <exportDialog 
-        :isVisible.sync="isVisible" 
-        :queryKey="'warnproduct_index'"
-        :exportApi="'/warn_product/export'"
-        :queryData="queryData" 
-        :pager="pager" />
-  </div>
+          <el-form-item label="详情图">
+            <el-upload
+              action="http://127.0.0.1:3000/product/detailImg"
+              :file-list="fileListDetail"
+              ref="uploads"
+              list-type="picture-card"
+              :on-preview="handleBannerPreview"
+              :multiple='true'
+              :on-success="detailSuccess"
+              :on-remove="detailRemove"
+              :before-upload="detailBeforeUpload"
+              name="imgSrc"
+              :data="fileDetail"
+              :limit="6"
+            >
+               <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisibleBanner">
+              <img width="100%" :src="dialogImageUrlBanner" alt="">
+            </el-dialog>
+          </el-form-item>
+
+        </el-form>
+        <el-button type="primary" :disabled="getUserInfo.userInfo.store_id==0" @click="save">保存</el-button>
+  </div> 
 </template>
 
 <style lang="less" src="./index.less"></style>

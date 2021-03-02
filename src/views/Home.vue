@@ -9,18 +9,26 @@
 import {
   getHot,
 } from '@/utils/api.js'
+import http from '@/utils/httpUtil.js'
 export default {
   components:{
 
   },
   data(){
     return{
+
     }
   },
   created(){
   },
   methods:{
- 
+    getStoreList(){
+      http.post('/store/storeList',{},(res)=>{
+          if(res){
+              sessionStorage.setItem('storeList',res)
+          }
+      })
+    }
 
   }
 }

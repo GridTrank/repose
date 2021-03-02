@@ -30,14 +30,15 @@ export default {
         pass_word:this.password
       }
       login(data).then(res=>{
-        if(res.data.code==200){
+        console.log(res)
+        if(res.code==200){
           this.$message({
             message:'登录成功',
             type:'success'
           })
-          sessionStorage.setItem("userInfo",JSON.stringify(res.data.result))
+          sessionStorage.setItem("userInfo",JSON.stringify(res.result))
           sessionStorage.setItem("isLogin",true)
-          this.upDataUserInfo(res.data.result)
+          this.upDataUserInfo(res.result)
           this.$router.push({
             path:'/home'
           })

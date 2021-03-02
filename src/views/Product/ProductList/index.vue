@@ -6,6 +6,7 @@
         @exportReport="exportReport"
         @search="search"
         @del="del"
+        @add="add"
         :from="'productList'"
         ></commonInput>
         <!-- 表格 -->

@@ -1,8 +1,10 @@
 import commonInput from '@/components/commonInput.vue'
 import commonTable from '@/components/commonTable.vue'
+import http from '@/utils/httpUtil.js'
 import { mapActions, mapGetters } from 'vuex'
 import {
-    getProductList
+    getProductList,
+    delProduct
 }from '@/utils/api'
 export default{
     data(){
@@ -21,11 +23,7 @@ export default{
                 {name:'按当前页',value:2},
                 {name:'按勾选条件',value:3},
             ],
-            ruleForm:{
-                costNum:[
-                    {required: true, message: '请输入修改值', trigger: 'blur'}
-                ]
-            },
+
 
             queryData:{},
             pager:{
@@ -51,14 +49,15 @@ export default{
                     placeholder:'请输入商品名称',
                     style:'width:250px'
                 },
-
                 {
                     type:'select',
-                    value:'store_name',
+                    value:'store_id',
                     label:'所属店铺',
                     search:'eq',
                     placeholder:'请选择',
-                    selectFrom:[]
+                    selectFrom:[
+                        
+                    ]
                 },
                 {
                     type:'select',
@@ -66,7 +65,16 @@ export default{
                     label:'商品类型',
                     search:'eq',
                     placeholder:'请选择',
-                    selectFrom:[]
+                    selectFrom:[
+                        {
+                            label:'官网',
+                            value:2
+                        },
+                        {
+                            label:'商家',
+                            value:3
+                        },
+                    ]
                 },
                 {
                     type:'select',
@@ -74,7 +82,16 @@ export default{
                     label:'是否上架',
                     search:'eq',
                     placeholder:'请选择',
-                    selectFrom:[]
+                    selectFrom:[
+                        {
+                            label:'是',
+                            value:1
+                        },
+                        {
+                            label:'否',
+                            value:2
+                        },
+                    ]
                 },
                 {
                     type:'date',
@@ -100,6 +117,12 @@ export default{
                     btnType:'primary',
                     value:'reset'
                 },
+                {
+                    type:'btn',
+                    btntxt:'批量删除',
+                    btnType:'primary',
+                    value:'batchDel'
+                },
          
             ],
             
@@ -120,6 +143,7 @@ export default{
                 {
                     prop:'product_price',
                     label:'商品价格',
+                    sort:true
                 },
                 {
                     prop:'product_type',
@@ -128,10 +152,12 @@ export default{
                 {
                     prop:'stock',
                     label:'库存',
+                    sort:true
                 },
                 {
                     prop:'create_time',
                     label:'创建时间',
+                    sort:true
                 },
                 {
                     prop:'store_name',
@@ -151,7 +177,7 @@ export default{
                     {type:'danger',name:'删除',value:'del'}
                 ]
             },
-            isVisible:false,
+            storeList:[],
             //表单选择数据
             selectOption:[],
             //修改条件数据
@@ -170,31 +196,69 @@ export default{
       },
     created(){
         this.getData({})
+        this.getStoreList()
+
     },
     methods:{
         //搜索
         search(data){
-            console.log(data)
             this.queryData= data 
             this.pager.page=1
             this.pager.rows=20
             this.getData(data)
         },
-        getData(data){
-           getProductList(data).then(res=>{
-                this.tableData=res.data.result.productList
-                this.count=res.data.result.count
+        getStoreList(){
+            http.post('/store/storeList',{},(res)=>{
+                if(res){
+                    this.storeList=res
+                    let arr=[]
+                    res.forEach(item=>{
+                        if(item.store_name){
+                            arr.push({
+                                label:item.store_name,
+                                value:item.store_id,
+                            })
+                        }
+                    })
+                    let sid=Number(this.getUserInfo.userInfo.store_id) 
+                    if(sid===0){
+                        arr.forEach(i=>{
+                            this.searchFrom[2].selectFrom.push(i)
+                        })
+                    }else{
+                        this.searchFrom[2].selectFrom=arr.filter(item=>{
+                            return sid==item.store_id
+                        })
+                        arr.forEach(i=>{
+                            if(sid==i.value){
+                                this.searchFrom[2].selectFrom.push(i)
+                            }
+                        })
+                    }
+                    console.log(arr,this.searchFrom[2].selectFrom)
+                    
+                }
             })
         },
-     
+        getData(data){
+            data.page=this.pager.page
+            data.row=this.pager.rows
+            data.store_id= data.store_id?data.store_id[1]:'' || Number(this.getUserInfo.userInfo.store_id) 
+            getProductList(data).then((res)=>{
+                this.tableData=res.result.productList
+                this.count=res.result.count
+            })
+        },
+        
         //单个修改
         edit(data){
-            this.isBatch=false
-            this.dialogTableVisible=true
-            this.diaTitle='单个商品修改'
-            let arr=[]
-            arr.push(data)
-            this.changeEditData=arr
+            this.$router.push({
+                path:'/Product/Detail',
+                query:{
+                    type:'edit',
+                    pid:data.pid
+                }
+            })
         },
         //批量修改
         batchModify(data){
@@ -326,17 +390,18 @@ export default{
                 let ids=[]
                 if(type=='all'){
                     this.selectOption.forEach(item=>{
-                        ids.push(item.warnProductId)
+                        ids.push(item.pid)
                     })
                 }else{
-                    ids[0]=data.warnProductId
+                    ids[0]=data.pid
                 }
 
                 let query={
-                    warn_product_id:['in',ids]
+                    pid:ids
                 }
-                http.post("/warn_product/remove",query,res=>{
-                    if(res){
+                delProduct(query).then(res=>{
+                    console.log(res)
+                    if(res.code==200){
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
@@ -352,7 +417,15 @@ export default{
                 });
             })
         },
-
+        // 添加
+        add(){
+            this.$router.push({
+                path:'/Product/Detail',
+                query:{
+                    type:'add'
+                }
+            })
+        },
         //导出
         exportReport(val){
             this.isVisible=true

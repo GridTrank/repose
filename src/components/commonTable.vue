@@ -3,6 +3,7 @@
         <el-table 
         size="small"
         :data="tableData" 
+        @sort-change="sortTable"
          @selection-change="handleSelectionChange"
         border 
         >   
@@ -14,15 +15,14 @@
                 :prop="item.prop"
                 :label="item.label"
                 :width="item.width"
+                :sortable='item.sort'
             >
                 <template slot-scope="scope">
                     <!-- 商品类型 -->
-                    <span v-if="item.prop=='productType'">
+                    <span v-if="item.prop=='product_type'">
                         {{
-                            scope.row[item.prop]==1?'非出清款':
-                            scope.row[item.prop]==2?'出清款':
-                            scope.row[item.prop]==3?'礼品专供款':
-                            '未知类型'
+                            scope.row[item.prop]==2?'官网':
+                            scope.row[item.prop]==3?'商家':''
                         }}
                     </span>
                     <span v-else-if="item.prop=='afterData' || item.prop=='beforeData' ">
@@ -31,8 +31,8 @@
                         </p>
                     </span>
                     <!-- 是否商家 -->
-                    <span v-else-if="item.prop=='isSale' || item.prop=='isErrAlarm' ">
-                       {{scope.row[item.prop] == 0 ? '否':'是'}}
+                    <span v-else-if="item.prop=='is_sale' || item.prop=='isErrAlarm' ">
+                       {{scope.row[item.prop] == 1 ? '是':'否'}}
                     </span>
                     <!-- 接收状态 -->
                     <span v-else-if="item.prop=='receiveState'">
@@ -134,6 +134,10 @@ export default {
         //全选
         handleSelectionChange(val){
             this.$emit("select",val)
+        },
+        // 排序
+        sortTable(e){
+
         },
         //页码
         handleCurrentChange(val){

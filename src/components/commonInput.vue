@@ -161,7 +161,7 @@ export default {
 
                                         break;
                                         case 'eq' :
-                                            searchData[name]=['eq',that.searchData[name] ]
+                                            searchData[name]=['=',that.searchData[name] ]
                                             break;
                                         case 'like':
                                             searchData[name] = ['like',` "%${that.searchData[name]}%" `];

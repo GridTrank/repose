@@ -4,7 +4,6 @@ import config from '@/utils/config.js'
 import axios from 'axios'
 import qs from 'qs'
 const api = {};
-
 axios.defaults.transformRequest = [function(data) {
     return qs.stringify(data)
 }];
@@ -19,7 +18,7 @@ instance.defaults.headers = {
 
 
 function ajax(type,url,data,callback,failcallback,status,jsonState){
-    return axios[type](config.Domain + url , data)
+    return axios[type]( url , data)
     // .then( response => response.json())
     .then((result) => {
         var response = result.data;
