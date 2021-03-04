@@ -1,11 +1,11 @@
 <template>
   <div id="app" >
       <el-container>
-        <el-header v-if="getUserInfo.token">
+        <el-header v-if="getUserInfo.userInfo">
             <comHeader></comHeader>
         </el-header>
         <el-container class="con">
-          <el-aside :width=" isCollapse ?'70px':'300px'" v-if="getUserInfo.token">
+          <el-aside :width=" isCollapse ?'70px':'300px'" v-if="getUserInfo.userInfo">
               <comNav @showMenu="showMenu"></comNav>
           </el-aside>
           <el-main>
