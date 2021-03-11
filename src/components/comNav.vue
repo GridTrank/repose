@@ -30,10 +30,6 @@
 </template>
 
 <script>
-import {
-  getMenu,
-  addRole
-} from '@/utils/api.js'
 import configUrl from '@/utils/config.js'
 import { mapActions,mapGetters } from 'vuex'
 export default {

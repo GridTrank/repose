@@ -6,9 +6,7 @@
 </template>
 
 <script>
-import {
-  getHot,
-} from '@/utils/api.js'
+
 import http from '@/utils/httpUtil.js'
 export default {
   components:{

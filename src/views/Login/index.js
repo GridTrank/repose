@@ -1,6 +1,6 @@
 
 import { mapActions,mapGetters } from 'vuex'
-import {login} from '@/utils/api.js'
+import http from '@/utils/httpUtil.js'
 export default {
   name: 'login',
   data() {
@@ -29,8 +29,7 @@ export default {
         user_name:this.account,
         pass_word:this.password
       }
-      login(data).then(res=>{
-        console.log(res)
+      http.post('/store/login',data,(res=>{
         if(res.code==200){
           this.$message({
             message:'登录成功',
@@ -45,7 +44,8 @@ export default {
         }else{
           this.tip='用户名或密码错误'
         }
-      })
+      }))
+
     }
   },
 

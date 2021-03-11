@@ -1,6 +1,4 @@
-import {
-    getOrdertList
-}from '@/utils/api'
+
 export default{
     data(){
         return{
@@ -8,7 +6,6 @@ export default{
         }
     },
     created(){
-        getOrdertList().then(res=>{
-        })
+       
     }
 }

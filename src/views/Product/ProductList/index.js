@@ -2,10 +2,7 @@ import commonInput from '@/components/commonInput.vue'
 import commonTable from '@/components/commonTable.vue'
 import http from '@/utils/httpUtil.js'
 import { mapActions, mapGetters } from 'vuex'
-import {
-    getProductList,
-    delProduct
-}from '@/utils/api'
+
 export default{
     data(){
         return{
@@ -235,8 +232,6 @@ export default{
                             }
                         })
                     }
-                    console.log(arr,this.searchFrom[2].selectFrom)
-                    
                 }
             })
         },
@@ -244,10 +239,11 @@ export default{
             data.page=this.pager.page
             data.row=this.pager.rows
             data.store_id= data.store_id?data.store_id[1]:'' || Number(this.getUserInfo.userInfo.store_id) 
-            getProductList(data).then((res)=>{
-                this.tableData=res.result.productList
-                this.count=res.result.count
+            http.post("/product/getList",data,(res)=>{
+                this.tableData=res.productList
+                this.count=res.count
             })
+            
         },
         
         //单个修改
@@ -399,15 +395,12 @@ export default{
                 let query={
                     pid:ids
                 }
-                delProduct(query).then(res=>{
-                    console.log(res)
-                    if(res.code==200){
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                        this.getData({})
-                    }
+                http.post('/product/delProduct',query,(res)=>{
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                    this.getData({})
                 })
                 
               }).catch(() => {

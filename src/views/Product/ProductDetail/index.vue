@@ -15,14 +15,22 @@
           </el-form-item>
           <el-form-item label="是否上架" >
             <el-select v-model="formData.is_sale">
-              <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="是" value="1"></el-option>
+              <el-option label="否" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="展示类型" >
+            <el-select v-model="formData.type">
+              <el-option label="轮播" value="banner"></el-option>
+              <el-option label="品牌甄选" value="brand"></el-option>
+              <el-option label="推荐" value="recommend"></el-option>
+              <el-option label="猜你喜欢" value="like"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="主图">
             <el-upload
-              action="http://127.0.0.1:3000/product/productBanner"
+              action="http://47.112.113.38:3000/product/productBanner"
               :file-list="fileList"
               ref="upload"
               list-type="picture-card"
@@ -44,7 +52,7 @@
 
           <el-form-item label="详情图">
             <el-upload
-              action="http://127.0.0.1:3000/product/detailImg"
+              action="http://47.112.113.38:3000/product/detailImg"
               :file-list="fileListDetail"
               ref="uploads"
               list-type="picture-card"

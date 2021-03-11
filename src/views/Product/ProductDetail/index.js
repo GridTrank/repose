@@ -1,16 +1,12 @@
 
 import { mapActions, mapGetters } from 'vuex'
 import http from '@/utils/httpUtil.js'
-import {
-    addProduct,
-    getProductDetail,
-    editProduct
-}from '@/utils/api'
+
 export default{
     data(){
         return{
             formData:{
-                is_sale:1
+                is_sale:'1'
             },
             pageType:this.$route.query.type,
             fileList:[],
@@ -44,13 +40,12 @@ export default{
     },
     methods:{
         getData(pid){
-            getProductDetail({pid}).then(res=>{
-                let data=res.result
-                if(res.code==200){
-                    this.formData=data
+            http.post('/product/detail',{pid},(res=>{
+                if(res){
+                    this.formData=res
                     // 主图
-                    if(data.banners && data.banners.length>0){
-                        data.banners.forEach(el=>{
+                    if(res.banners && res.banners.length>0){
+                        res.banners.forEach(el=>{
                             this.imgList.push({
                                 img_type:'banner',
                                 img_src:el.split('uploads/')[1],
@@ -65,8 +60,8 @@ export default{
                         })
                     }
                     // 详情
-                    if(data.detail_imgs && data.detail_imgs.length>0){
-                        data.detail_imgs.forEach(el=>{
+                    if(res.detail_imgs && res.detail_imgs.length>0){
+                        res.detail_imgs.forEach(el=>{
                             this.imgListDetail.push({
                                 img_type:'detail',
                                 img_src:el.split('uploads/')[1],
@@ -81,7 +76,7 @@ export default{
                         })
                     }
                 }
-            })
+            }))
         },
         // 主图
         beforeUpload(file){
@@ -152,31 +147,28 @@ export default{
             }
 
             if(this.pageType=='add'){
-                addProduct(data).then(res=>{
-                    if(res.code==200){
-                        this.$message({
-                            type: 'success',
-                            message: '保存成功!'
-                        });
-                        this.$router.push({
-                            path:'/Product/list'
-                        })
-                    }
+                http.post('/product/addProduct',data,(res)=>{
+                    this.$message({
+                        type: 'success',
+                        message: '保存成功!'
+                    });
+                    this.$router.push({
+                        path:'/Product/list'
+                    })
                 })
             }else{
                 data.pid=this.$route.query.pid
-                editProduct(data).then(res=>{
-                    if(res.code==200){
-                        this.$message({
-                            type: 'success',
-                            message: '修改成功!'
-                        });
-                        this.$router.push({
-                            path:'/Product/list'
-                        })
-                    }
+                http.post('/product/editProduct',data,(res)=>{
+                    this.$message({
+                        type: 'success',
+                        message: '修改成功!'
+                    });
+                    this.$router.push({
+                        path:'/Product/list'
+                    })
                 })
             }
+            
             
         }
         
