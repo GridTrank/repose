@@ -30,14 +30,15 @@ export default {
         pass_word:this.password
       }
       http.post('/store/login',data,(res=>{
-        if(res.code==200){
+        if(res){
           this.$message({
             message:'登录成功',
             type:'success'
           })
-          sessionStorage.setItem("userInfo",JSON.stringify(res.result))
+          console.log(res)
+          sessionStorage.setItem("userInfo",JSON.stringify(res))
           sessionStorage.setItem("isLogin",true)
-          this.upDataUserInfo(res.result)
+          this.upDataUserInfo(res)
           this.$router.push({
             path:'/home'
           })
