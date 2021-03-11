@@ -4,6 +4,7 @@ import config from '@/utils/config.js'
 import axios from 'axios'
 import qs from 'qs'
 const api = {};
+// axios.defaults.withCredentials = true;
 axios.defaults.transformRequest = [function(data) {
     return qs.stringify(data)
 }];
@@ -18,7 +19,7 @@ instance.defaults.headers = {
 
 
 function ajax(type,url,data,callback,failcallback,status,jsonState){
-    return axios[type]( url , data)
+    return axios[type]( config.Domain+url , data)
     // .then( response => response.json())
     .then((result) => {
         var response = result.data;
@@ -90,7 +91,8 @@ api.put = (url, data, callback,failcallback,status,jsonState) => {
 
 // --------------data数据直接写在链接上------------------//
 api.get = (url, callback,failcallback,status) => {
-    return axios.get(config.Domain + url )
+    return axios.get('http://47.112.113.38:3000' + url )
+    // return axios.get(config.Domain + url )
     // .then( response => response.json())
     .then((result) =>{
         var response = result.data;
