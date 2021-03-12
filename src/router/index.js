@@ -29,6 +29,12 @@ const routes= [
       component: (resolve) => require(['@/views/Product/ProductDetail/index.vue'], resolve)
     },
     {
+      path: '/Product/HomeEdit',
+      name: 'ProductHomeEdit',
+      meta: { pageTitle: "商品详情", keepAlive: true},
+      component: (resolve) => require(['@/views/Product/HomeEdit/index.vue'], resolve)
+    },
+    {
       path: '/Order/List',
       name: 'OrderList',
       meta: { pageTitle: "订单列表", keepAlive: true},
@@ -51,6 +57,12 @@ const routes= [
       name: 'UserRoleManage',
       meta: { pageTitle: "商家角色管理", keepAlive: true},
       component: (resolve) => require(['@/views/User/RoleManage/index.vue'], resolve)
+    },
+    {
+      path: '/Member/List',
+      name: 'MemberList',
+      meta: { pageTitle: "商家角色管理", keepAlive: true},
+      component: (resolve) => require(['@/views/Member/List/index.vue'], resolve)
     },
   
     { // 匹配
