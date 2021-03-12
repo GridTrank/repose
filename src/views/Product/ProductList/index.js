@@ -218,7 +218,7 @@ export default{
                         }
                     })
                     let sid=Number(this.getUserInfo.userInfo.store_id) 
-                    if(sid===0){
+                    if(sid===1){
                         arr.forEach(i=>{
                             this.searchFrom[2].selectFrom.push(i)
                         })
