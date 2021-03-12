@@ -143,10 +143,6 @@ export default{
                     sort:true
                 },
                 {
-                    prop:'product_type',
-                    label:'商品类型',
-                },
-                {
                     prop:'stock',
                     label:'库存',
                     sort:true
@@ -163,6 +159,10 @@ export default{
                 {
                     prop:'is_sale',
                     label:'是否上架',
+                },
+                {
+                    prop:'type',
+                    label:'图片类型',
                 },
             ],
             count:0,
