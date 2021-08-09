@@ -5,71 +5,53 @@ Vue.use(Router)
 
 const routes= [
     {
-      path: '/home',
-      name: 'Home',
-      meta: { pageTitle: "首页", keepAlive: true},
-      component: (resolve) => require(['@/views/Home.vue'], resolve)
+      path: '/PublishArticles',
+      name: 'PublishArticles',
+      meta: { pageTitle: "发布文章", keepAlive: true},
+      component: (resolve) => require(['@/views/PublishArticles.vue'], resolve)
     },
     {
-      path: '/login',
-      name: 'Login',
-      meta: { pageTitle: "登录", keepAlive: true},
-      component: (resolve) => require(['@/views/Login/index.vue'], resolve)
+      path: '/MyArticles',
+      name: 'MyArticles',
+      meta: { pageTitle: "我的文章", keepAlive: true},
+      component: (resolve) => require(['@/views/MyArticles.vue'], resolve)
     },
     {
-      path: '/Product/List',
-      name: 'ProductList',
-      meta: { pageTitle: "商品列表", keepAlive: true},
-      component: (resolve) => require(['@/views/Product/ProductList/index.vue'], resolve)
+      path: '/EditArticles',
+      name: 'EditArticles',
+      meta: { pageTitle: "编辑文章", keepAlive: true},
+      component: (resolve) => require(['@/views/EditArticles.vue'], resolve)
     },
     {
-      path: '/Product/Detail',
-      name: 'ProductDetail',
-      meta: { pageTitle: "商品详情", keepAlive: true},
-      component: (resolve) => require(['@/views/Product/ProductDetail/index.vue'], resolve)
+      path: '/EditDrafts',
+      name: 'EditDrafts',
+      meta: { pageTitle: "编辑文章", keepAlive: true},
+      component: (resolve) => require(['@/views/EditDrafts.vue'], resolve)
     },
     {
-      path: '/Product/HomeEdit',
-      name: 'ProductHomeEdit',
-      meta: { pageTitle: "商品详情", keepAlive: true},
-      component: (resolve) => require(['@/views/Product/HomeEdit/index.vue'], resolve)
+      path: '/Drafts',
+      name: 'Drafts',
+      meta: { pageTitle: "草稿箱", keepAlive: true},
+      component: (resolve) => require(['@/views/Drafts.vue'], resolve)
     },
     {
-      path: '/Order/List',
-      name: 'OrderList',
-      meta: { pageTitle: "订单列表", keepAlive: true},
-      component: (resolve) => require(['@/views/Order/OrderList/index.vue'], resolve)
+      path: '/ArticlesManage',
+      name: 'ArticlesManage',
+      meta: { pageTitle: "文章管理", keepAlive: true},
+      component: (resolve) => require(['@/views/ArticlesManage.vue'], resolve)
     },
     {
-      path: '/Order/Detail',
-      name: 'OrderDetail',
-      meta: { pageTitle: "订单详情", keepAlive: true},
-      component: (resolve) => require(['@/views/Order/OrderDetail/index.vue'], resolve)
-    },
-    {
-      path: '/User/List',
-      name: 'UserList',
-      meta: { pageTitle: "商家列表", keepAlive: true},
-      component: (resolve) => require(['@/views/User/UserList/index.vue'], resolve)
-    },
-    {
-      path: '/User/Detail',
-      name: 'UserRoleManage',
-      meta: { pageTitle: "商家角色管理", keepAlive: true},
-      component: (resolve) => require(['@/views/User/RoleManage/index.vue'], resolve)
-    },
-    {
-      path: '/Member/List',
-      name: 'MemberList',
-      meta: { pageTitle: "商家角色管理", keepAlive: true},
-      component: (resolve) => require(['@/views/Member/List/index.vue'], resolve)
+      path: '/AccountManage',
+      name: 'AccountManage',
+      meta: { pageTitle: "账号管理", keepAlive: true},
+      component: (resolve) => require(['@/views/AccountManage.vue'], resolve)
     },
   
     { // 匹配
       path: '*',
-      name: 'Home',
-      meta: { pageTitle: "首页" },
-      component: (resolve) => require(['@/views/Home.vue'], resolve)
+      name: 'PublishArticles',
+      meta: { pageTitle: "发布文章" },
+      component: (resolve) => require(['@/views/PublishArticles.vue'], resolve)
     }
 ]
 const router = new Router({

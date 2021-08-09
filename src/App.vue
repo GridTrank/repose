@@ -1,30 +1,17 @@
 <template>
   <div id="app" >
-      <el-container>
-        <el-header v-if="getUserInfo.userInfo">
-            <comHeader></comHeader>
-        </el-header>
-        <el-container class="con">
-          <el-aside :width=" isCollapse ?'70px':'300px'" v-if="getUserInfo.userInfo">
-              <comNav @showMenu="showMenu"></comNav>
-          </el-aside>
-          <el-main>
-              <router-view  :key="$route.fullPath"></router-view>
-          </el-main>
-        </el-container>
-      </el-container>
+      <commonHead/>
+      <router-view ></router-view>
   </div>
 </template>
 
 <script>
-import comHeader from '@/components/comHeader.vue'
-import comNav from '@/components/comNav.vue'
+import commonHead from '@/components/common/commonHead.vue'
 import { mapActions,mapGetters } from 'vuex'
 export default {
   name: 'App',
   components:{
-    comHeader,
-    comNav
+    commonHead
   },
   data(){
     return{
@@ -36,10 +23,7 @@ export default {
       ...mapGetters(['getUserInfo',])
   },
   created(){
-    let userInfo=JSON.parse(sessionStorage.getItem("userInfo"))
-    if(userInfo){
-      this.upDataUserInfo(userInfo)
-    }
+  
   },
   methods:{
     ...mapActions([
@@ -55,8 +39,7 @@ export default {
 <style scoped lang="less">
 #app {
   height: 100%;
-  .con{
-    // margin-top: 40px;
-  }
+  padding: 30px;
+  min-width:1300px;
 }
 </style>

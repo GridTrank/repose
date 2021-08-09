@@ -21,13 +21,6 @@ Vue.prototype.$global=global
 
 Vue.config.productionTip = false
 router.beforeEach((to,from,next) => {
-  if(to.path!=='/login' && !sessionStorage.getItem("isLogin")){
-    ElementUI.Message.error('请先登录')
-    router.push({
-      path:'/login'
-    })
-    return
-  }
   next()
 });
 new Vue({
