@@ -26,6 +26,7 @@ export default {
     methods:{
         search(){
             console.log(this.searchData)
+            this.$emit("titleSearch",this.searchData)
         }
     }
 }

@@ -1,8 +1,6 @@
 <template>
     <div class="head-wrap">
-        <div class="head-logo">
-            <img src="@/assets/images/logo.png" alt="" srcset="">
-        </div>
+        <img class="head-logo" src="@/assets/images/logo.png" >
         <div class="head-menus">
             <div class="menus-list">
                 <div class="menus-item" 
@@ -15,8 +13,8 @@
             </div>
         </div>
         <div class="head-user">
-            <img src="@/assets/images/icon_default.png" alt="">
-            <p>admin</p>
+            <img class="" :src="userInfo.avatar" alt="">
+            <p>{{userInfo.nickname}}</p>
         </div>
     </div>
 </template>
@@ -55,6 +53,11 @@ export default {
             ]
         }
     },
+    computed:{
+        userInfo(){
+            return this.$store.state.common.userInfo
+        }
+    },
     mounted(){
         if(sessionStorage.getItem('routerIndex')){
             this.active=sessionStorage.getItem('routerIndex')
@@ -79,6 +82,9 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    .head-logo{
+        width: 200px;
+    }
     .head-menus{
         margin-left: -15%;
         .menus-list{
@@ -101,6 +107,12 @@ export default {
     }
     .head-user{
         display: flex;
+        align-items: center;
+        img{
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
     }
 }
 </style>

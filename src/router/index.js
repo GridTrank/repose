@@ -46,6 +46,12 @@ const routes= [
       meta: { pageTitle: "账号管理", keepAlive: true},
       component: (resolve) => require(['@/views/AccountManage.vue'], resolve)
     },
+    {
+      path: '/Login',
+      name: 'Login',
+      meta: { pageTitle: "登录", keepAlive: true},
+      component: (resolve) => require(['@/views/Login.vue'], resolve)
+    },
   
     { // 匹配
       path: '*',

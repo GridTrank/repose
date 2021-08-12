@@ -1,13 +1,13 @@
 <template>
   <div id="app" >
-      <commonHead/>
+      <commonHead v-if="$route.name!='Login'"/>
       <router-view ></router-view>
   </div>
 </template>
 
 <script>
 import commonHead from '@/components/common/commonHead.vue'
-import { mapActions,mapGetters } from 'vuex'
+import http from '@/utils/httpUtil'
 export default {
   name: 'App',
   components:{
@@ -19,16 +19,23 @@ export default {
       isCollapse:false
     }
   },
-  computed:{
-      ...mapGetters(['getUserInfo',])
-  },
+ 
   created(){
-  
+    this.getIndex()
   },
   methods:{
-    ...mapActions([
-            'upDataUserInfo',
-		]),
+    getIndex(){
+        http.post("/yifangPC/index",{},(res=>{
+            if(res.code!=200){
+              localStorage.removeItem("userInfo")
+              setTimeout(()=>{
+                this.$router.push("/Login")
+              },1000)
+            }else if(res.code==200){
+              this.$store.commit('updateUserInfo',res.data.user)
+            }
+        }))
+    },
     showMenu(val){
         this.isCollapse=!val
     }

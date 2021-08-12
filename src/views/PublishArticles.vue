@@ -1,7 +1,13 @@
 <template>
     <div class="page-wrap">
         <commonTitle :titleOptions="titleOptions" />
-        <articlesDetail ref="detail" />
+        <articlesDetail 
+            v-if="initDetail.token" 
+            ref="detail" 
+            :setTitle="setTitle" 
+            :initDetail="initDetail"
+            type="init" 
+        />
         <el-dialog 
         :title="diaTitle" 
         width="70%"
@@ -58,6 +64,7 @@
 import commonTitle from '@/components/common/commonTitle.vue'
 import articlesDetail from '@/components/common/articlesDetail.vue'
 import articlesList from '@/components/common/articlesList.vue'
+import http from '@/utils/httpUtil'
 export default {
     name:'PublishArticles',
     components:{articlesDetail,commonTitle,articlesList},
@@ -76,6 +83,7 @@ export default {
             isSelectArticle:false,
             childItem:{},
             setTitle:'',
+            initDetail:{},
         }
     },
     computed:{
@@ -89,7 +97,23 @@ export default {
             
         },
     },
+    created(){
+        this.initData()
+    },
     methods:{
+        initData(){
+            http.post("/yifangPC/publish/init",{},(res=>{
+                if(res.code==200){
+                    res.data.hottags.forEach((item,index,arr)=>{
+                        arr[index]={
+                            name:item,
+                            isSelect:0
+                        }
+                    })
+                    this.initDetail=res.data
+                }
+            }))
+        },
         selectItem(item,index){
             this.selectLeft=index
         },
@@ -105,8 +129,7 @@ export default {
             }
         },
         submitTitle(){
-            this.$refs.detail.content+=this.setTitle
-            
+            this.$refs.detail.change(this.setTitle)
             this.$store.commit('updateShowQuote',false)
         },
         reset(){

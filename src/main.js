@@ -18,9 +18,15 @@ Vue.use(VueAwesomeSwiper, /* { default options with global component } */)
 import global from './utils/global.js'
 Vue.prototype.$global=global
 
-
 Vue.config.productionTip = false
 router.beforeEach((to,from,next) => {
+  // if(!localStorage.getItem('token') && to.name!='Login'){
+  //   setTimeout(()=>{
+  //     router.push({
+  //       path:"/Login",
+  //     })
+  //   },1000)
+  // }
   next()
 });
 new Vue({

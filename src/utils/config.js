@@ -1,6 +1,6 @@
 let config = {};
 /* 生产环境 */
-config.Domain = 'http://47.112.113.38:3000';
+config.Domain = 'https://app.gter.net';
 
 // if (process.env.NODE_ENV === 'production') {
     

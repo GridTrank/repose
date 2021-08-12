@@ -4,13 +4,13 @@ import config from '@/utils/config.js'
 import axios from 'axios'
 import qs from 'qs'
 const api = {};
-// axios.defaults.withCredentials = true;
 axios.defaults.transformRequest = [function(data) {
     return qs.stringify(data)
 }];
 
 var instance = axios.create();
-axios.defaults.withCredentials  = true;
+// axios.defaults.withCredentials  = true;
+
 instance.defaults.headers = { 
     "Content-Type": "application/x-www-form-urlencoded",
     'X-Requested-With': 'XMLHttpRequest',
@@ -19,35 +19,34 @@ instance.defaults.headers = {
 
 
 function ajax(type,url,data,callback,failcallback,status,jsonState){
+    const loading =  Loading.service({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        fullscreen: true,
+    });
+    if(localStorage.getItem("authorization") ){
+        axios.defaults.headers.common["Authorization"]=localStorage.getItem("authorization") 
+    }
     return axios[type]( config.Domain+url , data)
-    // .then( response => response.json())
     .then((result) => {
+        loading.close();
         var response = result.data;
-        /*success*/
-        if(status && response.code != 20000){
-            callback(response);
-            return;
-        }
-        if(response.code == 200){
-            callback(response.result)
-            return;
-        }else if(response.code == 100001){
+        if(response.code == 401){
+            Message({
+                type:"error",
+                message:response.message,
+            });
+            localStorage.removeItem("userInfo")
             location.href = '/#/login';
-        }else if(response.code == 100002){
-
+        }else if(response.code == 200){
+            callback(response)
         }else{
             Message({
                 type:"error",
                 message:response.message,
             });
-            const loading =  Loading.service({
-                lock: true,
-                text: 'Loading',
-                spinner: 'el-icon-loading',
-                background: 'rgba(0, 0, 0, 0.7)',
-                fullscreen: true,
-            });
-            loading.close();
             typeof failcallback == "function" ? failcallback():"";
             return;
         }
@@ -91,9 +90,7 @@ api.put = (url, data, callback,failcallback,status,jsonState) => {
 
 // --------------data数据直接写在链接上------------------//
 api.get = (url, callback,failcallback,status) => {
-    return axios.get('http://47.112.113.38:3000' + url )
-    // return axios.get(config.Domain + url )
-    // .then( response => response.json())
+    return axios.get(config.Domain + url )
     .then((result) =>{
         var response = result.data;
         /*success*/

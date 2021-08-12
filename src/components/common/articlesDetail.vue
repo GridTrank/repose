@@ -1,27 +1,29 @@
 <template>
-    <div class="article-wrap">
+    <div class="article-wrap" >
         <div class="article">
             <div class="article-left">
                 <el-form :data="formData">
                     <el-form-item>
                         <p class="f-t">主题</p>
-                        <el-select v-model="formData.zhuti">
-                            <el-option value="1" label="主题1"></el-option>
-                        </el-select>
-                    </el-form-item>
-
-                    <el-form-item>
-                        <p class="f-t">分类</p>
-                        <el-select v-model="formData.zhuti">
-                            <el-option value="1" label="主题1"></el-option>
+                        <el-select v-model="formData.tid">
+                            <el-option 
+                                v-for="(item,index) in initDetail.topicalList"
+                                :key="index"
+                                :value="item.id" 
+                                :label="item.name">
+                            </el-option>
                         </el-select>
                     </el-form-item>
 
                     <el-form-item>
                         <p class="f-t">附件</p>
                         <el-upload
-                            action="#"
+                            :action="domain+'/yifangPC/upload/file'" 
                             :file-list="fileList"
+                            :multiple="true"
+                            :headers="headers"
+                            name="files"
+                            :on-success="updateSuccess"
                         >
                             <el-button >
                                 <i class="el-icon-upload"></i>
@@ -37,27 +39,27 @@
                             class="label-btn" 
                             :class="btn.isSelect && 'select-btn'"
                             @click="selectLabel(btn)" 
-                            v-for="(btn,bIndex) in labels" :key="bIndex">
+                            v-for="(btn,bIndex) in initDetail.hottags" :key="bIndex">
                                 {{btn.name}} 
                             </div>
                         </div>
-                        <el-input v-model="formData.otherLabel" placeholder="自定义标签，多个标签之间以空格分隔…"></el-input>
-                        <!-- <el-select 
-                        v-model="formData.knowledge" clearable multiple filterable allow-create default-first-option placeholder="自定义标签，多个标签之间以空格分隔…">
-                            <el-option v-for="item in customLabels" :key="item.value" :label="item.name" :value="item.value"></el-option>
-                        </el-select> -->
+                        <el-input v-model="moreLabel" placeholder="自定义标签，多个标签之间以空格分隔…" @blur="inputBlur"></el-input>
                     </el-form-item>
 
                     <el-form-item>
                         <p class="f-t">摘要</p>
-                        <el-input type="textarea"></el-input>
+                        <el-input type="textarea" v-model="formData.description"></el-input>
                     </el-form-item>
 
                     <el-form-item class="cover">
                         <p class="f-t">封面(非必填)</p>
                         <el-upload
-                            action="#"
+                            :action="domain+'/yifangPC/upload'" 
+                            :headers="headers"
+                            name="files"
                             list-type="picture-card"
+                            :limit="1"
+                            :on-success="updateSuccessImg"
                         >   
                             <i class="el-icon-plus"></i>
 
@@ -73,18 +75,21 @@
                 <div>
                     <quill-editor
                         ref="myQuillEditor"
-                        v-model="content"
+                        v-model="formData.content"
                         :options="editorOption"
                         class='editor'
+                        @blur="onEditorBlur($event)"
+                        @focus="onEditorFocus($event)"
+                        @ready="onEditorReady($event)"
                         /> 
                 </div>
             </div>
         </div>
         <div class="foot-btns">
-            <div class="f-btn bg1">
+            <div class="f-btn bg1" @click="submit(0)">
                 存为草稿
             </div>
-            <div class="f-btn bg2">
+            <div class="f-btn bg2" @click="submit(1)">
                 发布
             </div>
         </div>
@@ -92,17 +97,38 @@
 </template>
 
 <script>
+import config from '@/utils/config.js'
+import http from '@/utils/httpUtil'
 import Quill from "quill";
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+import { quillEditor } from 'vue-quill-editor'
+let Inline = Quill.import('blots/inline');
 let Parchment = Quill.import("parchment");
 class lineHeightAttributor extends Parchment.Attributor.Style {}
 const lineHeightStyle = new lineHeightAttributor("lineHeight", "line-height", {
   scope: Parchment.Scope.INLINE,
   whitelist: ["initial", '1', '1.5', '1.75', '2', '3', '4', '5' ]
 });
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
-import { quillEditor } from 'vue-quill-editor'
+Quill.register({'formats/lineHeight':lineHeightStyle},true);
+class LinkBlot extends Inline {
+  static create(data) {
+    let node = super.create();
+    node.setAttribute("onclick", `javascript:window.open("${data.url}");` );
+    node.setAttribute('href', data.url);
+    node.setAttribute('target', '_blank');
+	node.innerHTML = data.value
+    return node;
+  }
+  static formats(node) {
+    return node.getAttribute('href');
+  }
+}
+LinkBlot.blotName = 'link';
+LinkBlot.tagName = 'a';
+Quill.register(LinkBlot);
+
 const toolbarOptions = [
   ["bold", "italic", "underline",],
   [{ 'size': ["13px","14px","15px","18px","20px","24px","48px"] }],
@@ -119,8 +145,15 @@ const toolbarOptions = [
 ]
 export default {
     components:{quillEditor},
+    props:{
+        setTitle:String,
+        type:String,
+        initDetail:Object
+    },
+
     data(){
         return{
+            domain:config.Domain,
             formData:{},
             fileList:[],
             labels:[
@@ -175,6 +208,7 @@ export default {
                     isSelect:0,
                 },
             ],
+            moreLabel:'',
             selectBtn:0,
             customLabels:[],
             selectLabels:[],
@@ -187,16 +221,15 @@ export default {
                         handlers: {
                             lineheight:  (value)=> {
                                 if (value) {
-                                    this.quill.format('lineHeight', value);
+                                    this.editor.format('lineHeight', value);
                                 } else {
                                     console.log(value);
                                 }
                             },
                             // 重写引用
                             blockquote:(val)=>{
+								
                                 this.$store.commit('updateShowQuote',true)
-                                // let str="<a class='tes'>引用的</a>"
-                                // document.execCommand('insertText', true, str)
                             }
                         }
                     }
@@ -204,24 +237,89 @@ export default {
                 //主题
                 theme: "snow",
                 placeholder: "请输入正文"
-            }
+            },
+            uploadData:{}
         }
     },
     computed: {
         showQuote(){
             return this.$store.state.common.showQuote
         },
+        editor(){
+            return this.$refs.myQuillEditor.quill
+        },
+        headers() {
+            return {
+                Authorization: localStorage.getItem("authorization") || ''
+            };
+        },
+    },
+    created(){
+        this.init() 
     },
     methods:{
+        init(){
+            this.formData=this.initDetail.info  
+            this.formData.tags.forEach(item=>{
+                this.initDetail.hottags.forEach(el=>{
+                    if(item==el.name){
+                        el.isSelect=1
+                    }
+                })
+            })
+        },
+        updateSuccess(res,file){
+            this.formData.files.push(res.data.aid)
+        },
+        updateSuccessImg(res,file){
+            this.formData.aid=res.data.aid
+            this.formData.image=res.data.url
+        },
+        change(value){
+            this.editor.format('link', {value:value,url:'http://www.baidu.com'});
+        },
         selectLabel(data){
             data.isSelect=!data.isSelect
-            if(data.isSelect && this.selectLabels.indexOf(data.value)==-1){
-                this.selectLabels.push(data.value)
+            if(data.isSelect && this.selectLabels.indexOf(data.name)==-1){
+                this.selectLabels.push(data.name)
             }
-            if(!data.isSelect && this.selectLabels.indexOf(data.value)!==-1){
-                this.selectLabels.splice(this.selectLabels.indexOf(data.value),1)
+            if(!data.isSelect && this.selectLabels.indexOf(data.name)!==-1){
+                this.selectLabels.splice(this.selectLabels.indexOf(data.name),1)
             }
+            this.formData.tag=this.selectLabels
+
         },
+        inputBlur(){
+            this.formData.tag=this.formData.tag.concat(this.moreLabel.split(' '))
+        },
+        submit(status){
+            let data={
+                status,
+                token:this.initDetail.token,
+                info:{
+                    ...this.formData
+                }
+            }
+            console.log(data)
+            http.post("/yifangPC/publish/submit",data,(res=>{
+                console.log(res)
+                if(res.code==200){
+                    this.$message({
+                        message:'发布成功',
+                        type:'success'
+                    })
+                    setTimeout(()=>{
+                        this.$router.push('/MyArticles')
+                    },1000)
+                }
+            }))
+        },
+        onEditorBlur(){
+        },
+        onEditorFocus(){
+        },
+        onEditorReady(){
+        }
     }
 }
 </script>
@@ -230,6 +328,7 @@ export default {
 .article-wrap{
     display: flex;
     flex-direction: column;
+    
 }
 .article{
     display: flex;
@@ -330,6 +429,8 @@ export default {
   min-height: 400px;
   background-color: #fff;
   border: none;
+  max-height: 700px;
+overflow-y: scroll;
 
   .ql-toolbar.ql-snow{
     background-color: #f8f8f8;
