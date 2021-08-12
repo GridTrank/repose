@@ -23,9 +23,12 @@ export default {
     created(){
 
         let token=this.$route.query.token
+        let type=this.$route.query.type
+        console.log(this.$route.query)
         if(token){
             this.getData(token)
         }
+        this.titleOptions.name=type=='draft'?'编辑草稿':type=='article'?'编辑文章':''
     },
     methods:{
         getData(token){

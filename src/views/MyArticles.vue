@@ -71,15 +71,7 @@ export default {
                 limit:this.limit,
                 ...this.searchData
             }
-            const loading =  Loading.service({
-                lock: true,
-                text: 'Loading',
-                spinner: 'el-icon-loading',
-                background: 'rgba(0, 0, 0, 0.7)',
-                fullscreen: true,
-            });
             http.post('/yifangPC/article',data,(res=>{
-                loading.close();
                 if(res.code==200){
                     this.tableData=res.data.data
                     this.total=res.data.count
@@ -101,6 +93,7 @@ export default {
                     path:'/EditArticles',
                     query:{
                         token:data.token,
+                        type:'article'
                     }
                 })
             }else{

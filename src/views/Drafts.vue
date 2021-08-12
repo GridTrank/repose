@@ -2,11 +2,11 @@
     <div class="drafts-wrap">
         <commonTitle :titleOptions="titleOptions"/>
         <div class="dra-list">
-            <div class="dra-item" v-for="(item,index) in 3" :key="index">
+            <div class="dra-item" v-for="(item,index) in data" :key="index">
                 <div class="dra-top">
                     <div class="dt-left">
-                        <span class="dtl-left">3小时前</span>
-                        <span class="dtl-right">行前攻略</span>
+                        <span class="dtl-left">{{item.relativedate}}</span>
+                        <span class="dtl-right">{{item.title}}</span>
                     </div>
                     <div class="dt-right">
                         <span class="dtr-i" @click="handle(item,'edit')"> <i class="el-icon-edit"></i> </span>
@@ -15,8 +15,8 @@
                 </div>
                 <div class="dra-content">
                     <div class="dc-left">
-                        <p class="dcl-t">通过香港转飞美国行得通吗？</p>
-                        <p class="dcl-b towHidden">国内直飞美国机票价格真的飞上天了！怎么办了？ 莫怕莫怕，因为在香港中转可以优惠莫怕莫怕，因为在香港中转可以优惠莫怕莫怕，因为在香港中转可以优惠莫怕莫怕，因为在香港中转可以优惠</p>
+                        <p class="dcl-t">{{item.description}}</p>
+                        <p class="dcl-b towHidden" >{{item.content}} </p>
                     </div>
                     <div class="dc-right"></div>
                 </div>
@@ -28,6 +28,7 @@
 <script>
 // 草稿箱
 import commonTitle from '@/components/common/commonTitle.vue'
+import http from '@/utils/httpUtil'
 export default {
     name:'Drafts',
     components:{commonTitle},
@@ -37,19 +38,51 @@ export default {
                 name:'草稿箱',
                 remark:true,
             },
+            data:[]
         }
     },
+    created(){
+        this.getData()
+    },
     methods:{
+        getData(){
+            http.post('/yifangPC/article/draft',{},(res=>{
+                if(res.code==200){
+                    this.data=res.data
+                }
+            }))
+        },
         handle(data,type){
             if(type=='edit'){
                 this.$router.push({
-                    path:'/EditDrafts',
+                    path:'/EditArticles',
                     query:{
-                        id:1
+                        token:data.token,
+                        type:'draft'
                     }
                 })
             }else{
-
+                this.$confirm('删除后数据无法恢复，请确认是否执行该操作','提示',{
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(()=>{
+                    http.post("/yifangPC/article/delete",{token:data.token},res=>{
+                        console.log(res)
+                        if(res.code==200){
+                            this.$message({
+                                message:'删除成功',
+                                type:'success'
+                            })
+                            this.getData()
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                    });
+                })
             }
         }
     }

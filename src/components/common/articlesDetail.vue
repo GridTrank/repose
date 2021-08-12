@@ -43,7 +43,20 @@
                                 {{btn.name}} 
                             </div>
                         </div>
-                        <el-input v-model="moreLabel" placeholder="自定义标签，多个标签之间以空格分隔…" @blur="inputBlur"></el-input>
+                        <el-select 
+                            class="more-label"
+                            v-model="moreLabel" 
+                            clearable 
+                            multiple 
+                            filterable 
+                            allow-create 
+                            :popper-append-to-body="false"
+                            default-first-option 
+                            @change="changeLabel"
+                            placeholder="自定义标签，按回车键确认">
+                            <el-option v-for="item in moreLabel_" :key="item.value" :label="item.label" :value="item.label"></el-option>
+                        </el-select>
+
                     </el-form-item>
 
                     <el-form-item>
@@ -53,18 +66,27 @@
 
                     <el-form-item class="cover">
                         <p class="f-t">封面(非必填)</p>
-                        <el-upload
-                            :action="domain+'/yifangPC/upload'" 
-                            :headers="headers"
-                            name="files"
-                            list-type="picture-card"
-                            :limit="1"
-                            :on-success="updateSuccessImg"
-                        >   
-                            <i class="el-icon-plus"></i>
-
-                        </el-upload>
-                        <el-button class="s-btn">从文中选择封面图</el-button>
+                        <div class="img-wrap">
+                            <el-upload
+                                :action="domain+'/yifangPC/upload'" 
+                                class="upload-demo"
+                                :headers="headers"
+                                name="files"
+                                list-type="picture-card"
+                                :limit="1"
+                                ref="imgUpload"
+                                :file-list="imageList"
+                                :on-success="updateSuccessImg"
+                                :on-change="HFhandleChangeImg"
+                            >   
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                            <el-dialog :visible.sync="dialogVisible">
+                                <img width="100%" :src="dialogImageUrl" alt="">
+                            </el-dialog>
+                        </div>
+                        
+                        <!-- <el-button class="s-btn" >从文中选择封面图</el-button> -->
                     </el-form-item>
                 </el-form>
             </div>
@@ -86,7 +108,7 @@
             </div>
         </div>
         <div class="foot-btns">
-            <div class="f-btn bg1" @click="submit(0)">
+            <div class="f-btn bg1" @click="submit(0)" v-if="initDetail.status!==1">
                 存为草稿
             </div>
             <div class="f-btn bg2" @click="submit(1)">
@@ -208,9 +230,15 @@ export default {
                     isSelect:0,
                 },
             ],
-            moreLabel:'',
+            moreLabel:[],
+            moreLabel_:[],
             selectBtn:0,
             customLabels:[],
+            knowledge: [
+                { label: "知识点1" },
+                { label: "知识点2" },
+                { label: "知识点3" }
+            ],
             selectLabels:[],
             content:'',
             editorOption:{
@@ -238,7 +266,12 @@ export default {
                 theme: "snow",
                 placeholder: "请输入正文"
             },
-            uploadData:{}
+            uploadData:{},
+            disabled:false,
+            imageList:[],
+            dialogVisible:false,
+            dialogImageUrl:'',
+            noshow:false
         }
     },
     computed: {
@@ -253,9 +286,13 @@ export default {
                 Authorization: localStorage.getItem("authorization") || ''
             };
         },
+
     },
     created(){
         this.init() 
+    },
+
+    mounted(){
     },
     methods:{
         init(){
@@ -267,6 +304,20 @@ export default {
                     }
                 })
             })
+            this.formData.files.forEach(item=>{
+                this.fileList.push({
+                    name:item.original,
+                    url:item.url
+                })
+            })
+            if(this.formData.image){
+                this.imageList.push({
+                    name:'11',
+                    url:this.formData.image
+                })
+            }
+            
+
         },
         updateSuccess(res,file){
             this.formData.files.push(res.data.aid)
@@ -274,9 +325,32 @@ export default {
         updateSuccessImg(res,file){
             this.formData.aid=res.data.aid
             this.formData.image=res.data.url
+
         },
+        HFhandleChangeImg(file, fileList) {
+            if (fileList.length > 0) {
+                this.imageList = [fileList[fileList.length - 1]]; // 这一步，是 展示最后一次选择的csv文件
+            }
+        },
+
         change(value){
             this.editor.format('link', {value:value,url:'http://www.baidu.com'});
+        },
+        changeLabel(val){
+            val.forEach((el,index)=>{
+                if(this.formData.tags.indexOf(el)!==-1){
+                    val.splice(index,1)
+                }
+            })
+            this.moreLabel=val
+        },
+        handleRemove(file) {
+            this.$refs.imgUpload.clearFiles()
+            this.noshow=false
+        },
+        handlePictureCardPreview(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
         },
         selectLabel(data){
             data.isSelect=!data.isSelect
@@ -286,21 +360,33 @@ export default {
             if(!data.isSelect && this.selectLabels.indexOf(data.name)!==-1){
                 this.selectLabels.splice(this.selectLabels.indexOf(data.name),1)
             }
-            this.formData.tag=this.selectLabels
+            this.formData.tags=this.selectLabels
 
         },
-        inputBlur(){
-            this.formData.tag=this.formData.tag.concat(this.moreLabel.split(' '))
-        },
+        // inputBlur(){
+        //     this.formData.tag=this.formData.tag.concat(this.moreLabel.split(' '))
+        // },
         submit(status){
+            let tags=JSON.parse(JSON.stringify(this.formData.tags))
+            this.moreLabel.forEach(el=>{
+                if(tags.length>0){
+                    if(tags.indexOf(el)==-1){
+                        tags.push(el)
+                    }
+                }else{
+                    tags.push(el) 
+                }
+            })
+
             let data={
                 status,
                 token:this.initDetail.token,
                 info:{
-                    ...this.formData
+                    ...this.formData,
+                    tags
                 }
             }
-            console.log(data)
+            console.log( data)
             http.post("/yifangPC/publish/submit",data,(res=>{
                 console.log(res)
                 if(res.code==200){
@@ -351,6 +437,24 @@ export default {
                 width: 100%;
             }
         }
+        .more-label{
+            /deep/.is-multiple{
+                display: none;
+            }
+            /deep/.el-select .el-input .el-select__caret.is-reverse{
+                    display: none;
+            }
+            /deep/.el-input__icon:after{
+                 display: none;
+            }
+            /deep/.el-icon-arrow-up:before{
+                display: none;
+            }
+            .el-select .el-input .el-select__caret{
+                display: none;
+            }
+        }
+        
         .cover{
             /deep/.el-upload{
                 width: 150px;
@@ -360,6 +464,35 @@ export default {
                 margin-right: 200px;
                 margin-top: -50px
             }
+            .img-wrap{
+                display: flex;
+                .fengmian{
+                    width: 150px;
+                    height: 150px;
+                    margin-right:10px;
+                    border-radius: 6px;
+                }
+                .noshow{
+                    display: none !important;
+                }
+                .upload-demo {
+                    display: flex;
+                }
+                /deep/ .el-list-enter-active,
+                /deep/ .el-list-leave-active {
+                    transition: none;
+                }
+            
+                /deep/ .el-list-enter,
+                /deep/ .el-list-leave-active {
+                    opacity: 0;
+                }
+                /deep/ .el-upload-list {
+                    height: 40px;
+                }
+
+            }
+            
         }
         
         .label-wrap{
@@ -475,5 +608,7 @@ overflow-y: scroll;
 .ql-snow .ql-picker.ql-lineheight {
   width: 70px;
 }
-
+.disabled .el-upload--picture-card {
+    display: none;
+}
 </style>
