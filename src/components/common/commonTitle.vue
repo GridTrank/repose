@@ -6,7 +6,14 @@
         <div class="title">{{titleOptions.name}}</div>
         <div class="tool">
             <p v-if="titleOptions.remark" class="remark">备注：以下数据不包括找飞友及图片类主题的文章</p>
-            <el-input v-if="titleOptions.search" class="search-input" style="width:300px" v-model="searchData" placeholder="搜索文章">
+            <el-input 
+                v-if="titleOptions.search" 
+                class="search-input" 
+                style="width:300px" 
+                v-model="searchData" 
+                placeholder="搜索文章"
+                @keyup.enter.native="search"
+            >
                 <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
             </el-input>
         </div>

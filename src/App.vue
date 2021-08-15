@@ -33,6 +33,7 @@ export default {
               },1000)
             }else if(res.code==200){
               this.$store.commit('updateUserInfo',res.data.user)
+              this.$store.commit('updateMenusList',res.data.user)
             }
         }))
     },

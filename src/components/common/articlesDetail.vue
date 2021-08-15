@@ -24,6 +24,7 @@
                             :headers="headers"
                             name="files"
                             :on-success="updateSuccess"
+                            :on-remove="removeFile"
                         >
                             <el-button >
                                 <i class="el-icon-upload"></i>
@@ -46,7 +47,6 @@
                         <el-select 
                             class="more-label"
                             v-model="moreLabel" 
-                            clearable 
                             multiple 
                             filterable 
                             allow-create 
@@ -54,7 +54,7 @@
                             default-first-option 
                             @change="changeLabel"
                             placeholder="自定义标签，按回车键确认">
-                            <el-option v-for="item in moreLabel_" :key="item.value" :label="item.label" :value="item.label"></el-option>
+                            <el-option v-for="(item,index) in moreLabel_" :key="index" :label="item" :value="item"></el-option>
                         </el-select>
 
                     </el-form-item>
@@ -73,20 +73,18 @@
                                 :headers="headers"
                                 name="files"
                                 list-type="picture-card"
-                                :limit="1"
                                 ref="imgUpload"
                                 :file-list="imageList"
                                 :on-success="updateSuccessImg"
+                                :on-remove="removeImg"
                                 :on-change="HFhandleChangeImg"
                             >   
                                 <i class="el-icon-plus"></i>
                             </el-upload>
-                            <el-dialog :visible.sync="dialogVisible">
-                                <img width="100%" :src="dialogImageUrl" alt="">
-                            </el-dialog>
+                           
                         </div>
                         
-                        <!-- <el-button class="s-btn" >从文中选择封面图</el-button> -->
+                        <el-button class="s-btn" v-if="hasImage" @click="dialogChooseImage=true">从文中选择封面图</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -94,17 +92,24 @@
                 <div class="r-top">
                     <el-input class="tit-input" v-model="formData.title" placeholder="请输入标题"></el-input>
                 </div>
-                <div>
-                    <quill-editor
-                        ref="myQuillEditor"
-                        v-model="formData.content"
-                        :options="editorOption"
-                        class='editor'
-                        @blur="onEditorBlur($event)"
-                        @focus="onEditorFocus($event)"
-                        @ready="onEditorReady($event)"
-                        /> 
-                </div>
+                <quill-editor
+                    ref="myQuillEditor"
+                    v-model="formData.content"
+                    :options="editorOption"
+                    class='editor'
+                /> 
+
+                <el-upload 
+                    class="quill-upload"
+                    :action="domain+'/yifangPC/upload'" 
+                    :headers="headers"
+                    name="files"
+                    id="upload" 
+                    multiple
+                    :on-success="quillUploadImage"
+                    :on-change="quillChangeImage"
+                    style="display:none;" 
+                ></el-upload>
             </div>
         </div>
         <div class="foot-btns">
@@ -115,10 +120,35 @@
                 发布
             </div>
         </div>
+        
+        <!-- 选取图片弹窗 -->
+        <el-dialog
+            title="选择图片"
+            :visible="dialogChooseImage" 
+            width="50%"
+        >
+            <div class="image-wrap">
+                <div class="image-item" 
+                    v-for="(item,index) in contentImage" 
+                    @click="chooseImage(item,index)"
+                    
+                    :key="index">
+                    <img :class="selectImageIndex==index && 'select-image'"  :src="item" >
+                </div>
+                
+            </div>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogChooseImage = false">取 消</el-button>
+                <el-button type="primary" @click="selectImage">确 定</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
 <script>
+import { Message,Loading  } from 'element-ui';
 import config from '@/utils/config.js'
 import http from '@/utils/httpUtil'
 import Quill from "quill";
@@ -126,6 +156,9 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
+import { container, ImageExtend, QuillWatch } from "quill-image-extend-module";
+Quill.register('modules/ImageExtend', ImageExtend)
+
 let Inline = Quill.import('blots/inline');
 let Parchment = Quill.import("parchment");
 class lineHeightAttributor extends Parchment.Attributor.Style {}
@@ -162,7 +195,7 @@ const toolbarOptions = [
   [{ lineheight: [ '1.5', '1.75', '2', '3', '4', '5'] }],
 
   ["blockquote"], // 引用  
-  ["link"] // 链接、图片、视频
+  ["image"] // 链接、图片、视频
 
 ]
 export default {
@@ -233,17 +266,9 @@ export default {
             moreLabel:[],
             moreLabel_:[],
             selectBtn:0,
-            customLabels:[],
-            knowledge: [
-                { label: "知识点1" },
-                { label: "知识点2" },
-                { label: "知识点3" }
-            ],
-            selectLabels:[],
             content:'',
             editorOption:{
                 modules: {
-                    //工具栏定义的
                     toolbar: {
                         container:toolbarOptions,
                         handlers: {
@@ -256,8 +281,16 @@ export default {
                             },
                             // 重写引用
                             blockquote:(val)=>{
-								
                                 this.$store.commit('updateShowQuote',true)
+                            },
+                            image:(value)=>{
+                                if (value) {
+                                    // upload点击上传事件
+                                    document.querySelector('.quill-upload input').click()
+                                } else {
+                                    this.quill.format('image', false)
+                                }
+
                             }
                         }
                     }
@@ -267,11 +300,13 @@ export default {
                 placeholder: "请输入正文"
             },
             uploadData:{},
-            disabled:false,
             imageList:[],
-            dialogVisible:false,
-            dialogImageUrl:'',
-            noshow:false
+            initSelectTags:[],
+            hasImage:false,
+            contentImage:[],
+            chooseImageSrc:'',
+            dialogChooseImage:false,
+            selectImageIndex:0
         }
     },
     computed: {
@@ -286,98 +321,168 @@ export default {
                 Authorization: localStorage.getItem("authorization") || ''
             };
         },
-
+    },
+    watch:{
+        imageList:(val)=>{
+            if(val.length>0){
+                document.getElementsByClassName("el-upload--picture-card")[0].style.display='none'
+            }
+        }
     },
     created(){
         this.init() 
     },
-
-    mounted(){
-    },
     methods:{
         init(){
             this.formData=this.initDetail.info  
+            let initTag=[]
+            this.initDetail.hottags.forEach(item=>{
+                initTag.push(item.name)  
+            })
+            // 处理标签
             this.formData.tags.forEach(item=>{
+                if(initTag.indexOf(item)==-1){
+                    this.moreLabel.push(item)
+                    this.moreLabel_.push(item)
+                }
                 this.initDetail.hottags.forEach(el=>{
                     if(item==el.name){
                         el.isSelect=1
+                        // 获取热门标签中已选择的标签
+                        this.initSelectTags.push(el.name)
                     }
                 })
             })
+
+            // 有附件时
             this.formData.files.forEach(item=>{
                 this.fileList.push({
                     name:item.original,
                     url:item.url
                 })
             })
+            // 有封面时
             if(this.formData.image){
                 this.imageList.push({
                     name:'11',
                     url:this.formData.image
                 })
             }
+            // 是否有图片
             
-
-        },
-        updateSuccess(res,file){
-            this.formData.files.push(res.data.aid)
-        },
-        updateSuccessImg(res,file){
-            this.formData.aid=res.data.aid
-            this.formData.image=res.data.url
-
-        },
-        HFhandleChangeImg(file, fileList) {
-            if (fileList.length > 0) {
-                this.imageList = [fileList[fileList.length - 1]]; // 这一步，是 展示最后一次选择的csv文件
+            if(this.formData.content && this.formData.content.indexOf('img')!=-1){
+                this.hasImage=true
+                var reg = /(?<=(src="))[^"]*?(?=")/ig;
+                var allSrc = this.formData.content.match(reg);
+                for(var i = 0; i<allSrc.length;i++){
+                    this.contentImage.push(allSrc[i])
+                }
             }
         },
-
-        change(value){
-            this.editor.format('link', {value:value,url:'http://www.baidu.com'});
+        // 附件上传
+        updateSuccess(res,file){
+            if(res.code==200){
+                this.formData.files.push(res.data.aid)
+            }else{
+                this.$message.error(res.message)
+                this.fileList=[]
+                this.formData.files=[]
+            }
         },
+        // 附件移出
+        removeFile(res){
+            if(res.status=='success'){
+                this.fileList=[]
+                this.formData.files=[]
+            }
+        },
+        // 封面上传
+        updateSuccessImg(res,file){
+            document.getElementsByClassName("el-upload-list--picture-card")[0].style.display='block'
+            if(res.code==200){
+                document.getElementsByClassName("el-upload--picture-card")[0].style.display='none'
+                this.formData.aid=res.data.aid
+                this.formData.image=res.data.url
+            }else{
+                document.getElementsByClassName("el-upload-list--picture-card")[0].style.display='none'
+                this.$message.error(res.message)
+                this.imageList=[]
+            }
+        },
+        // 封面移除
+        removeImg(res,file){
+            if(res.status=='success'){
+                document.getElementsByClassName("el-upload--picture-card")[0].style.display='block'
+                this.imageList=[]
+            }
+        },  
+        // 监听封面上传
+        HFhandleChangeImg(file, fileList) {
+            if (fileList.length > 0) {
+                this.imageList = [fileList[fileList.length - 1]]; 
+            }
+        },
+        // 富文本上传图片
+        quillUploadImage(res){
+            var data = res.data
+            let quill = this.editor
+            if (res.code==200) {
+                let length = quill.getSelection().index
+                quill.insertEmbed(length, 'image',  data.url)
+                quill.setSelection(length + 1)
+            } else {
+                this.$message.error(res.message)
+            }
+        },
+        // 监听富文本上传图片
+        quillChangeImage(res){
+             const loading =  Loading.service({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+                fullscreen: true,
+            });
+            if(res.response && res.response.code==200){
+                loading.close()
+            }
+        },
+        // 改变标签输入框数据
         changeLabel(val){
             val.forEach((el,index)=>{
-                if(this.formData.tags.indexOf(el)!==-1){
-                    val.splice(index,1)
-                }
+                this.initDetail.hottags.forEach((i)=>{
+                    if(el==i.name){
+                        val.splice(index,1)
+                    }
+                }) 
             })
             this.moreLabel=val
         },
-        handleRemove(file) {
-            this.$refs.imgUpload.clearFiles()
-            this.noshow=false
-        },
-        handlePictureCardPreview(file) {
-            this.dialogImageUrl = file.url;
-            this.dialogVisible = true;
-        },
+        // 选择标签
         selectLabel(data){
             data.isSelect=!data.isSelect
-            if(data.isSelect && this.selectLabels.indexOf(data.name)==-1){
-                this.selectLabels.push(data.name)
+            // 热门标签选中
+            if(data.isSelect && this.initSelectTags.indexOf(data.name)==-1){
+                this.initSelectTags.push(data.name)
             }
-            if(!data.isSelect && this.selectLabels.indexOf(data.name)!==-1){
-                this.selectLabels.splice(this.selectLabels.indexOf(data.name),1)
+            if(!data.isSelect && this.initSelectTags.indexOf(data.name)!==-1){
+                this.initSelectTags.splice(this.initSelectTags.indexOf(data.name),1)
             }
-            this.formData.tags=this.selectLabels
-
         },
-        // inputBlur(){
-        //     this.formData.tag=this.formData.tag.concat(this.moreLabel.split(' '))
-        // },
+        // 选择图片
+        chooseImage(item,index){
+            this.chooseImageSrc=item
+            this.selectImageIndex=index
+        },
+        // 选中
+        selectImage(){
+            console.log(this.imageList)
+            this.imageList[0].url=this.chooseImageSrc
+            this.formData.image=this.chooseImageSrc
+            this.dialogChooseImage=false
+        },
         submit(status){
-            let tags=JSON.parse(JSON.stringify(this.formData.tags))
-            this.moreLabel.forEach(el=>{
-                if(tags.length>0){
-                    if(tags.indexOf(el)==-1){
-                        tags.push(el)
-                    }
-                }else{
-                    tags.push(el) 
-                }
-            })
-
+            let tags=this.moreLabel.concat(this.initSelectTags)
             let data={
                 status,
                 token:this.initDetail.token,
@@ -386,26 +491,24 @@ export default {
                     tags
                 }
             }
-            console.log( data)
+            console.log(data)
             http.post("/yifangPC/publish/submit",data,(res=>{
-                console.log(res)
                 if(res.code==200){
                     this.$message({
-                        message:'发布成功',
+                        message:status==1?'发布成功':'保存成功',
                         type:'success'
                     })
                     setTimeout(()=>{
-                        this.$router.push('/MyArticles')
+                        if(status==1){
+                            this.$router.push('/MyArticles')
+                        }else if(status==0){
+                            this.$router.push('/Drafts')
+                        }
+                        
                     },1000)
                 }
             }))
         },
-        onEditorBlur(){
-        },
-        onEditorFocus(){
-        },
-        onEditorReady(){
-        }
     }
 }
 </script>
@@ -461,11 +564,12 @@ export default {
             } 
             .s-btn{
                 float: right;
-                margin-right: 200px;
+                margin-right: 400px;
                 margin-top: -50px
             }
             .img-wrap{
                 display: flex;
+                height: 150px;
                 .fengmian{
                     width: 150px;
                     height: 150px;
@@ -557,6 +661,28 @@ export default {
         background-color: #000;
     }
 }
+.image-wrap{
+    max-height: 800px;
+    overflow-y: scroll;
+    &::-webkit-scrollbar { width: 0 !important }
+    .image-item{
+        display: inline-block;
+        padding: 10px;
+        width: 200px;
+        height: 200px;
+        cursor: pointer;
+        img{
+            border-radius: 12px;
+            display: block;
+            width: 100%;
+            height: 100%;
+            
+        }
+    }
+    .select-image{
+        border:1px solid #26d79f;
+    }  
+}
 .editor {
   line-height: normal !important;
   min-height: 400px;
@@ -608,7 +734,5 @@ overflow-y: scroll;
 .ql-snow .ql-picker.ql-lineheight {
   width: 70px;
 }
-.disabled .el-upload--picture-card {
-    display: none;
-}
+
 </style>

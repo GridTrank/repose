@@ -24,44 +24,23 @@ export default {
     data(){
         return{
             active:0,
-            menusList:[
-                {
-                    router:'/PublishArticles',
-                    name:'发布文章',
-                    icon:'el-icon-circle-plus-outline'
-                },
-                {
-                    router:'/MyArticles',
-                    name:'我的文章',
-                    icon:'el-icon-document'
-                },
-                {
-                    router:'/Drafts',
-                    name:'草稿箱',
-                    icon:'el-icon-notebook-1'
-                },
-                {
-                    router:'/ArticlesManage',
-                    name:'文章管理',
-                    icon:'el-icon-postcard'
-                },
-                {
-                    router:'/AccountManage',
-                    name:'账号管理',
-                    icon:'el-icon-user'
-                },
-            ]
+
         }
     },
     computed:{
         userInfo(){
             return this.$store.state.common.userInfo
+        },
+        menusList(){
+            return this.$store.state.common.menusList
         }
+
     },
     mounted(){
         if(sessionStorage.getItem('routerIndex')){
             this.active=sessionStorage.getItem('routerIndex')
         }
+
     },
     
     methods:{
@@ -82,11 +61,13 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    position: relative;
     .head-logo{
         width: 200px;
     }
     .head-menus{
-        margin-left: -15%;
+        position: absolute;
+        left: 400px;
         .menus-list{
             display: flex;
             .menus-item{

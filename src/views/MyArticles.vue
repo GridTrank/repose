@@ -103,7 +103,6 @@ export default {
                     type: 'warning'
                 }).then(()=>{
                     http.post("/yifangPC/article/delete",{token:data.token},res=>{
-                        console.log(res)
                         if(res.code==200){
                             this.$message({
                                 message:'删除成功',

@@ -19,6 +19,7 @@
     "less": "^3.12.2",
     "less-loader": "^4.1.0",
     "qrcodejs2": "0.0.2",
+    "quill-image-extend-module": "^1.1.2",
     "swiper": "^3.4.2",
     "tinymce": "^5.8.2",
     "vue": "^2.5.2",

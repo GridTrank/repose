@@ -53,6 +53,7 @@ export default {
                     })
                     localStorage.setItem("authorization",res.data.authorization)
                     this.$store.commit('updateUserInfo',res.data.user)
+                    this.$store.commit('updateMenusList',res.data.user)
                     setTimeout(()=>{
                         this.$router.push("/PublishArticles"); 
                     },2000)
