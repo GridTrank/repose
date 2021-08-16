@@ -19,19 +19,21 @@ instance.defaults.headers = {
 
 
 function ajax(type,url,data,callback,failcallback,status,jsonState){
-    const loading =  Loading.service({
+    const loading = url!=='/yifangPC/login/monitor'? Loading.service({
         lock: true,
         text: 'Loading',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)',
         fullscreen: true,
-    });
+    }):'';
     if(localStorage.getItem("authorization") ){
         axios.defaults.headers.common["Authorization"]=localStorage.getItem("authorization") 
     }
     return axios[type]( config.Domain+url , data)
     .then((result) => {
-        loading.close();
+        if( url!=='/yifangPC/login/monitor'){
+            loading.close();
+        }
         var response = result.data;
         if(response.code == 401){
             Message({

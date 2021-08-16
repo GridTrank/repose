@@ -156,8 +156,6 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
-import { container, ImageExtend, QuillWatch } from "quill-image-extend-module";
-Quill.register('modules/ImageExtend', ImageExtend)
 
 let Inline = Quill.import('blots/inline');
 let Parchment = Quill.import("parchment");
@@ -327,6 +325,13 @@ export default {
             if(val.length>0){
                 document.getElementsByClassName("el-upload--picture-card")[0].style.display='none'
             }
+        },
+        "formData.content":function(val){
+            if(val && val.indexOf('img')!=-1){
+                this.hasImage=true
+            }else{
+                this.hasImage=false
+            }
         }
     },
     created(){
@@ -483,12 +488,21 @@ export default {
         },
         submit(status){
             let tags=this.moreLabel.concat(this.initSelectTags)
+            let files=[]
+            this.formData.files.forEach(item=>{
+                if(item.aid){
+                    files.push(item.aid)
+                }else{
+                    files.push(item)
+                }
+            })
             let data={
                 status,
                 token:this.initDetail.token,
                 info:{
                     ...this.formData,
-                    tags
+                    tags,
+                    files
                 }
             }
             console.log(data)

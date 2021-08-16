@@ -2,7 +2,23 @@
 const state = {
     showQuote:false,
     userInfo:{},
-    menusList:[]
+    menusList:[
+      {
+        router:'/PublishArticles',
+        name:'发布文章',
+        icon:'el-icon-circle-plus-outline'
+      },
+      {
+          router:'/MyArticles',
+          name:'我的文章',
+          icon:'el-icon-document'
+      },
+      {
+          router:'/Drafts',
+          name:'草稿箱',
+          icon:'el-icon-notebook-1'
+      },
+    ]
 }
 
 
@@ -18,9 +34,6 @@ const mutations = {
   },
   updateUserInfo(state,data){
     localStorage.setItem('userInfo',JSON.stringify(data))
-    state.userInfo=data
-  },
-  updateMenusList(state,data){
     let authoritylist=data.authoritylist
     if(authoritylist.length==0){
       state.menusList=[
@@ -92,6 +105,11 @@ const mutations = {
         }
       ]
     }
+    
+    state.userInfo=data
+  },
+  updateMenusList(state,data){
+    
   }
 }
 
