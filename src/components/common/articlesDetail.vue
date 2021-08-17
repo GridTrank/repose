@@ -126,21 +126,21 @@
             title="选择图片"
             :visible="dialogChooseImage" 
             width="50%"
+            @close="dialogChooseImage = false"
         >
             <div class="image-wrap">
                 <div class="image-item" 
                     v-for="(item,index) in contentImage" 
                     @click="chooseImage(item,index)"
-                    
                     :key="index">
-                    <img :class="selectImageIndex==index && 'select-image'"  :src="item" >
+                    <img :class="selectImageIndex==index && 'select-image'"  :src="item.src" >
                 </div>
                 
             </div>
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogChooseImage = false">取 消</el-button>
-                <el-button type="primary" @click="selectImage">确 定</el-button>
+                <el-button type="primary" @click="dialogChooseImage = false">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -159,6 +159,7 @@ import { quillEditor } from 'vue-quill-editor'
 
 let Inline = Quill.import('blots/inline');
 let Parchment = Quill.import("parchment");
+let BlockEmbed = Quill.import('blots/block/embed');
 class lineHeightAttributor extends Parchment.Attributor.Style {}
 const lineHeightStyle = new lineHeightAttributor("lineHeight", "line-height", {
   scope: Parchment.Scope.INLINE,
@@ -181,6 +182,25 @@ class LinkBlot extends Inline {
 LinkBlot.blotName = 'link';
 LinkBlot.tagName = 'a';
 Quill.register(LinkBlot);
+class ImageBlot extends BlockEmbed {
+    static create(value) {
+        let node = super.create();
+        node.setAttribute('title', value.title);
+        node.setAttribute('data-aid', value.aid);
+        node.setAttribute('src', value.src || value.url );
+        return node;
+    }
+    static value(node) {
+      return {
+        title: node.getAttribute('title'),
+        aid: node.getAttribute('data-aid'),
+        src:node.getAttribute('src'),
+      };
+    }
+  }
+ImageBlot.blotName = 'image';
+ImageBlot.tagName = 'img';
+Quill.register(ImageBlot);
 
 const toolbarOptions = [
   ["bold", "italic", "underline",],
@@ -332,9 +352,10 @@ export default {
             }else{
                 this.hasImage=false
             }
+            this.handleImage()
         }
     },
-    created(){
+    mounted(){
         this.init() 
     },
     methods:{
@@ -358,7 +379,6 @@ export default {
                     }
                 })
             })
-
             // 有附件时
             this.formData.files.forEach(item=>{
                 this.fileList.push({
@@ -373,16 +393,30 @@ export default {
                     url:this.formData.image
                 })
             }
-            // 是否有图片
+            // 是否有图片进行处理
+            this.handleImage()
             
+        },
+        handleImage(){
+            let initImage=[]
+            this.contentImage=[]
             if(this.formData.content && this.formData.content.indexOf('img')!=-1){
                 this.hasImage=true
-                var reg = /(?<=(src="))[^"]*?(?=")/ig;
+                var reg = /(<img(?:(?!id|>).)*)(id[\=\"\'\s]+)?([^\"\'\s]*)([\"\']?)([^>]*>)/gi;
                 var allSrc = this.formData.content.match(reg);
                 for(var i = 0; i<allSrc.length;i++){
-                    this.contentImage.push(allSrc[i])
+                    initImage.push(allSrc[i])
                 }
             }
+            initImage.forEach((item)=>{
+                let itemArr=item.split(' ')
+                let obj={
+                    title:itemArr[1].split('title="')[1].substr(0,itemArr[1].split('title="')[1].length-1),
+                    dataAid:itemArr[2].split('data-aid="')[1].substr(0,itemArr[2].split('data-aid="')[1].length-1),
+                    src:itemArr[3].split('src="')[1].substr(0,itemArr[3].split('src="')[1].length-2),
+                }
+                this.contentImage.push(obj)
+            }) 
         },
         // 附件上传
         updateSuccess(res,file){
@@ -430,10 +464,15 @@ export default {
         // 富文本上传图片
         quillUploadImage(res){
             var data = res.data
+            console.log(data)
             let quill = this.editor
             if (res.code==200) {
                 let length = quill.getSelection().index
-                quill.insertEmbed(length, 'image',  data.url)
+                quill.insertEmbed(length, 'image', {
+                    url:data.url,
+                    title:data.original,
+                    aid:data.aid,
+                })
                 quill.setSelection(length + 1)
             } else {
                 this.$message.error(res.message)
@@ -449,6 +488,7 @@ export default {
                 fullscreen: true,
             });
             if(res.response && res.response.code==200){
+                this.handleImage()
                 loading.close()
             }
         },
@@ -476,15 +516,21 @@ export default {
         },
         // 选择图片
         chooseImage(item,index){
-            this.chooseImageSrc=item
+            this.imageList=[]
             this.selectImageIndex=index
+            let img={
+                url:item.src,
+                name:item.title
+            }
+            this.imageList.push(img)
+            this.formData.image=item.src
+            this.formData.aid=Number(item.dataAid) 
+            this.$forceUpdate()
         },
-        // 选中
-        selectImage(){
-            console.log(this.imageList)
-            this.imageList[0].url=this.chooseImageSrc
-            this.formData.image=this.chooseImageSrc
-            this.dialogChooseImage=false
+
+        // 父组件调用事件，设置标题
+        change(value){
+            this.editor.format('link', {value:value,url:'http://www.baidu.com'});
         },
         submit(status){
             let tags=this.moreLabel.concat(this.initSelectTags)
