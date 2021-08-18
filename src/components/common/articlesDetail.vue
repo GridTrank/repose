@@ -140,24 +140,45 @@
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogChooseImage = false">取 消</el-button>
-                <el-button type="primary" @click="dialogChooseImage = false">确 定</el-button>
+                <el-button type="primary" @click="selectImage">确 定</el-button>
             </span>
         </el-dialog>
+        
+        <!-- 新增弹窗修改标题 -->
+        <el-dialog 
+            :visible="showTitleDialog" 
+            title="修改标题"
+            @close="$store.commit('updateShowTitleDialog',false)"
+        >
+            <div class="set-title">
+                <p class="s-p">将在文中插入引用对象，请为其设置标题</p>
+                <el-input v-model="setTitle" :maxlength="25">
+                    <template slot="append">{{25-setTitle.length}}</template>
+                </el-input>
+                <div class="sub" @click="submitTitle">确定</div>
+            </div>
+        </el-dialog>
+        <!-- 引用弹窗 -->
+        <commonQuote @getSetTitle="getSetTitle" />
 
     </div>
 </template>
 
+
 <script>
+import commonQuote from '@/components/common/commonQuote'
 import { Message,Loading  } from 'element-ui';
 import config from '@/utils/config.js'
 import http from '@/utils/httpUtil'
 import Quill from "quill";
+import store from '../../store'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
 
 let Inline = Quill.import('blots/inline');
+let Link = Quill.import("formats/link");
 let Parchment = Quill.import("parchment");
 let BlockEmbed = Quill.import('blots/block/embed');
 class lineHeightAttributor extends Parchment.Attributor.Style {}
@@ -166,41 +187,52 @@ const lineHeightStyle = new lineHeightAttributor("lineHeight", "line-height", {
   whitelist: ["initial", '1', '1.5', '1.75', '2', '3', '4', '5' ]
 });
 Quill.register({'formats/lineHeight':lineHeightStyle},true);
+
 class LinkBlot extends Inline {
-  static create(data) {
-    let node = super.create();
-    node.setAttribute("onclick", `javascript:window.open("${data.url}");` );
-    node.setAttribute('href', data.url);
-    node.setAttribute('target', '_blank');
-	node.innerHTML = data.value
-    return node;
-  }
-  static formats(node) {
-    return node.getAttribute('href');
-  }
+    static create(data) {
+        let node = super.create();
+        // node.setAttribute("onclick", 'showLink(' +JSON.stringify(data)+ ')' );
+        node.setAttribute('target', '_blank');
+        node.setAttribute('data-token', data.token);
+        node.setAttribute('data-miniprogram-appid', data.appid);
+        node.setAttribute('data-miniprogram-path', data.path);
+        node.innerHTML= data.value
+        return node;
+    }
+    static formats(node) {
+        // 返回所有用到的字段
+        return{
+            appid: node.getAttribute('data-miniprogram-appid'),
+            path: node.getAttribute('data-miniprogram-path'),
+            token: node.getAttribute('data-token'),
+            value: node.innerHTML,
+        }
+    }
 }
 LinkBlot.blotName = 'link';
 LinkBlot.tagName = 'a';
 Quill.register(LinkBlot);
+
 class ImageBlot extends BlockEmbed {
     static create(value) {
         let node = super.create();
         node.setAttribute('title', value.title);
-        node.setAttribute('data-aid', value.aid);
+        node.setAttribute('data-custom', value.aid);
         node.setAttribute('src', value.src || value.url );
         return node;
     }
     static value(node) {
       return {
         title: node.getAttribute('title'),
-        aid: node.getAttribute('data-aid'),
+        aid: node.getAttribute('data-custom'),
         src:node.getAttribute('src'),
       };
     }
-  }
+}
 ImageBlot.blotName = 'image';
 ImageBlot.tagName = 'img';
 Quill.register(ImageBlot);
+
 
 const toolbarOptions = [
   ["bold", "italic", "underline",],
@@ -216,10 +248,17 @@ const toolbarOptions = [
   ["image"] // 链接、图片、视频
 
 ]
+// 监听a标签点击事件
+window.showLink=(data)=>{
+    let query={
+        show:true,
+        token:data.token
+    }
+    store.commit("updateShowTitleDialog",query)
+}
 export default {
-    components:{quillEditor},
+    components:{quillEditor,commonQuote},
     props:{
-        setTitle:String,
         type:String,
         initDetail:Object
     },
@@ -229,62 +268,12 @@ export default {
             domain:config.Domain,
             formData:{},
             fileList:[],
-            labels:[
-                {
-                    name:'标签1',
-                    value:1,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:2,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:3,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:4,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:5,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:6,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:7,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:8,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:9,
-                    isSelect:0,
-                },
-                {
-                    name:'标签1',
-                    value:10,
-                    isSelect:0,
-                },
-            ],
+            labels:[],
             moreLabel:[],
             moreLabel_:[],
             selectBtn:0,
             content:'',
+            quillIndex:'',
             editorOption:{
                 modules: {
                     toolbar: {
@@ -299,6 +288,8 @@ export default {
                             },
                             // 重写引用
                             blockquote:(val)=>{
+                                // 编辑页面重写弹出框
+                                this.quillIndex=this.editor.getSelection().index
                                 this.$store.commit('updateShowQuote',true)
                             },
                             image:(value)=>{
@@ -324,7 +315,11 @@ export default {
             contentImage:[],
             chooseImageSrc:'',
             dialogChooseImage:false,
-            selectImageIndex:0
+            selectImageIndex:0,
+            selectImageInfo:{},
+            dialogTitle:false,
+            setTitle:'',
+            setToken:''
         }
     },
     computed: {
@@ -339,6 +334,17 @@ export default {
                 Authorization: localStorage.getItem("authorization") || ''
             };
         },
+        showTitleDialog:{
+            get(){
+                return this.$store.state.common.showTitleDialog
+            },
+            set(val){
+                return val
+            }
+        },
+        changeTitleToken(){
+            return this.$store.state.common.changeTitleToken
+        }
     },
     watch:{
         imageList:(val)=>{
@@ -377,6 +383,7 @@ export default {
                         // 获取热门标签中已选择的标签
                         this.initSelectTags.push(el.name)
                     }
+                    
                 })
             })
             // 有附件时
@@ -412,7 +419,7 @@ export default {
                 let itemArr=item.split(' ')
                 let obj={
                     title:itemArr[1].split('title="')[1].substr(0,itemArr[1].split('title="')[1].length-1),
-                    dataAid:itemArr[2].split('data-aid="')[1].substr(0,itemArr[2].split('data-aid="')[1].length-1),
+                    dataAid:Number(itemArr[2].split('data-custom="id=')[1].substr(0,itemArr[2].split('data-custom="id=')[1].length-1)) ,
                     src:itemArr[3].split('src="')[1].substr(0,itemArr[3].split('src="')[1].length-2),
                 }
                 this.contentImage.push(obj)
@@ -464,14 +471,13 @@ export default {
         // 富文本上传图片
         quillUploadImage(res){
             var data = res.data
-            console.log(data)
             let quill = this.editor
             if (res.code==200) {
                 let length = quill.getSelection().index
                 quill.insertEmbed(length, 'image', {
                     url:data.url,
                     title:data.original,
-                    aid:data.aid,
+                    aid:'id='+data.aid,
                 })
                 quill.setSelection(length + 1)
             } else {
@@ -516,8 +522,13 @@ export default {
         },
         // 选择图片
         chooseImage(item,index){
-            this.imageList=[]
             this.selectImageIndex=index
+            this.selectImageInfo=item
+        },
+        // 图片选中
+        selectImage(){
+            this.imageList=[]
+            let item=this.selectImageInfo
             let img={
                 url:item.src,
                 name:item.title
@@ -525,12 +536,35 @@ export default {
             this.imageList.push(img)
             this.formData.image=item.src
             this.formData.aid=Number(item.dataAid) 
-            this.$forceUpdate()
+            this.dialogChooseImage=false
         },
-
+        // 修改标题
+        submitTitle(){
+            let data={
+                title:this.setTitle,
+                token:this.changeTitleToken
+            }
+            http.post('/yifangPC/quote/submit',data,(res=>{
+                if(res.code==200){
+                    this.getSetTitle(this.setTitle,res.data.content,this.changeTitleToken)
+                    this.$message({
+                        message:'修改成功',
+                        type:'success'
+                    })
+                    this.$store.commit('updateShowTitleDialog',false)
+                }
+            }))
+        },
         // 父组件调用事件，设置标题
-        change(value){
-            this.editor.format('link', {value:value,url:'http://www.baidu.com'});
+        getSetTitle(value,info){
+            let quill = this.editor
+            quill.insertEmbed(this.quillIndex+1, 'link', {
+                value:value,
+                token:info.token,
+                appid:info.appid,
+                path:info.path
+            })
+            quill.setSelection(this.quillIndex + value.length+2)
         },
         submit(status){
             let tags=this.moreLabel.concat(this.initSelectTags)
@@ -578,6 +612,33 @@ export default {
     display: flex;
     flex-direction: column;
     
+}
+.set-title{
+       background: #fff;
+       border-radius: 12px;
+       padding: 40px 25%;
+       margin-top: 20px;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       .s-p{
+           margin-bottom: 40px;
+           font-size: 16px;
+           color: #333;
+       }
+       .sub{
+           margin-top: 50px;
+           width: 200px;
+           height: 50px;
+           background: #000;
+           color: #fff;
+           font-size: 20px;
+           font-weight: 600;
+           border-radius: 24px;
+           text-align: center;
+           line-height: 50px;
+           cursor: pointer;
+       }
 }
 .article{
     display: flex;

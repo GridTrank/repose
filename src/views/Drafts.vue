@@ -6,7 +6,7 @@
                 <div class="dra-top">
                     <div class="dt-left">
                         <span class="dtl-left">{{item.relativedate}}</span>
-                        <span class="dtl-right">{{item.title}}</span>
+                        <span class="dtl-right">{{item.topicalname}}</span>
                     </div>
                     <div class="dt-right">
                         <span class="dtr-i" @click="handle(item,'edit')"> <i class="el-icon-edit"></i> </span>
@@ -15,10 +15,12 @@
                 </div>
                 <div class="dra-content">
                     <div class="dc-left">
-                        <p class="dcl-t">{{item.description}}</p>
+                        <p class="dcl-t">{{item.title}}</p>
                         <p class="dcl-b towHidden" >{{item.content}} </p>
                     </div>
-                    <div class="dc-right"></div>
+                    <div class="dc-right">
+                        <img :src="item.imageurl" >
+                    </div>
                 </div>
             </div>
         </div>
@@ -95,7 +97,7 @@ export default {
         display: flex;
         flex-wrap: wrap;
         .dra-item{
-            width: 49%;
+            width: 48%;
             margin-top: 20px ;
             margin-right: 20px;
             background-color: #fff;
@@ -109,6 +111,7 @@ export default {
                 padding: 30px;
                 border-bottom: 1px solid #ccc;
                 .dt-left{
+                    display: flex;
                     .dtl-left{
                         color: #999;
                         padding-right: 20px;

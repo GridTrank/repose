@@ -1,0 +1,303 @@
+<template>
+    <div class="page-wrap">
+        <el-dialog 
+        :title="diaTitle" 
+        width="70%"
+        @close="$store.commit('updateShowQuote',false)"
+        :visible.sync="showQuote">
+            <div v-if="!isSelectArticle">
+                <p class="dia-tit">发布文章时，可以在文中引用你或他人发布的文章。发布后，浏览者点击文中的相关链接，即可查看被引用的文章。</p>
+                <div class="dia-wrap">
+                    <div class="dia-left">
+                        <div class="left-list">
+                            <div class="left-item" 
+                            :class="selectLeft == index && 'select-left'"
+                            @click="selectItem(item,index)"
+                            v-for="(item,index) in list" :key="index">
+                                <img class="item-img" :src="item.image">
+                                <p class="item-tit">{{item.name}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dia-right">
+                        <div class="search">
+                            <el-input placeholder="搜索文章" v-model="keyword"  @keyup.enter.native="diaSearch">
+                                <el-button slot="append" icon="el-icon-search"  @click="diaSearch"></el-button>
+                            </el-input>
+                        </div>
+                        <div class="lables" v-if="showType=='label'">
+                            <span class="l-i" :class="type=='lately' && 'article-type' " @click="type='lately'">最近引用</span>
+                            <span class="l-i" :class="type=='mine' && 'article-type'"  @click="type='mine'">我发布的</span>
+                        </div>
+                        <div class="lables" v-else-if="showType=='search'">
+                            <div>共找到{{total}}条结果：</div>
+                        </div>
+                        <div class="dia-list">
+                            <div class="dia-item" v-for="(item,index) in (type=='lately'?quoteList:publishList)" :key="index">
+                                <articlesList :item="item" @selectArticle='selectArticle' />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else class="child-item">
+                <p class="reset"  @click="reset"> <i class="el-icon-back"></i> 重新选择</p>
+                <articlesList :item="childItem" @selectArticle='selectArticle' :isSelect="true" />
+                <div class="set-title">
+                    <p class="s-p">将在文中插入引用对象，请为其设置标题</p>
+                    <el-input v-model="setTitle" :maxlength="25">
+                        <template slot="append">{{25-setTitle.length}}</template>
+                    </el-input>
+                    <div class="sub" @click="submitTitle">确定</div>
+                </div>
+            </div>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+import commonTitle from '@/components/common/commonTitle.vue'
+import articlesDetail from '@/components/common/articlesDetail.vue'
+import articlesList from '@/components/common/articlesList.vue'
+import http from '@/utils/httpUtil'
+export default {
+    name:'PublishArticles',
+    components:{articlesDetail,commonTitle,articlesList},
+    data(){
+        return{
+            selectLeft:0,
+            type:'lately',
+            diaTitle:'引用',
+            isSelectArticle:false,
+            childItem:{},
+            setTitle:'',
+            list:[],
+            publishList:[],
+            quoteList:[],
+            appid:'',
+            keyword:'',
+            showType:'label',
+            total:0
+        }
+    },
+    computed:{
+        showQuote:{
+            get(){
+                return this.$store.state.common.showQuote
+            },
+            set(val){
+                return val
+            }
+            
+        },
+
+    },
+    mounted(){
+        this.getQuoteList()
+    },
+    methods:{
+        getQuoteList(){
+            http.post('/yifangPC/quote',{},(res=>{
+                if(res.code==200){
+                    this.list=res.data.miniprogramList
+                    this.publishList=res.data.miniprogramList[0].publishList
+                    this.quoteList=res.data.miniprogramList[0].quoteList
+                    this.appid=res.data.miniprogramList[0].appid
+                }
+            }))
+        },
+        selectItem(item,index){
+            this.appid=item.appid
+            this.selectLeft=index
+            this.publishList=item.publishList
+            this.quoteList=item.quoteList
+            this.showType='label'
+        },
+        diaSearch(){
+            let data={
+                keyword:this.keyword,
+                appid:this.appid
+            }
+            http.post('/yifangPC/quote/search',data,(res=>{
+                console.log(res)
+                if(res.code==200){
+                    this.type='lately'
+                    this.quoteList=res.data.data
+                    this.total=res.data.count
+                    this.showType='search'
+                    
+                }
+            }))
+        },
+        selectArticle(val){
+            this.childItem=val
+            if(val){
+                this.isSelectArticle=true
+                this.diaTitle=''
+            }
+        },
+        submitTitle(){
+            let data={
+                title:this.setTitle,
+                token:this.childItem.token
+            }
+            http.post('/yifangPC/quote/submit',data,(res=>{
+                res.data.token=this.childItem.token
+                if(res.code==200){
+                    this.$emit('getSetTitle',this.setTitle,{...res.data})
+                    this.$message({
+                        message:'引用成功',
+                        type:'success'
+                    })
+                    this.setTitle=''
+                    this.isSelectArticle=false
+                    this.$store.commit('updateShowQuote',false)
+                }
+            }))
+        },
+        reset(){
+            this.isSelectArticle=false
+            this.diaTitle='引用'
+        }
+        
+    }
+}
+</script>
+
+<style scoped lang="less">
+.page-wrap{
+   /deep/.el-dialog{
+       background-color: #f8f8f8;
+       border-radius: 12px;
+       .el-dialog__body{
+           padding: 0;
+       }
+   }
+   .dia-tit{
+       padding: 20px;
+   }
+   .dia-wrap{
+        display: flex;
+        border-top: 1px solid #ccc;
+        margin-top: 20px;
+        min-height: 500px;
+        max-height: 700px;
+       .dia-left{
+           width: 20%;
+           border-right: 1px solid #ccc;
+           overflow-y: auto;
+           .left-list{
+               .left-item{
+                   display: flex;
+                   align-items: center;
+                   padding: 20px 30px;
+                   cursor: pointer;
+                   .item-img{
+                       width: 40px;
+                       margin-right: 20px;
+                   }
+               }
+               .select-left{
+                   background: #000;
+                   color: #fff;
+               }
+           }
+       }
+       .dia-right{
+           padding: 30px;
+           width: 70%;
+            /deep/.el-input__inner{
+                background-color: #fff;
+                border-radius: 20px;
+            }
+            /deep/.el-input-group__append{
+                background: transparent;
+                border: none;
+                position: absolute;
+                right: 10px;
+                bottom: 10px;
+                font-size:18px;
+                color: #000;
+            }
+            .lables{
+                span{
+                    display: inline-block;
+                    padding: 20px 0;
+                    color: #999;
+                    font-size: 16px;
+                    margin-right: 30px;
+                    position: relative;
+                    cursor: pointer;
+                    &:first-child{
+                        &::after{
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            right: -15px;
+                            width: 1px;
+                            height: 25px;
+                            top: 20px;
+                            background: #999;
+                        }
+                    }
+                }
+                .article-type{
+                    color: #333;
+                    font-weight: 600;
+                }
+                
+            }
+            .dia-list{
+                overflow-y: auto;
+                max-height: 500px;
+                .dia-item{
+                    background: #fff;
+                    
+                    margin-bottom: 10px;
+                    border-radius: 12px;
+                    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.101960784313725);
+                }
+            }
+       }
+   }
+   .child-item{
+       padding:30px 60px;
+       .reset{
+           cursor: pointer;
+           color: #333;
+           margin: 20px ;
+           text-align: center;
+           font-size: 20px;
+           font-weight: 600;
+
+       }
+       .set-title{
+           background: #fff;
+           border-radius: 12px;
+           padding: 40px 25%;
+           margin-top: 20px;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           .s-p{
+               margin-bottom: 40px;
+               font-size: 16px;
+               color: #333;
+           }
+           .sub{
+               margin-top: 50px;
+               width: 200px;
+               height: 50px;
+               background: #000;
+               color: #fff;
+               font-size: 20px;
+               font-weight: 600;
+               border-radius: 24px;
+               text-align: center;
+               line-height: 50px;
+               cursor: pointer;
+           }
+       }
+   }
+}
+</style>

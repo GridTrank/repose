@@ -18,7 +18,9 @@ const state = {
           name:'草稿箱',
           icon:'el-icon-notebook-1'
       },
-    ]
+    ],
+    showTitleDialog:false,
+    changeTitleToken:''
 }
 
 
@@ -31,6 +33,10 @@ const actions = {
 const mutations = {
   updateShowQuote(state,data){
     state.showQuote=data
+  },
+  updateShowTitleDialog(state,data){
+    state.showTitleDialog=data.show
+    state.changeTitleToken=data.token
   },
   updateUserInfo(state,data){
     localStorage.setItem('userInfo',JSON.stringify(data))

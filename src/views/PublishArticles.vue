@@ -4,59 +4,9 @@
         <articlesDetail 
             v-if="initDetail.token" 
             ref="detail" 
-            :setTitle="setTitle" 
             :initDetail="initDetail"
             type="init" 
         />
-        <el-dialog 
-        :title="diaTitle" 
-        width="70%"
-        @close="$store.commit('updateShowQuote',false)"
-        :visible.sync="showQuote">
-            <div v-if="!isSelectArticle">
-                <p class="dia-tit">发布文章时，可以在文中引用你或他人发布的文章。发布后，浏览者点击文中的相关链接，即可查看被引用的文章。</p>
-                <div class="dia-wrap">
-                    <div class="dia-left">
-                        <div class="left-list">
-                            <div class="left-item" 
-                            :class="selectLeft == index && 'select-left'"
-                            @click="selectItem(item,index)"
-                            v-for="(item,index) in 5" :key="index">
-                                <img class="item-img" src="@/assets/images/icon_default.png">
-                                <p class="item-tit">寄托一方</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="dia-right">
-                        <div class="search">
-                            <el-input placeholder="搜索文章">
-                                <el-button slot="append" icon="el-icon-search" @click="diaSearch"></el-button>
-                            </el-input>
-                        </div>
-                        <div class="lables">
-                            <span class="l-i" :class="articleType=='lately' && 'article-type' " @click="articleType='lately'">最近引用</span>
-                            <span class="l-i" :class="articleType=='mine' && 'article-type'"  @click="articleType='mine'">我发布的</span>
-                        </div>
-                        <div class="dia-list">
-                            <div class="dia-item" v-for="(item,index) in list" :key="index">
-                                <articlesList :item="item" @selectArticle='selectArticle' />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div v-else class="child-item">
-                <p class="reset" @click="reset"> <i class="el-icon-back"></i> 重新选择</p>
-                <articlesList :item="childItem" @selectArticle='selectArticle' :isSelect="true" />
-                <div class="set-title">
-                    <p class="s-p">将在文中插入引用对象，请为其设置标题</p>
-                    <el-input v-model="setTitle" :maxlength="25">
-                        <template slot="append" >{{25-setTitle.length}}</template>
-                    </el-input>
-                    <div class="sub" @click="submitTitle">确定</div>
-                </div>
-            </div>
-        </el-dialog>
     </div>
 </template>
 
@@ -80,23 +30,11 @@ export default {
                 {id:1},
                 {id:2},
             ],
-            isSelectArticle:false,
             childItem:{},
-            setTitle:'',
             initDetail:{},
         }
     },
-    computed:{
-        showQuote:{
-            get(){
-                return this.$store.state.common.showQuote
-            },
-            set(val){
-                return val
-            }
-            
-        },
-    },
+
     created(){
         this.initData()
     },
@@ -114,28 +52,6 @@ export default {
                 }
             }))
         },
-        selectItem(item,index){
-            this.selectLeft=index
-        },
-        diaSearch(){
-            console.log('搜索文章')
-        },
-        selectArticle(val){
-            console.log('选中文章',val)
-            this.childItem=val
-            if(val){
-                this.isSelectArticle=true
-                this.diaTitle=''
-            }
-        },
-        submitTitle(){
-            this.$refs.detail.change(this.setTitle)
-            this.$store.commit('updateShowQuote',false)
-        },
-        reset(){
-            this.isSelectArticle=false
-            this.diaTitle='引用'
-        }
         
     }
 }
