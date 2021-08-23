@@ -135,11 +135,17 @@ export default {
                 padding:30px;
                 display: flex;
                 .dc-left{
+                    width: 88%;
                     .dcl-t{
                         margin-bottom: 10px ;
                     }
                     .dcl-b{
                       width: 100%; 
+                    }
+                }
+                .dc-right{
+                    img{
+                        width: 100px;
                     }
                 }
             }
