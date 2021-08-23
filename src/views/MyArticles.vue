@@ -9,7 +9,7 @@
                 <el-table-column prop="nickname" label="发布者"></el-table-column>
                 <el-table-column prop="timestamp" label="发布时间" sortable="custom"></el-table-column>
                 <el-table-column prop="topicalname" label="主题"></el-table-column>
-                <el-table-column prop="commentnum" label="阅读" sortable="custom"></el-table-column>
+                <el-table-column prop="views" label="阅读" sortable="custom"></el-table-column>
                 <el-table-column prop="likenum" label="点赞" sortable="custom"></el-table-column>
                 <el-table-column prop="sharenum" label="分享" sortable="custom"></el-table-column>
                 <el-table-column prop="" label="编辑">

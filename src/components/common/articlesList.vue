@@ -4,7 +4,15 @@
             <div class="top-left">
                 <img :src="item.avatar" >
                 <span class="tl-s1">{{item.nickname}}</span>
-                <span class="tl-s2">{{item.relativedate}} <span class="tl-s3">{{item.topicalname}}</span> </span>
+                <span v-if="item.type=='artivle' || item.type=='flyingFriend'" class="tl-s2">{{item.relativedate}} <span class="tl-s3">{{item.topicalname}}</span> </span>
+
+                <span v-else-if="item.type=='renthouse' " class="tl-s2">
+                    {{item.relativedate}}发表于 <span class="tl-s3">{{item.citynode}}</span>
+                </span>
+
+                <span v-else-if="item.type=='offer'" class="tl-s2">
+                    {{item.relativedate}}发表于 <span class="tl-s3">{{item.type}}</span>
+                </span>
             </div>
             <div class="top-right" @click="selectArticle" :class="isSelect && 'sel'">
                 <i class="el-icon-circle-check"></i>
@@ -39,6 +47,35 @@
                 <p>{{item.message}}</p>
             </div>
         </div>
+
+        <div class="bottom " v-if="item.type=='renthouse'">
+            <div class="b-left">
+                <p class="b-p1">{{item.subject}}</p>
+                <div class="b-c">
+                    <span>{{item.location}}</span> <span>{{item.housetype}}</span> <span>{{item.gender}}</span>
+                </div>
+                <p class="b-b">
+                    <span class="b-b-s1">{{item.currency}}</span>
+                    <span class="b-b-s2">{{item.money }}<span class="b-b-s3">/{{item.rentalperiod}}</span> </span>
+                </p>
+            </div>
+            <div class="b-right">
+                <img :src="item.image" >
+            </div>
+        </div>
+
+        <div class="bottom fly" v-if="item.type=='offer'">
+            <p class="b-p1">{{item.schoolname}}</p>
+            <p class="b-p1">{{item.professional}}</p>
+            <div class="b-c">
+                <span>{{item.year}}</span> 
+                <span>{{item.semester}}</span> 
+                <span>{{item.apply_results}}</span> 
+                <span v-if="item.gpa">{{item.gpa}}</span>
+                <span v-if="item.schoolgrade">{{item.schoolgrade}}</span>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -102,6 +139,24 @@ export default {
         justify-content: space-between;
         .b-left{
             width: 88%;
+        }
+        .b-c{
+            margin: 10px 0;
+            span{
+                color: #666;
+                font-size: 14px;
+                margin-right: 15px;
+            }
+        }
+        .b-b{
+            font-size: 16px;
+            .b-b-s1,.b-b-s3{
+                color: #333;
+            }
+            .b-b-s2{
+                color: #C63E3A;
+                
+            }
         }
         .b-right{
             img{
