@@ -20,6 +20,7 @@
                 <img :src="item.image" >
             </div>
         </div>
+        
         <div class="bottom fly" v-else-if="item.type=='flyingFriend'">
             <div class="b-top">
                 <p>{{item.departurecityname}}</p>
@@ -27,7 +28,12 @@
                 <p>{{item.destinationcityname}}</p>
             </div>
             <div class="b-center">
-                <i class="el-icon-date"></i>
+                
+                <p >
+                    <i class="el-icon-date"></i>
+                    <span>{{item.startschedule}}</span>~<span>{{item.latestschedule}}</span></p>
+                <p>{{item.sex==1?'限男生':item.sex==2?'限女生':'男女皆可'}}</p>
+                <p>{{item.istickets==1?'已购机票':'未购机票'}}</p>
             </div>
             <div class="b-bottom">
                 <p>{{item.message}}</p>
@@ -113,7 +119,24 @@ export default {
     }
     .fly{
         flex-direction: column;
-        
+        .b-top{
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            i{
+                margin: 0 10px;
+            }
+        }
+        .b-center{
+            display: flex;
+            align-items: center;
+            p{
+                margin: 20px 20px 15px 0;
+                font-size: 16px;
+            }
+        }
     }
 }
 </style>
