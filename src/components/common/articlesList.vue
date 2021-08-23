@@ -10,13 +10,27 @@
                 <i class="el-icon-circle-check"></i>
             </div>
         </div>
-        <div class="bottom">
+        
+        <div class="bottom" v-if="item.type=='article'">
             <div class="b-left">
                 <p class="b-p1">{{item.title}}</p>
                 <p class="b-p2 towHidden">{{item.description}}</p>
             </div>
             <div class="b-right">
                 <img :src="item.image" >
+            </div>
+        </div>
+        <div class="bottom fly" v-else-if="item.type=='flyingFriend'">
+            <div class="b-top">
+                <p>{{item.departurecityname}}</p>
+                <i class="el-icon-right"></i>
+                <p>{{item.destinationcityname}}</p>
+            </div>
+            <div class="b-center">
+                <i class="el-icon-date"></i>
+            </div>
+            <div class="b-bottom">
+                <p>{{item.message}}</p>
             </div>
         </div>
     </div>
@@ -96,6 +110,10 @@ export default {
         .b-p2{
 
         }
+    }
+    .fly{
+        flex-direction: column;
+        
     }
 }
 </style>

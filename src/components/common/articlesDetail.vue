@@ -190,13 +190,23 @@ Quill.register({'formats/lineHeight':lineHeightStyle},true);
 
 class LinkBlot extends Inline {
     static create(data) {
-        let node = super.create();
-        // node.setAttribute("onclick", 'showLink(' +JSON.stringify(data)+ ')' );
-        node.setAttribute('target', '_blank');
-        node.setAttribute('data-token', data.token);
-        node.setAttribute('data-miniprogram-appid', data.appid);
-        node.setAttribute('data-miniprogram-path', data.path);
-        node.innerHTML= data.value
+        let node = undefined;
+        if (data && !data.path) {
+            // 适应原本的Link Blot
+            node = super.create(data);
+        } else {
+            node = super.create();
+            // node.setAttribute("onclick", 'showLink(' +JSON.stringify(data)+ ')' );
+            console.log(this);
+            node.setAttribute('target', '_blank');
+            node.setAttribute('data-token', data.token);
+            node.setAttribute('isEdit',true);
+            node.setAttribute('data-miniprogram-appid', data.appid);
+            node.setAttribute('data-miniprogram-path', data.path);
+            if(!data.isEdit){
+            node.innerHTML= data.value
+            }
+        }
         return node;
     }
     static formats(node) {
@@ -205,12 +215,13 @@ class LinkBlot extends Inline {
             appid: node.getAttribute('data-miniprogram-appid'),
             path: node.getAttribute('data-miniprogram-path'),
             token: node.getAttribute('data-token'),
+            isEdit: node.getAttribute('isEdit'),
             value: node.innerHTML,
         }
     }
 }
 LinkBlot.blotName = 'link';
-LinkBlot.tagName = 'a';
+LinkBlot.tagName = 'A';
 Quill.register(LinkBlot);
 
 class ImageBlot extends BlockEmbed {

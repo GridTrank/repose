@@ -2,7 +2,7 @@
     <div class="page-wrap">
         <el-dialog 
         :title="diaTitle" 
-        width="70%"
+        width="60%"
         @close="$store.commit('updateShowQuote',false)"
         :visible.sync="showQuote">
             <div v-if="!isSelectArticle">
@@ -29,16 +29,24 @@
                             <span class="l-i" :class="type=='lately' && 'article-type' " @click="type='lately'">最近引用</span>
                             <span class="l-i" :class="type=='mine' && 'article-type'"  @click="type='mine'">我发布的</span>
                         </div>
-                        <div class="lables" v-else-if="showType=='search'">
+                        <div class="res-wrap" v-else-if="showType=='search'">
                             <div>共找到{{total}}条结果：</div>
+                            <div class="fly" @click="checkFly">
+                                <i  :class="showFly?'el-icon-circle-close':'el-icon-circle-check' " ></i>
+                                <span class="fly-tip">{{showFly?'屏蔽找飞友':'显示找飞友'}}</span>
+                            </div>
                         </div>
-                        <div class="dia-list">
+                        <div class="dia-list" v-if="quoteList.length>0 || publishList.length>0 ">
                             <div class="dia-item" v-for="(item,index) in (type=='lately'?quoteList:publishList)" :key="index">
                                 <articlesList :item="item" @selectArticle='selectArticle' />
                             </div>
                         </div>
+                        <div v-if="(type=='lately' && quoteList.length<=0) || (type=='mine' && publishList.length<=0)" class="no-data">
+                            暂无数据
+                        </div>
                     </div>
                 </div>
+
             </div>
             <div v-else class="child-item">
                 <p class="reset"  @click="reset"> <i class="el-icon-back"></i> 重新选择</p>
@@ -77,7 +85,8 @@ export default {
             appid:'',
             keyword:'',
             showType:'label',
-            total:0
+            total:0,
+            showFly:true,
         }
     },
     computed:{
@@ -92,10 +101,16 @@ export default {
         },
 
     },
+    watch:{
+       type:function(val){
+           
+       } 
+    },
     mounted(){
         this.getQuoteList()
     },
     methods:{
+        // 初始化
         getQuoteList(){
             http.post('/yifangPC/quote',{},(res=>{
                 if(res.code==200){
@@ -106,6 +121,7 @@ export default {
                 }
             }))
         },
+        // 选择小程序
         selectItem(item,index){
             this.appid=item.appid
             this.selectLeft=index
@@ -113,6 +129,7 @@ export default {
             this.quoteList=item.quoteList
             this.showType='label'
         },
+        // 搜索
         diaSearch(){
             let data={
                 keyword:this.keyword,
@@ -129,6 +146,7 @@ export default {
                 }
             }))
         },
+        // 选择文章
         selectArticle(val){
             this.childItem=val
             if(val){
@@ -136,6 +154,7 @@ export default {
                 this.diaTitle=''
             }
         },
+        // 提交标题
         submitTitle(){
             let data={
                 title:this.setTitle,
@@ -152,6 +171,24 @@ export default {
                     this.setTitle=''
                     this.isSelectArticle=false
                     this.$store.commit('updateShowQuote',false)
+                }
+            }))
+        },
+        // 屏蔽找飞友
+        checkFly(){
+            this.showFly=!this.showFly
+            let data={
+                keyword:this.keyword,
+                appid:this.appid,
+                blockflyingfriend:this.showFly?'':1
+            }
+            http.post('/yifangPC/quote/search',data,(res=>{
+                console.log(res)
+                if(res.code==200){
+                    this.type='lately'
+                    this.quoteList=res.data.data
+                    this.total=res.data.count
+                    this.showType='search'
                 }
             }))
         },
@@ -247,6 +284,15 @@ export default {
                 }
                 
             }
+            .res-wrap{
+                display: flex;
+                justify-content: space-between;
+                padding: 20px 10px;
+                .fly{
+                    cursor: pointer;
+                    color: #000;
+                }
+            }
             .dia-list{
                 overflow-y: auto;
                 max-height: 500px;
@@ -255,8 +301,16 @@ export default {
                     
                     margin-bottom: 10px;
                     border-radius: 12px;
-                    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.101960784313725);
+                    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.101960784313725);
                 }
+            }
+            .no-data{
+                padding: 100px;
+                text-align: center;
+                background: #fff;
+                border-radius: 12px;
+                font-size: 20px;
+                color: #999;
             }
        }
    }
