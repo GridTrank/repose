@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import router from '../router'
 import { Message,Loading  } from 'element-ui';
 import config from '@/utils/config.js'
 import axios from 'axios'
@@ -41,7 +42,7 @@ function ajax(type,url,data,callback,failcallback,status,jsonState){
                 message:response.message,
             });
             localStorage.removeItem("userInfo")
-            location.href = '/#/login';
+            router.push('/Login')
         }else if(response.code == 200){
             callback(response)
         }else{
