@@ -2,18 +2,33 @@
     <div class="list-wrap">
         <div class="top">
             <div class="top-left">
-                <img :src="item.avatar" >
+                <img v-if="item.type=='apartment'" class="avatar" src="https://ada.xiaoapi.com/gter/yifangPC/images/%E3%80%901_0%E3%80%91%E5%BC%95%E7%94%A8/u537.png" >
+                <img v-else class="avatar" :src="item.avatar" >
+
                 <span class="tl-s1">{{item.nickname}}</span>
-                <span v-if="item.type=='artivle' || item.type=='flyingFriend'" class="tl-s2">{{item.relativedate}} <span class="tl-s3">{{item.topicalname}}</span> </span>
+                <span v-if="item.type=='article' || item.type=='flyingFriend' || item.type=='read'" class="tl-s2">
+                   
+                    {{item.relativedate}} <span class="tl-s3">{{item.topicalname}}</span> 
+                </span>
 
                 <span v-else-if="item.type=='renthouse' " class="tl-s2">
                     {{item.relativedate}}发表于 <span class="tl-s3">{{item.citynode}}</span>
                 </span>
 
                 <span v-else-if="item.type=='offer'" class="tl-s2">
-                    {{item.relativedate}}发表于 <span class="tl-s3">{{item.type}}</span>
+                    {{item.relativedate}}发表于 <span class="tl-s3">Offer</span>
+                </span>
+                <span v-else-if="item.type=='vote'" class="tl-s2">
+                    {{item.relativedate}}发表于 <span class="tl-s3">投票</span>
+                </span>
+                <span v-else-if="item.type=='interviewExperience'" class="tl-s2">
+                    {{item.relativedate}}发表于 <span class="tl-s3">面经</span>
+                </span>
+                <span v-else-if="item.type=='apartment'" class="tl-s2">
+                    <span class="tl-s3">香港品牌公寓</span>
                 </span>
             </div>
+
             <div class="top-right" @click="selectArticle" :class="isSelect && 'sel'">
                 <i class="el-icon-circle-check"></i>
             </div>
@@ -36,10 +51,13 @@
                 <p>{{item.destinationcityname}}</p>
             </div>
             <div class="b-center">
-                
-                <p >
+                <p>
                     <i class="el-icon-date"></i>
-                    <span>{{item.startschedule}}</span>~<span>{{item.latestschedule}}</span></p>
+                    <span v-if="item.flightdeparturetime">{{item.flightdeparturetime}}</span>
+                    <span v-else>
+                        <span >{{item.startschedule}}</span>~<span>{{item.latestschedule}}</span>
+                    </span>
+                </p>
                 <p>{{item.sex==1?'限男生':item.sex==2?'限女生':'男女皆可'}}</p>
                 <p>{{item.istickets==1?'已购机票':'未购机票'}}</p>
             </div>
@@ -76,6 +94,30 @@
             </div>
         </div>
 
+        <div class="bottom" v-if="item.type=='apartment'">
+            <div class="b-left">
+                <p class="b-p1">{{item.title}}</p>
+                <p class="b-p2 towHidden">{{item.propaganda}}</p>
+                <p> HK$ <span class="b-b-s2">{{item.rentprice}}</span> </p>
+            </div>
+            <div class="b-right">
+                <img :src="item.image" >
+            </div>
+        </div>
+        
+        <div class="bottom" v-if="item.type=='interviewExperience'">
+            <div class="b-left">
+                <p class="b-p1">{{item.subject}}</p>
+                <p class="b-p2 towHidden">{{item.school}}</p>
+                <p>{{item.profession}}</p>
+            </div>
+            <div class="b-right">
+                <img :src="item.image" >
+            </div>
+        </div>
+
+
+
     </div>
 </template>
 
@@ -109,6 +151,7 @@ export default {
             justify-content: space-between;
             img{
                 width: 28px;
+                border-radius: 50%;
             }
             .tl-s1{
                 font-size: 16px;
@@ -155,9 +198,11 @@ export default {
             }
             .b-b-s2{
                 color: #C63E3A;
-                
             }
         }
+        .b-b-s2{
+                color: #C63E3A;
+            }
         .b-right{
             img{
                 width: 100px;
@@ -169,7 +214,7 @@ export default {
             margin-bottom: 10px ;
         }
         .b-p2{
-
+            margin: 10px 0;
         }
     }
     .fly{

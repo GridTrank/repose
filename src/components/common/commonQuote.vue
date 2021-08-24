@@ -31,8 +31,9 @@
                         </div>
                         <div class="res-wrap" v-else-if="showType=='search'">
                             <div>共找到{{total}}条结果：</div>
-                            <div class="fly" @click="checkFly">
-                                <i  :class="showFly?'el-icon-circle-close':'el-icon-circle-check' " ></i>
+                            <div class="fly" @click="checkFly" v-if="shwoFlyContent">
+                                <img v-if="showFly" src="@/assets/images/close.png">
+                                <img v-else src="@/assets/images/open.png">
                                 <span class="fly-tip">{{showFly?'屏蔽找飞友':'显示找飞友'}}</span>
                             </div>
                         </div>
@@ -40,6 +41,7 @@
                             <div class="dia-item" v-for="(item,index) in (type=='lately'?quoteList:publishList)" :key="index">
                                 <articlesList :item="item" @selectArticle='selectArticle' />
                             </div>
+                            <div v-if="showMore" class="more" @click="searchMore">{{!noMore?'点击加载更多~':'暂无更多~'}}</div>
                         </div>
                         <div v-if="(type=='lately' && quoteList.length<=0) || (type=='mine' && publishList.length<=0)" class="no-data">
                             暂无数据
@@ -86,7 +88,11 @@ export default {
             keyword:'',
             showType:'label',
             total:0,
+            shwoFlyContent:true,
             showFly:true,
+            page:1,
+            noMore:false,
+            showMore:false
         }
     },
     computed:{
@@ -102,8 +108,10 @@ export default {
 
     },
     watch:{
-       type:function(val){
-           
+       keyword:function(val){
+           if(!val){
+
+           }
        } 
     },
     mounted(){
@@ -128,23 +136,46 @@ export default {
             this.publishList=item.publishList
             this.quoteList=item.quoteList
             this.showType='label'
+            this.shwoFlyContent=index==0?true:false
+            this.keyword=''
+            this.page=1
         },
         // 搜索
-        diaSearch(){
+        diaSearch(type){
+            if(type!='more'){
+                this.quoteList=[]
+                this.page=1
+            }
             let data={
                 keyword:this.keyword,
-                appid:this.appid
+                appid:this.appid,
+                page:this.page,
+                limit:10,
+                blockflyingfriend:this.showFly?'':1
             }
             http.post('/yifangPC/quote/search',data,(res=>{
-                console.log(res)
                 if(res.code==200){
                     this.type='lately'
-                    this.quoteList=res.data.data
+                    this.quoteList=this.quoteList.concat(res.data.data) 
                     this.total=res.data.count
                     this.showType='search'
-                    
+                    if(this.total<=0){
+                        this.showMore=false
+                    }else{
+                        this.showMore=true
+                    }
+                    if(res.data.data.length<=0){
+                        this.noMore=true
+                    }else{
+                        this.noMore=false
+                    }
                 }
             }))
+        },
+        searchMore(){
+            if(this.noMore)return
+            this.page+=1
+            this.diaSearch('more')
         },
         // 选择文章
         selectArticle(val){
@@ -291,6 +322,12 @@ export default {
                 .fly{
                     cursor: pointer;
                     color: #000;
+                    display: flex;
+                    align-items: center;
+                    img{
+                        width:18px;
+                        margin-right: 7px;
+                    }
                 }
             }
             .dia-list{
@@ -302,6 +339,11 @@ export default {
                     margin-bottom: 10px;
                     border-radius: 12px;
                     box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.101960784313725);
+                }
+                .more{
+                    padding: 10px;
+                    text-align: center;
+                    cursor: pointer;
                 }
             }
             .no-data{

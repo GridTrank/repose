@@ -204,7 +204,7 @@ class LinkBlot extends Inline {
             node.setAttribute('data-miniprogram-appid', data.appid);
             node.setAttribute('data-miniprogram-path', data.path);
             if(!data.isEdit){
-            node.innerHTML= data.value
+                node.innerHTML= data.value
             }
         }
         return node;
@@ -442,15 +442,24 @@ export default {
                 this.formData.files.push(res.data.aid)
             }else{
                 this.$message.error(res.message)
-                this.fileList=[]
-                this.formData.files=[]
             }
         },
         // 附件移出
-        removeFile(res){
+        removeFile(res,file){
+            console.log(res,this.formData.files)
             if(res.status=='success'){
-                this.fileList=[]
-                this.formData.files=[]
+                if(res.response){
+                    let aid=res.response.data.aid
+                    let index=this.formData.files.indexOf(aid)
+                    this.formData.files.splice(index,1)
+                }else{
+                    this.formData.files.forEach((item,index)=>{
+                        if(item.original==res.name){
+                            this.formData.files.splice(index,1)
+                        }
+                    })
+                }
+                
             }
         },
         // 封面上传
