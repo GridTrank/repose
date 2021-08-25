@@ -578,6 +578,7 @@ export default {
         // 父组件调用事件，设置标题
         getSetTitle(value,info){
             let quill = this.editor
+            quill.insertText(this.quillIndex+1,' ');
             quill.insertEmbed(this.quillIndex+1, 'link', {
                 value:value,
                 token:info.token,
