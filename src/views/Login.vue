@@ -1,5 +1,5 @@
 <template>
-    <div class="login-wrap">
+    <div class="login-wrap page-wrap">
         <div class="login-imgs">
             <img src="@/assets/images/logo-bg.png" class="login-bg">
             <div class="code-wrap">

@@ -5,7 +5,7 @@
                 <el-form :data="formData">
                     <el-form-item>
                         <p class="f-t">主题</p>
-                        <el-select v-model="formData.tid" >
+                        <el-select v-model="formData.tid" style="width:100%">
                             <el-option 
                                 v-for="(item,index) in initDetail.topicalList"
                                 :key="index"
@@ -17,7 +17,7 @@
 
                     <el-form-item v-if="showClass">
                         <p class="f-t">分类</p>
-                        <el-select v-model="formData.cid" >
+                        <el-select v-model="formData.cid"  style="width:100%" placeholder="请选择">
                             <el-option 
                                 v-for="(item,index) in classList"
                                 :key="index"
@@ -37,7 +37,9 @@
                             :headers="headers"
                             name="files"
                             :on-success="updateSuccess"
+                            :before-upload="breforeUploadFile"
                             :on-remove="removeFile"
+                            style="width:100%"
                         >
                             <el-button >
                                 <i class="el-icon-upload"></i>
@@ -58,6 +60,7 @@
                             </div>
                         </div>
                         <el-select 
+                            style="width:100%"
                             class="more-label"
                             v-model="moreLabel" 
                             multiple 
@@ -88,6 +91,7 @@
                                 list-type="picture-card"
                                 ref="imgUpload"
                                 :file-list="imageList"
+                                :before-upload="breforeUploadImage"
                                 :on-success="updateSuccessImg"
                                 :on-remove="removeImg"
                                 :on-change="HFhandleChangeImg"
@@ -120,6 +124,7 @@
                     id="upload" 
                     multiple
                     :on-success="quillUploadImage"
+                    :before-upload="breforeUploadImage"
                     :on-change="quillChangeImage"
                     style="display:none;" 
                 ></el-upload>
@@ -260,8 +265,8 @@ Quill.register(ImageBlot);
 
 const toolbarOptions = [
   ["bold", "italic", "underline",],
-  [{ 'size': ["13px","14px","15px","18px","20px","24px","48px"] }],
-  [{ color: [] }], // 字体颜色、字体背景颜色-----[{ color: [] }, { background: [] }]
+  [{ 'size': ["13px","14px",false,"18px","20px","24px","48px"] }],
+  [{ color: ['#555','#000','#c4c4c4','#DF4D33'] }], // 字体颜色、字体背景颜色-----[{ color: [] }, { background: [] }]
   [{ align: 'justify' },{ align: 'center' },{ align: 'right' }], // 对齐方式-----[{ align: [] }]
 
   [{ list: "ordered" }, { list: "bullet" }], // 有序、无序列表-----[{ list: 'ordered' }, { list: 'bullet' }]
@@ -462,6 +467,17 @@ export default {
                 this.contentImage.push(obj)
             }) 
         },
+        // 附件上传前
+        breforeUploadFile(file){
+            let fileName=file.name
+            let fileType=fileName.substring(fileName.lastIndexOf('.')+1)
+            let typeList=['doc','docx','xls','xlsx','ppt','pptx','pdf']
+            if(typeList.indexOf(fileType.toLowerCase())==-1){
+                this.$message.error('目前支持的格式为 doc、docx、xls、xlsx、ppt、pptx、pdf。')
+                return false
+            }
+        },
+        
         // 附件上传
         updateSuccess(res,file){
             if(res.code==200){
@@ -488,8 +504,20 @@ export default {
                 
             }
         },
+        // 照片上传前
+        breforeUploadImage(file){
+            let fileName=file.name
+            let fileType=fileName.substring(fileName.lastIndexOf('.')+1)
+            let typeList=['jpg','png','jepg']
+            if(typeList.indexOf(fileType.toLowerCase())==-1){
+                this.$message.error('目前支持的格式为 jpg、png、jepg')
+                this.imageList=[]
+                return false
+            }
+        },
         // 封面上传
         updateSuccessImg(res,file){
+            console.log(1111)
             document.getElementsByClassName("el-upload-list--picture-card")[0].style.display='block'
             if(res.code==200){
                 document.getElementsByClassName("el-upload--picture-card")[0].style.display='none'
@@ -541,6 +569,8 @@ export default {
             });
             if(res.response && res.response.code==200){
                 this.handleImage()
+                loading.close()
+            }else{
                 loading.close()
             }
         },
@@ -776,6 +806,7 @@ export default {
         .label-wrap{
             display: flex;
             flex-wrap: wrap;
+            width: 100%;
             .label-btn{
                 width: 110px;
                 margin-right: 20px;
@@ -858,24 +889,33 @@ export default {
     }  
 }
 .editor {
-  line-height: normal !important;
-  min-height: 400px;
-  background-color: #fff;
-  border: none;
-  max-height: 700px;
-overflow-y: scroll;
-
-  .ql-toolbar.ql-snow{
-    background-color: #f8f8f8;
-  }
-  .ql-toolbar.ql-snow,.ql-container.ql-snow{
+    line-height: normal !important;
+    
+    background-color: #fff;
     border: none;
-  }
-  
-  .ql-editor{
-    min-height: 500px;
-  }
+    
+    .ql-container{
+        min-height: 600px;
+        max-height: 700px;
+        overflow-y: scroll;
+    }
+    .ql-toolbar.ql-snow{
+        background-color: #f8f8f8;
+    }
+    .ql-toolbar.ql-snow,.ql-container.ql-snow{
+        border: none;
+    }
+    .ql-editor{
+        min-height: 600px;
+    }
  
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item::before {
+  content: '15px';
+}
+.ql-container {
+  font-size: 15px;
 }
 //配置编辑器行高
 .ql-snow .ql-picker.ql-lineheight .ql-picker-label::before {
@@ -907,6 +947,21 @@ overflow-y: scroll;
 }
 .ql-snow .ql-picker.ql-lineheight {
   width: 70px;
+}
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label{
+    border:none;
+}
+.quill-editor .ql-toolbar .ql-formats{
+    border-right: 1px solid #ddd;
+    padding-right: 20px;
+    &:last-child{
+        border:none
+    }
+    &:nth-last-child(2){
+        .ql-blockquote{
+            transform: rotate(180deg);
+        }
+    }
 }
 
 </style>

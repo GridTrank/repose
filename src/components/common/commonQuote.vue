@@ -179,6 +179,9 @@ export default {
         },
         // 选择文章
         selectArticle(val){
+            if(val.title || val.subject){
+                this.setTitle=val.title ||  val.subject
+            }
             this.childItem=val
             if(val){
                 this.isSelectArticle=true

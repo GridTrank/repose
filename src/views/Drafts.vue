@@ -1,5 +1,5 @@
 <template>
-    <div class="drafts-wrap">
+    <div class="drafts-wrap page-wrap">
         <commonTitle :titleOptions="titleOptions"/>
         <div class="dra-list">
             <div class="dra-item" v-for="(item,index) in data" :key="index">

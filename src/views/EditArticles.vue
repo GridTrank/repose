@@ -1,5 +1,5 @@
 <template>
-    <div class="dedkit-wrap">
+    <div class="dedkit-wrap page-wrap">
         <commonTitle :titleOptions="titleOptions"/>
         <articlesDetail v-if="initDetail.token" :initDetail="initDetail" type='edit' />
     </div>

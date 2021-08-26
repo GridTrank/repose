@@ -1,5 +1,5 @@
 <template>
-    <div class="list-wrap">
+    <div class="list-wrap" @click="selectArticle">
         <div class="top">
             <div class="top-left">
                 <img v-if="item.type=='apartment'" class="avatar" src="https://ada.xiaoapi.com/gter/yifangPC/images/%E3%80%901_0%E3%80%91%E5%BC%95%E7%94%A8/u537.png" >
@@ -29,7 +29,7 @@
                 </span>
             </div>
 
-            <div class="top-right" @click="selectArticle" :class="isSelect && 'sel'">
+            <div class="top-right"  :class="isSelect && 'sel'">
                 <i class="el-icon-circle-check"></i>
             </div>
         </div>
@@ -139,6 +139,7 @@ export default {
 .list-wrap{
     background: #fff;
     border-radius: 12px;
+    cursor: pointer;
     .top{
         display: flex;
         align-items: center;

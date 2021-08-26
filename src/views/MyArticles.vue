@@ -1,5 +1,5 @@
 <template>
-    <div class="myarticle-wrap">
+    <div class="myarticle-wrap page-wrap">
         <commonTitle :titleOptions="titleOptions" @titleSearch="titleSearch" />
         <div class="myarticle-table">
             <el-table 
