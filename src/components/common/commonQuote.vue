@@ -180,7 +180,7 @@ export default {
         // 选择文章
         selectArticle(val){
             if(val.title || val.subject){
-                this.setTitle=val.title ||  val.subject
+                this.setTitle=val.title.substring(25,0) ||  val.subject.substring(25,0)
             }
             this.childItem=val
             if(val){
@@ -227,6 +227,7 @@ export default {
             }))
         },
         reset(){
+            this.setTitle=''
             this.isSelectArticle=false
             this.diaTitle='引用'
         }
