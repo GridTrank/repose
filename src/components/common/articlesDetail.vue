@@ -5,7 +5,7 @@
                 <el-form :data="formData">
                     <el-form-item>
                         <p class="f-t">主题</p>
-                        <el-select v-model="formData.tid">
+                        <el-select v-model="formData.tid" >
                             <el-option 
                                 v-for="(item,index) in initDetail.topicalList"
                                 :key="index"
@@ -13,6 +13,19 @@
                                 :label="item.name">
                             </el-option>
                         </el-select>
+                    </el-form-item>
+
+                    <el-form-item v-if="showClass">
+                        <p class="f-t">分类</p>
+                        <el-select v-model="formData.cid" >
+                            <el-option 
+                                v-for="(item,index) in classList"
+                                :key="index"
+                                :value="item.id" 
+                                :label="item.name">
+                            </el-option>
+                        </el-select>
+
                     </el-form-item>
 
                     <el-form-item>
@@ -330,7 +343,9 @@ export default {
             selectImageInfo:{},
             dialogTitle:false,
             setTitle:'',
-            setToken:''
+            setToken:'',
+            showClass:false,
+            classList:[]
         }
     },
     computed: {
@@ -370,6 +385,17 @@ export default {
                 this.hasImage=false
             }
             this.handleImage()
+        },
+        "formData.tid":function(val){
+            let list=this.initDetail.topicalList
+            this.showClass=list.some(item=>{
+                if(item.id==val && item.classification.length>0){
+                    this.classList=item.classification
+                }
+                return item.id==val && item.classification.length>0
+            })
+            
+            
         }
     },
     mounted(){
@@ -548,7 +574,13 @@ export default {
         // 图片选中
         selectImage(){
             this.imageList=[]
-            let item=this.selectImageInfo
+
+            let item={}
+            if(this.selectImageInfo && this.selectImageInfo.dataAid){
+                item=this.selectImageInfo
+            }else{
+                item=this.contentImage[0]
+            }
             let img={
                 url:item.src,
                 name:item.title
@@ -628,7 +660,7 @@ export default {
 }
 </script>
 
-<style  lang="less" >
+<style  lang="less">
 .article-wrap{
     display: flex;
     flex-direction: column;

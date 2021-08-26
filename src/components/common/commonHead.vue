@@ -24,7 +24,6 @@ export default {
     data(){
         return{
             active:0,
-
         }
     },
     computed:{
@@ -37,10 +36,12 @@ export default {
 
     },
     mounted(){
+        if(!this.$route.name){
+            sessionStorage.setItem('routerIndex',1)
+        }
         if(sessionStorage.getItem('routerIndex')){
             this.active=sessionStorage.getItem('routerIndex')
         }
-
     },
     
     methods:{

@@ -5,16 +5,16 @@ Vue.use(Router)
 
 const routes= [
     {
-      path: '/PublishArticles',
-      name: 'PublishArticles',
-      meta: { pageTitle: "发布文章", keepAlive: true},
-      component: (resolve) => require(['@/views/PublishArticles.vue'], resolve)
-    },
-    {
       path: '/MyArticles',
       name: 'MyArticles',
       meta: { pageTitle: "我的文章", keepAlive: true},
       component: (resolve) => require(['@/views/MyArticles.vue'], resolve)
+    },
+    {
+      path: '/PublishArticles',
+      name: 'PublishArticles',
+      meta: { pageTitle: "发布文章", keepAlive: true},
+      component: (resolve) => require(['@/views/PublishArticles.vue'], resolve)
     },
     {
       path: '/EditArticles',
@@ -55,9 +55,9 @@ const routes= [
   
     { // 匹配
       path: '*',
-      name: 'PublishArticles',
-      meta: { pageTitle: "发布文章" },
-      component: (resolve) => require(['@/views/PublishArticles.vue'], resolve)
+      name: 'MyArticles',
+      meta: { pageTitle: "我的文章" },
+      component: (resolve) => require(['@/views/MyArticles.vue'], resolve)
     }
 ]
 const router = new Router({

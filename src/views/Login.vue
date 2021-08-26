@@ -54,7 +54,8 @@ export default {
                     localStorage.setItem("authorization",res.data.authorization)
                     this.$store.commit('updateUserInfo',res.data.user)
                     setTimeout(()=>{
-                        this.$router.push("/PublishArticles"); 
+                        this.$router.push("/MyArticles"); 
+                        sessionStorage.setItem('routerIndex',1)
                     },2000)
                 }else{
                     this.$message.error(res.message)
@@ -71,16 +72,18 @@ export default {
 .login-wrap{
     padding: 80px;
     .login-imgs{
+        width: 80%;
+        margin: auto;
         background-color: #fff;
         display: flex;
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0px 0px 30px #bbb;
         .login-bg{
-            width:65%;
+            // width:65%;
         }
         .code-wrap{
-            width: 35%;
+            width: 38%;
             display: flex;
             flex-direction: column;
             justify-content: center;
