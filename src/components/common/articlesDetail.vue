@@ -510,7 +510,7 @@ export default {
             let fileType=fileName.substring(fileName.lastIndexOf('.')+1)
             let typeList=['jpg','png','jepg']
             if(typeList.indexOf(fileType.toLowerCase())==-1){
-                this.$message.error('目前支持的格式为 jpg、png、jepg')
+                this.$message.error('请选择正确格式的图片')
                 this.imageList=[]
                 return false
             }
