@@ -1,5 +1,5 @@
 <template>
-    <div class="head-wrap">
+    <div class="head-wrap page-wrap">
         <img class="head-logo" src="@/assets/images/logo.png" >
         <div class="head-menus">
             <div class="menus-list">
