@@ -99,7 +99,7 @@ export default {
         .dra-item{
             width: 48%;
             margin-top: 20px ;
-            margin-right: 20px;
+            margin-right: 4%;
             background-color: #fff;
             border-radius: 12px;
             &:nth-child(2){

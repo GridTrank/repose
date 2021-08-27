@@ -27,8 +27,11 @@ function ajax(type,url,data,callback,failcallback,status,jsonState){
         background: 'rgba(0, 0, 0, 0.7)',
         fullscreen: true,
     }):'';
+    console.log(localStorage.getItem("authorization"))
     if(localStorage.getItem("authorization") ){
         axios.defaults.headers.common["Authorization"]=localStorage.getItem("authorization") 
+    }else{
+        axios.defaults.headers.common["Authorization"]=''
     }
     return axios[type]( config.Domain+url , data)
     .then((result) => {

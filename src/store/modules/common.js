@@ -41,6 +41,7 @@ const mutations = {
   updateUserInfo(state,data){
     localStorage.setItem('userInfo',JSON.stringify(data))
     let authoritylist=data.authoritylist
+    console.log(authoritylist)
     if(authoritylist.length==0){
       state.menusList=[
         {
