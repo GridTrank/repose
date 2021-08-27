@@ -35,10 +35,17 @@ export default {
         }
 
     },
-    mounted(){
-        if(!this.$route.name){
-            sessionStorage.setItem('routerIndex',1)
+    watch:{
+        "$route":function(val){
+            this.menusList.forEach((item,index)=>{
+                if(item.router==val.path){
+                    this.active=index
+                }
+            })
         }
+
+    },
+    mounted(){
         if(sessionStorage.getItem('routerIndex')){
             this.active=sessionStorage.getItem('routerIndex')
         }

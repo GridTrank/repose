@@ -202,7 +202,7 @@ let BlockEmbed = Quill.import('blots/block/embed');
 class lineHeightAttributor extends Parchment.Attributor.Style {}
 const lineHeightStyle = new lineHeightAttributor("lineHeight", "line-height", {
   scope: Parchment.Scope.INLINE,
-  whitelist: ["initial", '1', '1.5', '1.75', '2', '3', '4', '5' ]
+  whitelist: [ '1.5', '1.75', '2', '3', '4', '5' ]
 });
 Quill.register({'formats/lineHeight':lineHeightStyle},true);
 
@@ -477,7 +477,6 @@ export default {
                 return false
             }
         },
-        
         // 附件上传
         updateSuccess(res,file){
             if(res.code==200){
@@ -485,6 +484,7 @@ export default {
             }else{
                 this.$message.error(res.message)
             }
+            
         },
         // 附件移出
         removeFile(res,file){
@@ -917,13 +917,36 @@ export default {
 .ql-container {
   font-size: 15px;
 }
-//配置编辑器行高
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label::before {
-  content: '行高';
+// //配置编辑器行高
+// .ql-snow .ql-picker.ql-lineheight .ql-picker-label::before {
+//   content: '1.75';
+// }
+// .ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value='initial']::before {
+//   content: '默认';
+// }
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value='1']::before {
+  content: '1';
 }
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value='initial']::before {
-  content: '默认';
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value='1.5']::before {
+  content: '1.5' ;
 }
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value='1.75']::before {
+  content: '1.75';
+}
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value='2']::before {
+  content: '2';
+}
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value='3']::before {
+  content: '3';
+}
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value='4']::before {
+  content: '4';
+}
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value='5']::before {
+  content: '5';
+}
+
+
 .ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value='1']::before {
   content: '1';
 }
