@@ -4,6 +4,7 @@
         <articlesDetail 
             v-if="initDetail.token" 
             ref="detail" 
+            @changeValue="changeValue"
             :initDetail="initDetail"
             type="init" 
         />
@@ -32,11 +33,42 @@ export default {
             ],
             childItem:{},
             initDetail:{},
+            canNext:false
         }
     },
 
     created(){
         this.initData()
+    },
+    beforeRouteLeave(to,form,next){
+        if(this.canNext){
+            next()
+            return
+        }
+        let data=this.$refs.detail.formData
+        let leave=''
+        for(var key in data){
+            if((data[key] &&  !Array.isArray(data[key])) || (Array.isArray(data[key]) && data[key].length>0)){
+                leave=false
+                break
+            }else{
+               leave=true
+            }
+        }
+        if(!leave){
+            this.$confirm('当前信息尚未保存，离开页面将会放弃所有数据，是否保存为草稿？','提示',{
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(()=>{
+                    this.$refs.detail.submit(0,'next')
+                    next()
+                }).catch(() => {
+                    next()
+                })
+        }else{
+            next()
+        }
     },
     methods:{
         initData(){
@@ -52,7 +84,9 @@ export default {
                 }
             }))
         },
-        
+        changeValue(){
+            this.canNext=true
+        }
     }
 }
 </script>

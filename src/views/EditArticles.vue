@@ -1,7 +1,7 @@
 <template>
     <div class="dedkit-wrap page-wrap">
         <commonTitle :titleOptions="titleOptions"/>
-        <articlesDetail v-if="initDetail.token" :initDetail="initDetail" type='edit' />
+        <articlesDetail @changeValue="changeValue" v-if="initDetail.token" :initDetail="initDetail" ref="detail" type='edit' />
     </div>
 </template>
 
@@ -17,14 +17,14 @@ export default {
                 name:'编辑文章',
                 back:true,
             },
-            initDetail:{}
+            initDetail:{},
+            canNext:false,
+            originData:{}
         }
     },
     created(){
-
         let token=this.$route.query.token
         let type=this.$route.query.type
-        console.log(this.$route.query)
         if(token){
             this.getData(token)
         }
@@ -41,10 +41,36 @@ export default {
                         }
                     })
                     this.initDetail=res.data
+                    this.originData=JSON.parse(JSON.stringify(res.data.info))
                 }
             }))
+        },
+        changeValue(){
+            this.canNext=true
         }
-    }
+    },
+    // beforeRouteLeave(to,form,next){
+    //     if(this.canNext){
+    //         next()
+    //         return
+    //     }
+    //     let data=JSON.stringify(this.$refs.detail.formData) 
+    //     let leave=data==JSON.stringify(this.originData)
+    //     if(!leave){
+    //         this.$confirm('当前信息尚未保存，离开页面将会放弃所有数据，是否保存为草稿？','提示',{
+    //                 confirmButtonText: '确定',
+    //                 cancelButtonText: '取消',
+    //                 type: 'warning'
+    //             }).then(()=>{
+    //                 this.$refs.detail.submit(0,'next')
+    //                 next()
+    //             }).catch(() => {
+    //                 next()
+    //             })
+    //     }else{
+    //         next()
+    //     }
+    // },
 }
 </script>
 

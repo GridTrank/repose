@@ -102,7 +102,7 @@ export default {
             margin-right: 4%;
             background-color: #fff;
             border-radius: 12px;
-            &:nth-child(2){
+            &:nth-child(2n+0){
                 margin-right: 0;
             }
             .dra-top{

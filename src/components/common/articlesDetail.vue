@@ -399,8 +399,9 @@ export default {
                 }
                 return item.id==val && item.classification.length>0
             })
-            
-            
+        },
+        '$route':function(){
+            return
         }
     },
     mounted(){
@@ -649,7 +650,7 @@ export default {
             })
             quill.setSelection(this.quillIndex + value.length+2)
         },
-        submit(status){
+        submit(status,type){
             let tags=this.moreLabel.concat(this.initSelectTags)
             let files=[]
             this.formData.files.forEach(item=>{
@@ -675,6 +676,8 @@ export default {
                         message:status==1?'发布成功':'保存成功',
                         type:'success'
                     })
+                    this.$emit('changeValue')
+                    if(type=='next')return
                     setTimeout(()=>{
                         if(status==1){
                             this.$router.push('/MyArticles')
@@ -686,6 +689,7 @@ export default {
                 }
             }))
         },
+        
     }
 }
 </script>
