@@ -46,6 +46,7 @@
                                 上传附件
                             </el-button>
                         </el-upload>
+                        <p>支持格式：Word、Excel、PPT、PDF, 大小不超过10M</p>
                     </el-form-item>
 
                     <el-form-item>
@@ -471,10 +472,14 @@ export default {
         // 附件上传前
         breforeUploadFile(file){
             let fileName=file.name
+            let size=file.size
             let fileType=fileName.substring(fileName.lastIndexOf('.')+1)
             let typeList=['doc','docx','xls','xlsx','ppt','pptx','pdf']
             if(typeList.indexOf(fileType.toLowerCase())==-1){
                 this.$message.error('目前支持的格式为 doc、docx、xls、xlsx、ppt、pptx、pdf。')
+                return false
+            }else if(size>=10485760){
+                this.$message.error('附件容量应不超过10M')
                 return false
             }
         },
